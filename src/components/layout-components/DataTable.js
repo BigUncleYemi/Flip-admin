@@ -11,7 +11,7 @@ const DataTable = ({ fetchTrans, transaction, columns, title, data }) => {
     total: transaction && transaction.meta && transaction.meta.count,
   });
   React.useEffect(() => {
-    fetchTrans({ skip: 0, limit: 5 });
+    fetchTrans({ skip: 0, limit: 10 });
     // eslint-disable-next-line
   }, []);
   React.useEffect(() => {

@@ -24,7 +24,7 @@ const SuperAdmin = ({
   const { Title } = Typography;
   const [isModalVisible, setIsModalVisible] = useState(false);
   useEffect(() => {
-    getAllAdminInvite({ skip: 0, limit: 5 });
+    getAllAdminInvite({ skip: 0, limit: 10 });
 	}, [getAllAdminInvite]);
   useEffect(() => {
     if (inviteAdminDone && isModalVisible) {

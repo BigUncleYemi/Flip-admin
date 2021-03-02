@@ -11,7 +11,7 @@ const User = ({getAllUsers, getUserDetailsById, users, selectedUser}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { Title } = Typography;
   useEffect(() => {
-		getAllUsers({skip: 0, limit: 5})
+		getAllUsers({skip: 0, limit: 10})
 		// getUserDetailsById({id: "ac65bd59-a8b9-4f6c-98d8-ac32da3107a1"})
 	}, [getAllUsers])
 

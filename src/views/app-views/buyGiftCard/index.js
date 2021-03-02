@@ -11,68 +11,60 @@ import {
   Popconfirm,
   Popover,
   Input,
-  Image,
   Drawer,
-  Switch,
-  Form,
+  // Switch,
+  // Form,
 } from "antd";
-import {
-  date,
-  Money,
-  sortData,
-  countryOptions,
-  DigitalAsset,
-  cardOptions,
-} from "utils/helper";
+import { date, Money } from "utils/helper";
 import styles from "../../styles.module.scss";
 import DataTable from "components/layout-components/DataTable";
 import ModalWrapper from "components/layout-components/Modal";
 import { getUserDetailsById } from "redux/actions/user";
 import {
-  approveGiftCardTransaction,
-  declineGiftCardTransaction,
-  getAllGiftCardsTransactions,
-  getGiftCardTransactionsById,
-  getNewGiftCardsTransactions,
-  getGiftCardCodes,
-  updateGiftCardsSettings,
-} from "redux/actions/giftCard";
-import Select from "components/select";
+  // approveGiftCardTransaction,
+  // declineGiftCardTransaction,
+  getAllBuyGiftCardTransactions,
+  getBuyGiftCardTransactionsById,
+  getNewBuyGiftCardTransactions,
+  getBuyGiftCardSettings,
+  updateBuyGiftCardSettings,
+} from "redux/actions/buyGiftCard";
+// import Select from "components/select";
 
-const rules = {
-  min: [
-    {
-      required: true,
-      message: "Please enter an input",
-    },
-  ],
-  max: [
-    {
-      required: true,
-      message: "Please enter an input",
-    },
-  ],
-  NGN: [
-    {
-      required: true,
-      message: "Please enter an input",
-    },
-  ],
-  GHS: [
-    {
-      required: true,
-      message: "Please enter an input",
-    },
-  ],
-  isAvailable: [
-    {
-      required: true,
-      message: "Please enter an input",
-    },
-  ],
-};
+// const rules = {
+//   min: [
+//     {
+//       required: true,
+//       message: "Please enter an input",
+//     },
+//   ],
+//   max: [
+//     {
+//       required: true,
+//       message: "Please enter an input",
+//     },
+//   ],
+//   NGN: [
+//     {
+//       required: true,
+//       message: "Please enter an input",
+//     },
+//   ],
+//   GHS: [
+//     {
+//       required: true,
+//       message: "Please enter an input",
+//     },
+//   ],
+//   isAvailable: [
+//     {
+//       required: true,
+//       message: "Please enter an input",
+//     },
+//   ],
+// };
 
-const GiftCard = ({
+const BuyGiftCard = ({
   getAllGiftCard,
   getNewGiftCard,
   getGiftCardById,
@@ -88,7 +80,7 @@ const GiftCard = ({
   getGiftCardList,
   giftCardList,
   loading,
-  updateGiftCardsSettings,
+  updateBuyGiftCardSettings,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -97,64 +89,23 @@ const GiftCard = ({
   const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [meta, setMeta] = useState(null);
-  const [avaCurr, setAvaCurr] = useState([]);
-  const [avaCard, setAvaCard] = useState([]);
-  const [state, setState] = useState({
-    btc: 0,
-    usd: 0,
-    ngn: 0,
-    ghs: 0,
-    country: "",
-    cardType: "",
-    asset: "",
-    assetValue: "",
-    amount: 0,
-    total: 0,
-  });
-  let b = giftCardList;
-  let list = sortData(b).map((i) => i[0]);
-  const onAssetChange = (value) => {
-    if (value !== "BTC") {
-      let a = DigitalAsset.find((item) => item.value === value)?.name;
-      setAvaCurr(Object.keys(b[a]).map((key) => key));
-    }
-    setState((state) => ({
-      ...state,
-      asset: value,
-      assetValue: DigitalAsset.find((item) => item.value === value)?.name,
-      country: "",
-      cardType: "",
-      amount: 0,
-      total: 0,
-    }));
-    setMeta(null);
-  };
-  const onCountryChange = (value) => {
-    if (value) {
-      let a = DigitalAsset.find((item) => item.value === state.asset)?.name;
-      setAvaCard(Object.keys(b[a][value.toLowerCase()]).map((key) => key));
-    }
-    setState((state) => ({
-      ...state,
-      country: value,
-      cardType: "",
-      amount: 0,
-      total: 0,
-    }));
-    setMeta(null);
-  };
-  const onCardTypeChange = (value) => {
-    let a = DigitalAsset.find((item) => item.value === state.asset)?.name;
-    setMeta(b[a][state.country.toLowerCase()][value][0]);
-    setState((state) => ({ ...state, cardType: value, amount: 0, total: 0 }));
-  };
+  // const [state, setState] = useState({
+  //   btc: 0,
+  //   usd: 0,
+  //   ngn: 0,
+  //   ghs: 0,
+  //   country: "",
+  //   cardType: "",
+  //   asset: "",
+  //   assetValue: "",
+  //   amount: 0,
+  //   total: 0,
+  // });
   const showDrawer = () => {
     setVisible(true);
   };
   const onClose = () => {
     setVisible(false);
-    onCountryChange("");
   };
   function callback(key) {
     console.log(key);
@@ -164,18 +115,6 @@ const GiftCard = ({
     getNewGiftCard({ skip: 0, limit: 10 });
     getGiftCardList({ cardCode: "all" });
   }, [getAllGiftCard, getNewGiftCard, getGiftCardList]);
-  useEffect(() => {
-    if (declineGiftCardTransaction && isModalVisible) {
-      setIsModalVisible(false);
-    }
-    // eslint-disable-next-line
-  }, [declineGiftCardTransaction]);
-  useEffect(() => {
-    if (approveGiftCardTransaction && isModalVisible) {
-      setIsModalVisible(false);
-    }
-    // eslint-disable-next-line
-  }, [approveGiftCardTransaction]);
 
   const handleAction = (id) => {
     setIsModalVisible(true);
@@ -193,21 +132,30 @@ const GiftCard = ({
       dataIndex: "reference",
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
+      title: "Card Ordered",
+      dataIndex: "cardSlug",
+      render: (cardSlug, rec) => (
+        <span>
+          Ordered: {cardSlug.replace("-", " ").replace("_", " ")}
+          <br />
+          Quantity: {rec.cardDetails && rec.cardDetails.quantity}
+        </span>
+      ),
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
+      title: "Card Amount | USD Amount",
+      dataIndex: "cardDetails",
+      render: (cardDetails) => (
+        <span>
+          {cardDetails && cardDetails.cardCurrency}
+          {cardDetails && cardDetails.cardValue} | USD
+          {cardDetails && cardDetails.estimatedUSDValue.amount}
+        </span>
+      ),
     },
     {
-      title: "Card Code",
-      dataIndex: "cardCode",
-    },
-    {
-      title: "Rate",
-      dataIndex: "rate",
-      render: (rate) => <span>{rate.amount}</span>,
+      title: "Wallet",
+      dataIndex: "referenceCurrency",
     },
     {
       title: "Status",
@@ -218,9 +166,9 @@ const GiftCard = ({
       dataIndex: "id",
       key: "x",
       render: (id) => (
-        <p style={{ cursor: "pointer" }} onClick={() => handleAction(id)}>
+        <span style={{ cursor: "pointer" }} onClick={() => handleAction(id)}>
           View Details
-        </p>
+        </span>
       ),
     },
   ];
@@ -414,34 +362,34 @@ const GiftCard = ({
       </Popconfirm>
     </div>
   );
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
 
-  const onSignUp = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        let data = {
-          cardCode: `${state.assetValue}.${state.country.toLowerCase()}.${
-            state.cardType
-          }`,
-          rates: [
-            {
-              min: values.min,
-              max: values.max,
-              rate: {
-                NGN: values.NGN,
-                GHS: values.GHS,
-              },
-              isAvailable: values.isAvailable,
-            },
-          ],
-        };
-        updateGiftCardsSettings(data);
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
-  };
+  // const onSignUp = () => {
+  //   form
+  //     .validateFields()
+  //     .then((values) => {
+  //       let data = {
+  //         cardCode: `${state.assetValue}.${state.country.toLowerCase()}.${
+  //           state.cardType
+  //         }`,
+  //         rates: [
+  //           {
+  //             min: values.min,
+  //             max: values.max,
+  //             rate: {
+  //               NGN: values.NGN,
+  //               GHS: values.GHS,
+  //             },
+  //             isAvailable: values.isAvailable,
+  //           },
+  //         ],
+  //       };
+  //       updateBuyGiftCardSettings(data);
+  //     })
+  //     .catch((info) => {
+  //       console.log("Validate Failed:", info);
+  //     });
+  // };
 
   return (
     <div>
@@ -498,26 +446,12 @@ const GiftCard = ({
               </List.Item>
               <List.Item>
                 <List.Item.Meta
-                  title={"Card Code"}
+                  title={"Card Slug"}
                   description={
                     giftCardDetails &&
                     giftCardDetails.transaction &&
-                    giftCardDetails.transaction.cardCode
+                    giftCardDetails.transaction.cardSlug
                   }
-                />
-              </List.Item>
-              <List.Item>
-                <List.Item.Meta
-                  title={"Amount"}
-                  description={Money(
-                    giftCardDetails &&
-                      giftCardDetails.transaction &&
-                      giftCardDetails.transaction.amount,
-                    (giftCardDetails &&
-                      giftCardDetails.transaction &&
-                      giftCardDetails.transaction.cardCode.split(".")[1]) ||
-                      "ngn"
-                  )}
                 />
               </List.Item>
               <List.Item>
@@ -526,44 +460,78 @@ const GiftCard = ({
                   description={
                     giftCardDetails &&
                     giftCardDetails.transaction &&
-                    giftCardDetails.transaction.quantity
+                    giftCardDetails.transaction.cardDetails.quantity
                   }
                 />
               </List.Item>
               <List.Item>
                 <List.Item.Meta
-                  title={"Rate"}
+                  title={"Total Estimated Amount"}
                   description={Money(
                     giftCardDetails &&
                       giftCardDetails.transaction &&
-                      giftCardDetails.transaction.rate.amount,
-                    "NGN"
+                      giftCardDetails.transaction.totalEstimatedAmount,
+                    (giftCardDetails &&
+                      giftCardDetails.transaction &&
+                      giftCardDetails.transaction.referenceCurrency) ||
+                      "usd"
                   )}
                 />
               </List.Item>
               <List.Item>
                 <List.Item.Meta
-                  title={"Image"}
+                  title={"Estimated USD Amount"}
+                  description={Money(
+                    giftCardDetails &&
+                      giftCardDetails.transaction &&
+                      giftCardDetails.transaction.cardDetails
+                        .estimatedUSDValue &&
+                      giftCardDetails.transaction.cardDetails.estimatedUSDValue
+                        .amount,
+                    "usd"
+                  )}
+                />
+              </List.Item>
+              <List.Item>
+                <List.Item.Meta
+                  title={"Card Currency"}
                   description={
-                    <div
-                      style={{
-                        width: "100%",
-                        overflowX: "auto",
-                        display: "flex",
-                        maxHeight: 300,
-                      }}
-                    >
-                      {giftCardDetails &&
-                        giftCardDetails.transaction &&
-                        giftCardDetails.transaction.images.map((i, index) => (
-                          <Image
-                            style={{ width: 150, height: "100%", margin: 15 }}
-                            key={index}
-                            src={i}
-                            alt={`card-${index}`}
-                          />
-                        ))}
-                    </div>
+                    giftCardDetails &&
+                    giftCardDetails.transaction &&
+                    giftCardDetails.transaction.cardDetails.cardCurrency
+                  }
+                />
+              </List.Item>
+              <List.Item>
+                <List.Item.Meta
+                  title={"Card Value"}
+                  description={
+                    giftCardDetails &&
+                    giftCardDetails.transaction &&
+                    giftCardDetails.transaction.cardDetails.cardValue
+                  }
+                />
+              </List.Item>
+              <List.Item>
+                <List.Item.Meta
+                  title={"Card Amount"}
+                  description={
+                    giftCardDetails &&
+                    giftCardDetails.transaction &&
+                    giftCardDetails.transaction.cardDetails.cardAmount &&
+                    giftCardDetails.transaction.cardDetails.cardAmount.toString()
+                  }
+                />
+              </List.Item>
+              <List.Item>
+                <List.Item.Meta
+                  title={"is Custom ?"}
+                  description={
+                    giftCardDetails &&
+                    giftCardDetails.transaction &&
+                    giftCardDetails.transaction.cardDetails.isCustom
+                      ? "Yes"
+                      : "No"
                   }
                 />
               </List.Item>
@@ -622,123 +590,20 @@ const GiftCard = ({
           flexWrap: "wrap",
         }}
       >
-        <Title level={2}>Sell Gift Card</Title>
+        <Title level={2}>Buy Gift Card</Title>
         <Button type="primary" onClick={showDrawer}>
           Edit Gift Card Rate
         </Button>
       </div>
       <Drawer
-        title="View Gift Cards"
+        title="Buy Gift Cards Settings"
         placement="right"
         closable={false}
         onClose={onClose}
         width={350}
         visible={visible}
       >
-        <div>
-          <Select
-            options={DigitalAsset.filter(
-              (it) => list.filter((i) => i === it.name).length > 0
-            )}
-            value={state.asset}
-            onSelect={onAssetChange}
-            label="Select Card"
-            labelClass={styles.label}
-            className={`${styles.rate__selector__content__input} ${styles.countryInput}`}
-          />
-          <Select
-            options={countryOptions.filter(
-              (it) =>
-                avaCurr &&
-                avaCurr.filter((i) => it.value.toLowerCase().includes(i))
-                  .length > 0
-            )}
-            value={state.country}
-            onSelect={onCountryChange}
-            label="Select Country Currency"
-            labelClass={styles.label}
-            className={`${styles.rate__selector__content__input} ${styles.countryInput}`}
-          />
-          <Select
-            options={cardOptions.filter(
-              (it) =>
-                avaCard &&
-                avaCard.filter((i) => it.value.includes(i)).length > 0
-            )}
-            value={state.cardType}
-            onSelect={onCardTypeChange}
-            label="Select Card Type"
-            labelClass={styles.label}
-            className={`${styles.rate__selector__content__input} ${styles.countryInput}`}
-          />
-          {meta && meta.max && (
-            <Form
-              form={form}
-              layout="vertical"
-              name="register-form"
-              onFinish={onSignUp}
-              initialValues={{
-                min: meta.min,
-                max: meta.max,
-                NGN: meta.rate.NGN,
-                GHS: meta.rate.GHS,
-                isAvailable: meta.isAvailable,
-              }}
-            >
-              <Form.Item
-                name="min"
-                label="Minium Tradable value"
-                rules={rules.min}
-                hasFeedback
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item
-                name="max"
-                label="Maximum Tradable value"
-                rules={rules.max}
-                hasFeedback
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item
-                name="NGN"
-                label="Rate in GHS"
-                rules={rules.GHS}
-                hasFeedback
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item
-                name="NGN"
-                label="Rate in Naira"
-                rules={rules.NGN}
-                hasFeedback
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item
-                name="isAvailable"
-                label="Available"
-                rules={rules.isAvailable}
-                valuePropName="checked"
-                hasFeedback
-              >
-                <Switch />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  block
-                  loading={loading}
-                >
-                  Update Gift Card
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
-        </div>
+        <div>settings</div>
       </Drawer>
       <Row gutter={16}>
         <Col
@@ -793,41 +658,43 @@ const GiftCard = ({
 };
 
 const mapStateToProps = (state) => ({
-  loading: state.giftCard.loading,
-  giftCard: state.giftCard.giftCard,
-  newGiftCard: state.giftCard.newGiftCard,
-  giftCardDetails: state.giftCard.giftCardDetails,
+  loading: state.buyGiftCard.loading,
+  giftCard: state.buyGiftCard.BuyGiftCards,
+  newGiftCard: state.buyGiftCard.newBuyGiftCard,
+  giftCardDetails: state.buyGiftCard.BuyGiftCardDetails,
+  BuyGiftCardTransactionSettings:
+    state.buyGiftCard.BuyGiftCardTransactionSettings,
   selectedUser: state.users.userById,
-  declineGiftCardTransaction: state.giftCard.declineGiftCardTransaction,
-  approveGiftCardTransaction: state.giftCard.approveGiftCardTransaction,
-  giftCardList: state.giftCard.giftCardList,
+  declineGiftCardTransaction: state.giftCard.declineGiftCardTransaction, //
+  approveGiftCardTransaction: state.giftCard.approveGiftCardTransaction, //
+  giftCardList: state.giftCard.giftCardList, //
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getAllGiftCard: (data) => {
-    dispatch(getAllGiftCardsTransactions(data));
+    dispatch(getAllBuyGiftCardTransactions(data));
   },
   getNewGiftCard: (data) => {
-    dispatch(getNewGiftCardsTransactions(data));
+    dispatch(getNewBuyGiftCardTransactions(data));
   },
   getGiftCardById: (data) => {
-    dispatch(getGiftCardTransactionsById(data));
+    dispatch(getBuyGiftCardTransactionsById(data));
   },
   approveGiftCard: (data) => {
-    dispatch(approveGiftCardTransaction(data));
+    // dispatch(approveGiftCardTransaction(data));
   },
   declineGiftCard: (data) => {
-    dispatch(declineGiftCardTransaction(data));
+    // dispatch(declineGiftCardTransaction(data));
   },
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));
   },
   getGiftCardList: (data) => {
-    dispatch(getGiftCardCodes(data));
+    dispatch(getBuyGiftCardSettings(data));
   },
-  updateGiftCardsSettings: (data) => {
-    dispatch(updateGiftCardsSettings(data));
+  updateBuyGiftCardSettings: (data) => {
+    dispatch(updateBuyGiftCardSettings(data));
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GiftCard);
+export default connect(mapStateToProps, mapDispatchToProps)(BuyGiftCard);

@@ -13,7 +13,7 @@ const InviteAdminUser = data => async dispatch => {
         type: actionTypes.INVITE_ADMIN_SUCCESS,
         payload: response.data
       });
-      dispatch(getAllAdminUserInvites({skip: 0, limit: 5}));
+      dispatch(getAllAdminUserInvites({skip: 0, limit: 10}));
     })
     .catch(err => {
       dispatch({
@@ -64,7 +64,7 @@ const DeleteAdminUserInvite = data => async dispatch => {
         type: actionTypes.DEL_ADMIN_INVITE_SUCCESS,
         payload: response.data
       });
-      dispatch(getAllAdminUserInvites({skip: 0, limit: 5}));
+      dispatch(getAllAdminUserInvites({skip: 0, limit: 10}));
     })
     .catch(err => {
       dispatch({

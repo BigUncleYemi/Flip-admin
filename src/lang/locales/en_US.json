@@ -1,3 +1,9 @@
 {
-	"home": "Home"
+	"home": "Home",
+	"Withdrawal": "Withdrawal",
+	"User": "User",
+	"Sell Gift Card": "Sell Gift Card",
+	"Buy Gift Card": "Buy Gift Card",
+	"Super Admin": "Super Admin",
+	"BTC": "BTC"
 }

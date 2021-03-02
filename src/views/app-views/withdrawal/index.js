@@ -49,8 +49,8 @@ const Withdrawal = ({
     console.log(key);
   }
   useEffect(() => {
-    getAllWithdrawals({ skip: 0, limit: 5 });
-    getNewWithdrawals({ skip: 0, limit: 5 });
+    getAllWithdrawals({ skip: 0, limit: 10 });
+    getNewWithdrawals({ skip: 0, limit: 10 });
   }, [getAllWithdrawals, getNewWithdrawals]);
   useEffect(() => {
     if (declineWithdrawalTransaction && isModalVisible) {
@@ -244,8 +244,8 @@ const Withdrawal = ({
         withdrawalDetails.transaction &&
         withdrawalDetails.transaction.id,
     });
-    getAllWithdrawals({ skip: 0, limit: 5 });
-    getNewWithdrawals({ skip: 0, limit: 5 });
+    getAllWithdrawals({ skip: 0, limit: 10 });
+    getNewWithdrawals({ skip: 0, limit: 10 });
   };
 
   const handleDecline = () => {
@@ -257,8 +257,8 @@ const Withdrawal = ({
         withdrawalDetails.transaction.id,
       comment,
     });
-    getAllWithdrawals({ skip: 0, limit: 5 });
-    getNewWithdrawals({ skip: 0, limit: 5 });
+    getAllWithdrawals({ skip: 0, limit: 10 });
+    getNewWithdrawals({ skip: 0, limit: 10 });
   };
 
   const content = (

@@ -14,8 +14,8 @@ const ApproveWithdrawalTransaction = data => async dispatch => {
         type: ActionTypes.APPROVE_WITHDRAWAL_TRANSACTION_SUCCESS,
         payload: response.data
       });
-      dispatch(getAllWithdrawalsTransactions({ skip: 0, limit: 5 }));
-      dispatch(getNewWithdrawalsTransactions({ skip: 0, limit: 5 }));
+      dispatch(getAllWithdrawalsTransactions({ skip: 0, limit: 10 }));
+      dispatch(getNewWithdrawalsTransactions({ skip: 0, limit: 10 }));
       dispatch(getWithdrawalTransactionsById({transactionId: data.transactionId}));
     })
     .catch(err => {
@@ -43,8 +43,8 @@ const DeclineWithdrawalTransaction = data => async dispatch => {
         type: ActionTypes.DECLINE_WITHDRAWAL_TRANSACTION_SUCCESS,
         payload: response.data
       });
-      dispatch(getAllWithdrawalsTransactions({ skip: 0, limit: 5 }));
-      dispatch(getNewWithdrawalsTransactions({ skip: 0, limit: 5 }));
+      dispatch(getAllWithdrawalsTransactions({ skip: 0, limit: 10 }));
+      dispatch(getNewWithdrawalsTransactions({ skip: 0, limit: 10 }));
       dispatch(getWithdrawalTransactionsById({transactionId: data.transactionId}));
     })
     .catch(err => {

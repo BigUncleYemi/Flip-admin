@@ -13,7 +13,7 @@ const key = KEY;
 
 // Config
 const ENTRY_ROUTE = '/auth/login'
-const TOKEN_PAYLOAD_KEY = 'Authorization'
+const TOKEN_PAYLOAD_KEY = "x-auth-token";
 const PUBLIC_REQUEST_KEY = 'public-request'
 
 // API Request interceptor
@@ -23,7 +23,7 @@ service.interceptors.request.use(config => {
 	config.headers["Access-Control-Allow-Method"] = "*";
 
   if (jwtToken) {
-    config.headers[TOKEN_PAYLOAD_KEY] = `Bearer ${jwtToken}`;
+    config.headers[TOKEN_PAYLOAD_KEY] = `${jwtToken}`;
   }
 
   if (!jwtToken && !config.headers[PUBLIC_REQUEST_KEY]) {

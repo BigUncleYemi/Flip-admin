@@ -39,8 +39,8 @@ const ApproveGiftCardTransaction = data => async dispatch => {
         type: ActionTypes.APPROVE_GIFTCARD_TRANSACTION_SUCCESS,
         payload: response.data
       });
-      dispatch(getAllGiftCardsTransactions({ skip: 0, limit: 5 }));
-      dispatch(getNewGiftCardsTransactions({ skip: 0, limit: 5 }));
+      dispatch(getAllGiftCardsTransactions({ skip: 0, limit: 10 }));
+      dispatch(getNewGiftCardsTransactions({ skip: 0, limit: 10 }));
       dispatch(getGiftCardTransactionsById({transactionId: data.transactionId}));
     })
     .catch(err => {
@@ -68,8 +68,8 @@ const DeclineGiftCardTransaction = data => async dispatch => {
         type: ActionTypes.DECLINE_GIFTCARD_TRANSACTION_SUCCESS,
         payload: response.data
       });
-      dispatch(getAllGiftCardsTransactions({ skip: 0, limit: 5 }));
-      dispatch(getNewGiftCardsTransactions({ skip: 0, limit: 5 }));
+      dispatch(getAllGiftCardsTransactions({ skip: 0, limit: 10 }));
+      dispatch(getNewGiftCardsTransactions({ skip: 0, limit: 10 }));
       dispatch(getGiftCardTransactionsById({transactionId: data.transactionId}));
     })
     .catch(err => {
