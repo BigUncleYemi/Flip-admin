@@ -9,8 +9,11 @@ import {
   Avatar,
   Button,
   Popconfirm,
+  Drawer,
   Popover,
   Input,
+  Form,
+  Switch,
 } from "antd";
 import { date, Money } from "utils/helper";
 import styles from "../../styles.module.scss";
@@ -22,10 +25,13 @@ import {
   getWithdrawalTransactionsById,
   approveWithdrawalTransaction,
   declineWithdrawalTransaction,
+  getWithdrawalsSettings,
+  updateWithdrawalsSettings,
 } from "redux/actions/withdrawal";
 import { getUserDetailsById } from "redux/actions/user";
 
 const Withdrawal = ({
+  loading,
   getAllWithdrawals,
   getNewWithdrawals,
   getWithdrawalById,
@@ -38,6 +44,9 @@ const Withdrawal = ({
   declineWithdrawalTransaction,
   approveWithdrawalTransaction,
   selectedUser,
+  getWithdrawalsSettings,
+  updateWithdrawalsSettings,
+  withdrawalSettings,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -45,13 +54,15 @@ const Withdrawal = ({
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
   function callback(key) {
     console.log(key);
   }
   useEffect(() => {
+    getWithdrawalsSettings();
     getAllWithdrawals({ skip: 0, limit: 10 });
     getNewWithdrawals({ skip: 0, limit: 10 });
-  }, [getAllWithdrawals, getNewWithdrawals]);
+  }, [getAllWithdrawals, getNewWithdrawals, getWithdrawalsSettings]);
   useEffect(() => {
     if (declineWithdrawalTransaction && isModalVisible) {
       setIsModalVisible(false);
@@ -294,6 +305,48 @@ const Withdrawal = ({
     </div>
   );
 
+  const [form] = Form.useForm();
+
+  const showDrawer = () => {
+    setVisible(true);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+  };
+
+  const onFinish = (value) => {
+    console.log(value);
+    const data = {
+      updateBody: {
+        rates: {
+          NGN: [
+            {
+              min: value.ratesNGNMIn,
+              max: value.ratesNGNMax,
+              charge: {
+                value: value.ratesNGNChargeValue,
+                isPercent: value.ratesNGNChargeIsPercent,
+              },
+            },
+          ],
+          GHS: [
+            {
+              min: value.ratesGHSMIn,
+              max: value.ratesGHSMax,
+              charge: {
+                value: value.ratesGHSChargeValue,
+                isPercent: value.ratesGHSChargeIsPercent,
+              },
+            },
+          ],
+        },
+        withdrawalDelay: value.withdrawalDelay,
+      },
+    };
+    updateWithdrawalsSettings({ ...data });
+  };
+
   return (
     <div>
       <UserModal />
@@ -424,7 +477,194 @@ const Withdrawal = ({
             )}
         </div>
       </ModalWrapper>
-      <Title level={2}>Withdrawals</Title>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Title level={2}>Withdrawals</Title>
+        <Button type="primary" onClick={showDrawer}>
+          Edit Withdrawals Transaction Settings
+        </Button>
+      </div>
+      <Drawer
+        title="Edit Withdrawals Transaction Settings"
+        placement="right"
+        closable={false}
+        onClose={onClose}
+        width={350}
+        visible={visible}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          name="login-form"
+          onFinish={onFinish}
+          initialValues={{
+            ratesNGNMIn:
+              withdrawalSettings && withdrawalSettings.rates.NGN[0].min,
+            ratesNGNMax:
+              withdrawalSettings && withdrawalSettings.rates.NGN[0].max,
+            ratesNGNChargeValue:
+              withdrawalSettings &&
+              withdrawalSettings.rates.NGN[0].charge &&
+              withdrawalSettings.rates.NGN[0].charge.value,
+            ratesNGNChargeIsPercent:
+              withdrawalSettings &&
+              withdrawalSettings.rates.NGN[0].charge &&
+              withdrawalSettings.rates.NGN[0].charge.isPercent,
+            ratesGHSMIn:
+              withdrawalSettings && withdrawalSettings.rates.GHS[0].min,
+            ratesGHSMax:
+              withdrawalSettings && withdrawalSettings.rates.GHS[0].max,
+            ratesGHSChargeValue:
+              withdrawalSettings &&
+              withdrawalSettings.rates.GHS[0].charge &&
+              withdrawalSettings.rates.GHS[0].charge.value,
+            ratesGHSChargeIsPercent:
+              withdrawalSettings &&
+              withdrawalSettings.rates.GHS[0].charge &&
+              withdrawalSettings.rates.GHS[0].charge.isPercent,
+            withdrawalDelay:
+              withdrawalSettings && withdrawalSettings.withdrawalDelay,
+          }}
+        >
+          <Title level={3}>Rates</Title>
+          <br />
+          <Title level={4}>NGN</Title>
+          <Form.Item
+            name="ratesNGNMIn"
+            label="Rates NGN Min"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates NGN Min",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="ratesNGNMax"
+            label="Rates NGN Max"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates NGN Max",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="ratesNGNChargeValue"
+            label="Rates NGN Charge value"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates NGN Charge value",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="ratesNGNChargeIsPercent"
+            label="Rates NGN Charge IsPercent"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates NGN Charge IsPercent",
+              },
+            ]}
+            valuePropName="checked"
+            hasFeedback
+          >
+            <Switch />
+          </Form.Item>
+          <br />
+          <Title level={4}>GHS</Title>
+          <Form.Item
+            name="ratesGHSMIn"
+            label="Rates GHS Min"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates GHS Min",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="ratesGHSMax"
+            label="Rates GHS Max"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates GHS Max",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="ratesGHSChargeValue"
+            label="Rates GHS Charge value"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates GHS Charge value",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="ratesGHSChargeIsPercent"
+            label="Rates GHS Charge IsPercent"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Rates GHS Charge IsPercent",
+              },
+            ]}
+            valuePropName="checked"
+            hasFeedback
+          >
+            <Switch />
+          </Form.Item>
+          <br />
+          <Title level={4}>Withdrawal Delay</Title>
+          <Form.Item
+            name="withdrawalDelay"
+            label="Withdrawal Delay"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Withdrawal Delay",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Update Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Drawer>
       <Row gutter={16}>
         <Col
           style={{ flex: 1, maxWidth: "100%" }}
@@ -478,12 +718,16 @@ const Withdrawal = ({
 };
 
 const mapStateToProps = (state) => ({
+  loading: state.withdrawals.loading,
   withdrawals: state.withdrawals.withdrawals,
   newWithdrawal: state.withdrawals.newWithdrawal,
   withdrawalDetails: state.withdrawals.withdrawalDetails,
   selectedUser: state.users.userById,
   declineWithdrawalTransaction: state.withdrawals.declineWithdrawalTransaction,
   approveWithdrawalTransaction: state.withdrawals.approveWithdrawalTransaction,
+  withdrawalSettings:
+    state.withdrawals.withdrawalSettings &&
+    state.withdrawals.withdrawalSettings.settings,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -504,6 +748,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));
+  },
+  updateWithdrawalsSettings: () => {
+    dispatch(updateWithdrawalsSettings());
+  },
+  getWithdrawalsSettings: () => {
+    dispatch(getWithdrawalsSettings());
   },
 });
 

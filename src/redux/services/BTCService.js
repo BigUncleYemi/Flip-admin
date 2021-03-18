@@ -28,10 +28,11 @@ btcService.getBTCSettings = function () {
   })
 }
 
-btcService.updateBTCSettings = function () {
+btcService.updateBTCSettings = function (data) {
   return fetch({
     url: `/api/admin/coins/btc/settings`,
     method: 'put',
+    data,
   })
 }
 

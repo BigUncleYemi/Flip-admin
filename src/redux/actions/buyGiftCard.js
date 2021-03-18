@@ -83,7 +83,7 @@ const UpdateBuyGiftCardSettings = data => async dispatch => {
   dispatch({
     type: ActionTypes.UPDATE_BUY_GIFT_CARD_SETTING,
   })
-
+  console.log(data)
   await buyGiftCoinService
     .updateBuyGiftCardSettings(data)
     .then((response) => {
@@ -106,13 +106,13 @@ export const updateBuyGiftCardSettings = data => async dispatch => {
 }
 
 
-const GetBuyGiftCardSettings = data => async dispatch => {
+const GetBuyGiftCardSettings = () => async dispatch => {
   dispatch({
     type: ActionTypes.GET_BUY_GIFT_CARD_SETTING,
   })
 
   await buyGiftCoinService
-    .getBuyGiftCardSettings(data)
+    .getBuyGiftCardSettings()
     .then((response) => {
       dispatch({
         type: ActionTypes.GET_BUY_GIFT_CARD_SETTING_SUCCESS,
@@ -128,6 +128,6 @@ const GetBuyGiftCardSettings = data => async dispatch => {
     return;
 }
 
-export const getBuyGiftCardSettings = data => async dispatch => {
-  dispatch(GetBuyGiftCardSettings(data))
+export const getBuyGiftCardSettings = () => async dispatch => {
+  dispatch(GetBuyGiftCardSettings())
 }

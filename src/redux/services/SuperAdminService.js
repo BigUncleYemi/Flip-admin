@@ -30,5 +30,15 @@ superAdminServices.deleteUserInvite = function (params) {
   })
 }
 
+superAdminServices.getAdminLogs = function (params) {
+  return fetch({
+    url: '/api/admin/super/activities',
+    method: 'get',
+    params: {
+      skip: params.skip,
+      limit: params.limit
+    }
+  })
+}
 
 export default superAdminServices

@@ -12,8 +12,8 @@ import {
   Popover,
   Input,
   Drawer,
-  // Switch,
-  // Form,
+  Switch,
+  Form,
 } from "antd";
 import { date, Money } from "utils/helper";
 import styles from "../../styles.module.scss";
@@ -29,40 +29,6 @@ import {
   getBuyGiftCardSettings,
   updateBuyGiftCardSettings,
 } from "redux/actions/buyGiftCard";
-// import Select from "components/select";
-
-// const rules = {
-//   min: [
-//     {
-//       required: true,
-//       message: "Please enter an input",
-//     },
-//   ],
-//   max: [
-//     {
-//       required: true,
-//       message: "Please enter an input",
-//     },
-//   ],
-//   NGN: [
-//     {
-//       required: true,
-//       message: "Please enter an input",
-//     },
-//   ],
-//   GHS: [
-//     {
-//       required: true,
-//       message: "Please enter an input",
-//     },
-//   ],
-//   isAvailable: [
-//     {
-//       required: true,
-//       message: "Please enter an input",
-//     },
-//   ],
-// };
 
 const BuyGiftCard = ({
   getAllGiftCard,
@@ -74,13 +40,12 @@ const BuyGiftCard = ({
   newGiftCard,
   giftCardDetails,
   getUserDetailsById,
-  declineGiftCardTransaction,
-  approveGiftCardTransaction,
   selectedUser,
   getGiftCardList,
-  giftCardList,
   loading,
   updateBuyGiftCardSettings,
+  getBuyGiftCardSettings,
+  BuyGiftCardTransactionSettings,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -89,18 +54,6 @@ const BuyGiftCard = ({
   const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
-  // const [state, setState] = useState({
-  //   btc: 0,
-  //   usd: 0,
-  //   ngn: 0,
-  //   ghs: 0,
-  //   country: "",
-  //   cardType: "",
-  //   asset: "",
-  //   assetValue: "",
-  //   amount: 0,
-  //   total: 0,
-  // });
   const showDrawer = () => {
     setVisible(true);
   };
@@ -113,8 +66,8 @@ const BuyGiftCard = ({
   useEffect(() => {
     getAllGiftCard({ skip: 0, limit: 10 });
     getNewGiftCard({ skip: 0, limit: 10 });
-    getGiftCardList({ cardCode: "all" });
-  }, [getAllGiftCard, getNewGiftCard, getGiftCardList]);
+    getBuyGiftCardSettings();
+  }, [getAllGiftCard, getNewGiftCard, getGiftCardList, getBuyGiftCardSettings]);
 
   const handleAction = (id) => {
     setIsModalVisible(true);
@@ -362,34 +315,25 @@ const BuyGiftCard = ({
       </Popconfirm>
     </div>
   );
-  // const [form] = Form.useForm();
+  const [form] = Form.useForm();
 
-  // const onSignUp = () => {
-  //   form
-  //     .validateFields()
-  //     .then((values) => {
-  //       let data = {
-  //         cardCode: `${state.assetValue}.${state.country.toLowerCase()}.${
-  //           state.cardType
-  //         }`,
-  //         rates: [
-  //           {
-  //             min: values.min,
-  //             max: values.max,
-  //             rate: {
-  //               NGN: values.NGN,
-  //               GHS: values.GHS,
-  //             },
-  //             isAvailable: values.isAvailable,
-  //           },
-  //         ],
-  //       };
-  //       updateBuyGiftCardSettings(data);
-  //     })
-  //     .catch((info) => {
-  //       console.log("Validate Failed:", info);
-  //     });
-  // };
+  const onFinish = (value) => {
+    console.log(value);
+    const data = {
+      updateBody: {
+        availability: {
+          value: value.availabilityValue,
+        },
+        conversionRates: {
+          value: {
+            NGN: value.conversionRatesValueNGN,
+            GHS: value.conversionRatesValueGHS,
+          },
+        },
+      },
+    };
+    updateBuyGiftCardSettings({ ...data });
+  };
 
   return (
     <div>
@@ -592,7 +536,7 @@ const BuyGiftCard = ({
       >
         <Title level={2}>Buy Gift Card</Title>
         <Button type="primary" onClick={showDrawer}>
-          Edit Gift Card Rate
+          Edit Buy Gift Card Settings
         </Button>
       </div>
       <Drawer
@@ -603,7 +547,71 @@ const BuyGiftCard = ({
         width={350}
         visible={visible}
       >
-        <div>settings</div>
+        <Form
+          form={form}
+          layout="vertical"
+          name="login-form"
+          onFinish={onFinish}
+          initialValues={{
+            availabilityValue:
+              BuyGiftCardTransactionSettings &&
+              BuyGiftCardTransactionSettings.availability.value,
+            conversionRatesValueGHS:
+              BuyGiftCardTransactionSettings &&
+              BuyGiftCardTransactionSettings.conversionRates.value.GHS,
+            conversionRatesValueNGN:
+              BuyGiftCardTransactionSettings &&
+              BuyGiftCardTransactionSettings.conversionRates.value.NGN,
+          }}
+        >
+          <Title level={3}>Availability</Title>
+          <Form.Item
+            name="availabilityValue"
+            label="Availability Value"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Value",
+              },
+            ]}
+            valuePropName="checked"
+            hasFeedback
+          >
+            <Switch />
+          </Form.Item>
+          <Title level={3}>Conversion Rate</Title>
+          <Form.Item
+            name="conversionRatesValueGHS"
+            label="Conversion Rates Value GHS"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Conversion Rates Value GHS",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesValueNGN"
+            label="Conversion Rates Value NGN"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Conversion Rates Value NGN",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Update Settings
+            </Button>
+          </Form.Item>
+        </Form>
       </Drawer>
       <Row gutter={16}>
         <Col
@@ -662,12 +670,9 @@ const mapStateToProps = (state) => ({
   giftCard: state.buyGiftCard.BuyGiftCards,
   newGiftCard: state.buyGiftCard.newBuyGiftCard,
   giftCardDetails: state.buyGiftCard.BuyGiftCardDetails,
+  selectedUser: state.users.userById,
   BuyGiftCardTransactionSettings:
     state.buyGiftCard.BuyGiftCardTransactionSettings,
-  selectedUser: state.users.userById,
-  declineGiftCardTransaction: state.giftCard.declineGiftCardTransaction, //
-  approveGiftCardTransaction: state.giftCard.approveGiftCardTransaction, //
-  giftCardList: state.giftCard.giftCardList, //
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -680,17 +685,11 @@ const mapDispatchToProps = (dispatch) => ({
   getGiftCardById: (data) => {
     dispatch(getBuyGiftCardTransactionsById(data));
   },
-  approveGiftCard: (data) => {
-    // dispatch(approveGiftCardTransaction(data));
-  },
-  declineGiftCard: (data) => {
-    // dispatch(declineGiftCardTransaction(data));
-  },
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));
   },
-  getGiftCardList: (data) => {
-    dispatch(getBuyGiftCardSettings(data));
+  getBuyGiftCardSettings: () => {
+    dispatch(getBuyGiftCardSettings());
   },
   updateBuyGiftCardSettings: (data) => {
     dispatch(updateBuyGiftCardSettings(data));

@@ -40,10 +40,11 @@ buyGiftCoinService.getBuyGiftCardSettings = function () {
   })
 }
 
-buyGiftCoinService.updateBuyGiftCardSettings = function () {
+buyGiftCoinService.updateBuyGiftCardSettings = function (data) {
   return fetch({
     url: `/api/admin/buy-cards/settings`,
     method: 'put',
+    data,
   })
 }
 

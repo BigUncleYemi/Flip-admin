@@ -45,7 +45,7 @@ const BTCTransactionReducer = (state = initState, action) => {
       })
       return {
         ...state,
-        BTCTransactionSettings: action.payload,
+        BTCTransactionSettings: action.payload.settings,
         loading: true,
         error: null,
       }

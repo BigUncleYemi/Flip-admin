@@ -65,6 +65,7 @@ const UpdateBTCSettings = data => async dispatch => {
         type: ActionTypes.UPDATE_BTC_SETTING_SUCCESS,
         payload: response.data
       });
+      dispatch(getBTCSettings());
     })
     .catch(err => {
       dispatch({
@@ -80,13 +81,13 @@ export const updateBTCSettings = data => async dispatch => {
 }
 
 
-const GetBTCSettings = data => async dispatch => {
+const GetBTCSettings = () => async dispatch => {
   dispatch({
     type: ActionTypes.GET_BTC_SETTING,
   })
 
   await btcService
-    .getBTCSettings(data)
+    .getBTCSettings()
     .then((response) => {
       dispatch({
         type: ActionTypes.GET_BTC_SETTING_SUCCESS,
@@ -102,6 +103,6 @@ const GetBTCSettings = data => async dispatch => {
     return;
 }
 
-export const getBTCSettings = data => async dispatch => {
-  dispatch(GetBTCSettings(data))
+export const getBTCSettings = () => async dispatch => {
+  dispatch(GetBTCSettings())
 }

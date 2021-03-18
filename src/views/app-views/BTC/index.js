@@ -8,10 +8,12 @@ import {
   List,
   Avatar,
   Button,
-  // Input,
+  Input,
   // Image,
   Drawer,
-  // Form,
+  Divider,
+  Form,
+  Switch,
 } from "antd";
 import {
   date,
@@ -28,17 +30,17 @@ import {
   updateBTCSettings,
 } from "redux/actions/btc";
 
-
 const BTC = ({
-  getAllGiftCard,
-  getGiftCardById,
+  getAllBTCTrans,
+  getBTCTransById,
   BTCTransaction,
   BTCDetails,
   getUserDetailsById,
-  declineGiftCardTransaction,
-  approveGiftCardTransaction,
   selectedUser,
-  getGiftCardList,
+  updateBTCSettings,
+  getBTCTransSettings,
+  loading,
+  BTCTransactionSettings,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -67,25 +69,13 @@ const BTC = ({
     console.log(key);
   }
   useEffect(() => {
-    getAllGiftCard({ skip: 0, limit: 10 });
-    getGiftCardList({ cardCode: "all" });
-  }, [getAllGiftCard, getGiftCardList]);
-  useEffect(() => {
-    if (declineGiftCardTransaction && isModalVisible) {
-      setIsModalVisible(false);
-    }
-    // eslint-disable-next-line
-  }, [declineGiftCardTransaction]);
-  useEffect(() => {
-    if (approveGiftCardTransaction && isModalVisible) {
-      setIsModalVisible(false);
-    }
-    // eslint-disable-next-line
-  }, [approveGiftCardTransaction]);
+    getAllBTCTrans({ skip: 0, limit: 10 });
+    getBTCTransSettings({ cardCode: "all" });
+  }, [getAllBTCTrans, getBTCTransSettings]);
 
   const handleAction = (id) => {
     setIsModalVisible(true);
-    getGiftCardById({ transactionId: id });
+    getBTCTransById({ transactionId: id });
   };
 
   const columns = [
@@ -263,7 +253,58 @@ const BTC = ({
     );
   };
 
-  // const [for m] = Form.useForm();
+  const [form] = Form.useForm();
+
+  const onFinish = (value) => {
+    console.log(value);
+    const data = {
+      updateBody: {
+        availability: {
+          buy: {
+            value: value.availabilityBuyValue,
+            minVolume: value.availabilityBuyMinVolume,
+            maxVolume: value.availabilityBuyMaxVolume,
+          },
+          sell: {
+            value: value.availabilitySellValue,
+            minVolume: value.availabilitySellMinVolume,
+            maxVolume: value.availabilitySellMaxVolume,
+          },
+        },
+        conversionRates: {
+          buy: [
+            {
+              value: {
+                NGN: value.conversionRatesBuyLowValueNGN,
+                GHS: value.conversionRatesBuyLowValueGHS,
+              },
+              minVolume: value.conversionRatesBuyLowMinVolume,
+              maxVolume: value.conversionRatesBuyLowMaxVolume,
+            },
+            {
+              value: {
+                NGN: value.conversionRatesBuyHighValueNGN,
+                GHS: value.conversionRatesBuyHighValueGHS,
+              },
+              minVolume: value.conversionRatesBuyHighMinVolume,
+              maxVolume: value.conversionRatesBuyHighMaxVolume,
+            },
+          ],
+          sell: [
+            {
+              value: {
+                NGN: value.conversionRatesSellValueNGN,
+                GHS: value.conversionRatesSellValueGHS,
+              },
+              minVolume: value.conversionRatesSellMinVolume,
+              maxVolume: value.conversionRatesSellMaxVolume,
+            },
+          ],
+        },
+      },
+    };
+    updateBTCSettings({...data})
+  };
 
   return (
     <div>
@@ -271,9 +312,7 @@ const BTC = ({
       {isModalVisible && (
         <ModalWrapper
           isModalVisible={
-            BTCDetails && BTCDetails.transaction
-              ? isModalVisible
-              : false
+            BTCDetails && BTCDetails.transaction ? isModalVisible : false
           }
           setIsModalVisible={setIsModalVisible}
           className={styles.withdrawInitial}
@@ -333,8 +372,9 @@ const BTC = ({
                   title={"Amount in BTC"}
                   description={
                     BTCDetails &&
-                      BTCDetails.transaction &&
-                      BTCDetails.transaction.amount}
+                    BTCDetails.transaction &&
+                    BTCDetails.transaction.amount
+                  }
                 />
               </List.Item>
               <List.Item>
@@ -342,8 +382,9 @@ const BTC = ({
                   title={"Rate"}
                   description={
                     BTCDetails &&
-                      BTCDetails.transaction &&
-                      BTCDetails.transaction.rate.amount}
+                    BTCDetails.transaction &&
+                    BTCDetails.transaction.rate.amount
+                  }
                 />
               </List.Item>
               <List.Item>
@@ -351,8 +392,9 @@ const BTC = ({
                   title={"Transaction Fee"}
                   description={
                     BTCDetails &&
-                      BTCDetails.transaction &&
-                      BTCDetails.transaction.transactionFee}
+                    BTCDetails.transaction &&
+                    BTCDetails.transaction.transactionFee
+                  }
                 />
               </List.Item>
               <List.Item>
@@ -360,8 +402,9 @@ const BTC = ({
                   title={"Transaction Type"}
                   description={
                     BTCDetails &&
-                      BTCDetails.transaction &&
-                      BTCDetails.transaction.transactionType}
+                    BTCDetails.transaction &&
+                    BTCDetails.transaction.transactionType
+                  }
                 />
               </List.Item>
               <List.Item>
@@ -369,8 +412,9 @@ const BTC = ({
                   title={"Type"}
                   description={
                     BTCDetails &&
-                      BTCDetails.transaction &&
-                      BTCDetails.transaction.type}
+                    BTCDetails.transaction &&
+                    BTCDetails.transaction.type
+                  }
                 />
               </List.Item>
               <List.Item>
@@ -406,7 +450,7 @@ const BTC = ({
           flexWrap: "wrap",
         }}
       >
-        <Title level={2}>Gift Card</Title>
+        <Title level={2}>BTC</Title>
         <Button type="primary" onClick={showDrawer}>
           Edit BTC Transaction Settings
         </Button>
@@ -419,9 +463,322 @@ const BTC = ({
         width={350}
         visible={visible}
       >
-        <div>
-        nbhjkl
-        </div>
+        <Form
+          form={form}
+          layout="vertical"
+          name="login-form"
+          onFinish={onFinish}
+          initialValues={{
+            availabilityBuyMaxVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.availability.buy.maxVolume,
+            availabilityBuyMinVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.availability.buy.minVolume,
+            availabilityBuyValue:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.availability.buy.value,
+            availabilitySellMaxVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.availability.sell.maxVolume,
+            availabilitySellMinVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.availability.sell.minVolume,
+            availabilitySellValue:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.availability.sell.value,
+            conversionRatesBuyHighMaxVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[0].maxVolume,
+            conversionRatesBuyHighMinVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[0].minVolume,
+            conversionRatesBuyHighValueGHS:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[0].value.GHS,
+            conversionRatesBuyHighValueNGN:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[0].value.NGN,
+            conversionRatesBuyLowMaxVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[1].maxVolume,
+            conversionRatesBuyLowMinVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[1].minVolume,
+            conversionRatesBuyLowValueGHS:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[1].value.GHS,
+            conversionRatesBuyLowValueNGN:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.buy[1].value.NGN,
+            conversionRatesSellMaxVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.sell[0].maxVolume,
+            conversionRatesSellMinVolume:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.sell[0].minVolume,
+            conversionRatesSellValueGHS:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.sell[0].value.GHS,
+            conversionRatesSellValueNGN:
+              BTCTransactionSettings &&
+              BTCTransactionSettings.conversionRates.sell[0].value.NGN,
+          }}
+        >
+          <Title level={3}>Availability</Title>
+          <Form.Item
+            name="availabilityBuyMaxVolume"
+            label="Availability Buy Max Volume"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Buy Max Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="availabilityBuyMinVolume"
+            label="Availability Buy Min Volume"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Buy Max Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="availabilityBuyValue"
+            label="Availability Buy Value"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Buy Value",
+              },
+            ]}
+            valuePropName="checked"
+            hasFeedback
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="availabilitySellMaxVolume"
+            label="Availability Sell Max Volume"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Sell Max Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="availabilitySellMinVolume"
+            label="Availability Sell Min Volume"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Sell Min Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="availabilitySellValue"
+            label="Availability Sell Value"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Availability Sell Value",
+              },
+            ]}
+            valuePropName="checked"
+            hasFeedback
+          >
+            <Switch />
+          </Form.Item>
+          <Divider />
+          <Title level={3}>Conversion Rate</Title>
+          <Title level={5}>Buy low</Title>
+          <Form.Item
+            name="conversionRatesBuyLowMaxVolume"
+            label="Conversion Rates Buy Low Max Volume"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Please input your Conversion Rates Buy Low Max Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesBuyLowMinVolume"
+            label="Conversion Rates Buy Low Min Volume"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Please input your Conversion Rates Buy Low Min Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesBuyLowValueGHS"
+            label="Conversion Rates Buy Low Value GHS"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Conversion Rates Buy Low Value GHS",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesBuyLowValueNGN"
+            label="Conversion Rates Buy Low Value NGN"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Conversion Rates Buy Low Value NGN",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Title level={5}>Buy High</Title>
+          <Form.Item
+            name="conversionRatesBuyHighMaxVolume"
+            label="Conversion Rates Buy High Max Volume"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Please input your Conversion Rates Buy High Max Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesBuyHighMinVolume"
+            label="Conversion Rates Buy High Min Volume"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Please input your Conversion Rates Buy High Min Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesBuyHighValueGHS"
+            label="Conversion Rates Buy High Value GHS"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Please input your Conversion Rates Buy High Value GHS",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesBuyHighValueNGN"
+            label="Conversion Rates Buy High Value NGN"
+            rules={[
+              {
+                required: true,
+                message:
+                  "Please input your Conversion Rates Buy High Value NGN",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Title level={5}>Sell</Title>
+          <Form.Item
+            name="conversionRatesSellMaxVolume"
+            label="Conversion Rates Sell Max Volume"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Conversion Rates Sell Max Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesSellMinVolume"
+            label="Conversion Rates Sell Min Volume"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Conversion Rates Sell Min Volume",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesSellValueGHS"
+            label="Conversion Rates Sell Value GHS"
+            rules={[
+              {
+                required: true,
+                message: "Please input your password",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            name="conversionRatesSellValueNGN"
+            label="Conversion Rates Sell Value NGN"
+            rules={[
+              {
+                required: true,
+                message: "Please input your password",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Update Settings
+            </Button>
+          </Form.Item>
+        </Form>
       </Drawer>
       <Row gutter={16}>
         <Col
@@ -439,16 +796,16 @@ const BTC = ({
             <TabPane
               tab={
                 <div>
-                  <span>All Gift Card</span>
+                  <span>All BTC</span>
                 </div>
               }
-              key="2"
+              key="1"
             >
               <DataTable
                 columns={columns}
                 transaction={BTCTransaction}
-                fetchTrans={getAllGiftCard}
-                title={"Gift Card"}
+                fetchTrans={getAllBTCTrans}
+                title={"BTC"}
                 data={BTCTransaction && BTCTransaction.transactions}
               />
             </TabPane>
@@ -468,16 +825,16 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getAllGiftCard: (data) => {
+  getAllBTCTrans: (data) => {
     dispatch(getAllBTCTransactions(data));
   },
-  getGiftCardById: (data) => {
+  getBTCTransById: (data) => {
     dispatch(getBTCTransactionsById(data));
   },
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));
   },
-  getGiftCardList: (data) => {
+  getBTCTransSettings: (data) => {
     dispatch(getBTCSettings(data));
   },
   updateBTCSettings: (data) => {

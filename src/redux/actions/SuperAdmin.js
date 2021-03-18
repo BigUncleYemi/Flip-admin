@@ -78,3 +78,28 @@ const DeleteAdminUserInvite = data => async dispatch => {
 export const deleteAdminUserInvite = data => dispatch => {
   dispatch(DeleteAdminUserInvite(data));
 };// done
+
+const GetAllAdminLogs = data => async dispatch => {
+  dispatch({
+    type: actionTypes.ADMIN_LOG_PENDING,
+  })
+  await superAdminServices
+    .getAdminLogs(data)
+    .then((response) => {
+      dispatch({
+        type: actionTypes.ADMIN_LOG_SUCCESS,
+        payload: response.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: actionTypes.ADMIN_LOG_FAILED,
+        payload: err
+      });
+    });
+  return;
+}// done
+
+export const getAllAdminLogs = data => dispatch => {
+  dispatch(GetAllAdminLogs(data));
+};// done

@@ -7,11 +7,23 @@ const initState = {
   admins: null,
   inviteAdminUser: false,
   deleteAdminUser: false,
+  adminLog: null,
 }
 const key = actionTypes.KEY;
 
 const superAdminReducer = (state = initState, action) => {
 	switch (action.type) {
+    case actionTypes.ADMIN_LOG_PENDING:
+      notification.info({
+        message: "Loading.....",
+        duration: 0,
+        key,
+      })
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
     case actionTypes.DEL_ADMIN_INVITE_PENDING:
       notification.info({
         message: "Loading.....",
@@ -47,6 +59,17 @@ const superAdminReducer = (state = initState, action) => {
         loading: true,
         error: null,
       }
+    case actionTypes.ADMIN_LOG_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        adminLog: action.payload,
+        loading: false,
+        error: null,
+      }
     case actionTypes.DEL_ADMIN_INVITE_SUCCESS:
       notification.success({
         message: "Successful",
@@ -80,6 +103,7 @@ const superAdminReducer = (state = initState, action) => {
         loading: false,
         error: null,
       }
+    case actionTypes.ADMIN_LOG_FAILED:
     case actionTypes.INVITE_ADMIN_FAILED:
     case actionTypes.GET_ALL_ADMIN_INVITE_FAILED:
     case actionTypes.DEL_ADMIN_INVITE_FAILED:

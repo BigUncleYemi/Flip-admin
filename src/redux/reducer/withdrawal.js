@@ -7,6 +7,7 @@ const initState = {
   withdrawals: null,
   newWithdrawal: null,
   withdrawalDetails: null,
+  withdrawalSettings: null,
   declineWithdrawalTransaction: null,
   approveWithdrawalTransaction: null,
 }
@@ -39,6 +40,7 @@ const withdrawalReducer = (state = initState, action) => {
         loading: true,
         error: null,
       }
+    case actionTypes.GET_WITHDRAWAL_SETTINGS:
     case actionTypes.GET_NEW_WITHDRAWAL_TRANSACTIONS:
     case actionTypes.GET_ALL_WITHDRAWAL_TRANSACTIONS:
     case actionTypes.UPDATE_WITHDRAWAL_SETTINGS:
@@ -61,6 +63,18 @@ const withdrawalReducer = (state = initState, action) => {
         ...state,
         withdrawalDetails: null,
         loading: false,
+        error: null,
+      }
+    case actionTypes.GET_WITHDRAWAL_SETTINGS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        duration: 0,
+        key,
+      })
+      return {
+        ...state,
+        withdrawalSettings: action.payload,
+        loading: true,
         error: null,
       }
     case actionTypes.APPROVE_WITHDRAWAL_TRANSACTION_SUCCESS:
@@ -132,6 +146,7 @@ const withdrawalReducer = (state = initState, action) => {
         loading: false,
         error: null,
       }
+    case actionTypes.GET_WITHDRAWAL_SETTINGS_FAILED:
     case actionTypes.APPROVE_WITHDRAWAL_TRANSACTION_FAILED:
     case actionTypes.DECLINE_WITHDRAWAL_TRANSACTION_FAILED:
     case actionTypes.GET_NEW_WITHDRAWAL_TRANSACTIONS_FAILED:

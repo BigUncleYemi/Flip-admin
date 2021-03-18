@@ -163,3 +163,29 @@ const UpdateWithdrawalsSettings = data => async dispatch => {
 export const updateWithdrawalsSettings = data => async dispatch => {
   dispatch(UpdateWithdrawalsSettings(data))
 }
+
+const GetWithdrawalsSettings = () => async dispatch => {
+  dispatch({
+    type: ActionTypes.GET_WITHDRAWAL_SETTINGS,
+  })
+
+  await withdrawalService
+    .getWithdrawalSettings()
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.GET_WITHDRAWAL_SETTINGS_SUCCESS,
+        payload: response.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: ActionTypes.GET_WITHDRAWAL_SETTINGS_FAILED,
+        payload: err
+      });
+    });
+    return;
+}
+
+export const getWithdrawalsSettings = () => async dispatch => {
+  dispatch(GetWithdrawalsSettings())
+}
