@@ -43,6 +43,10 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
       dataIndex: "type",
     },
     {
+      title: "User Name",
+      dataIndex: "username",
+    },
+    {
       title: "Verification",
       dataIndex: "verification",
       render: (verification) => (
