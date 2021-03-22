@@ -8,8 +8,6 @@ import {
   List,
   Avatar,
   Button,
-  Popconfirm,
-  Popover,
   Input,
   Drawer,
   Switch,
@@ -23,12 +21,14 @@ import { getUserDetailsById } from "redux/actions/user";
 import {
   // approveGiftCardTransaction,
   // declineGiftCardTransaction,
+  updateBuyGiftCardStatus,
   getAllBuyGiftCardTransactions,
   getBuyGiftCardTransactionsById,
   getNewBuyGiftCardTransactions,
   getBuyGiftCardSettings,
   updateBuyGiftCardSettings,
 } from "redux/actions/buyGiftCard";
+import Scrumboard from "./scrumboard";
 
 const BuyGiftCard = ({
   getAllGiftCard,
@@ -46,12 +46,12 @@ const BuyGiftCard = ({
   updateBuyGiftCardSettings,
   getBuyGiftCardSettings,
   BuyGiftCardTransactionSettings,
+  updateBuyGiftCardStatus,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
-  const { TextArea } = Input;
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
-  const [comment, setComment] = useState("");
+  // const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const showDrawer = () => {
@@ -258,67 +258,34 @@ const BuyGiftCard = ({
     );
   };
 
-  const handleApproval = () => {
-    setIsModalVisible(true);
-    approveGiftCard({
-      transactionId:
-        giftCardDetails &&
-        giftCardDetails.transaction &&
-        giftCardDetails.transaction.id,
-    });
-    getAllGiftCard({ skip: 0, limit: 10 });
-    getNewGiftCard({ skip: 0, limit: 10 });
-  };
+  // const handleApproval = () => {
+  //   setIsModalVisible(true);
+  //   approveGiftCard({
+  //     transactionId:
+  //       giftCardDetails &&
+  //       giftCardDetails.transaction &&
+  //       giftCardDetails.transaction.id,
+  //   });
+  //   getAllGiftCard({ skip: 0, limit: 10 });
+  //   getNewGiftCard({ skip: 0, limit: 10 });
+  // };
 
-  const handleDecline = () => {
-    setIsModalVisible(true);
-    declineGiftCard({
-      transactionId:
-        giftCardDetails &&
-        giftCardDetails.transaction &&
-        giftCardDetails.transaction.id,
-      comment,
-    });
-    getAllGiftCard({ skip: 0, limit: 10 });
-    getNewGiftCard({ skip: 0, limit: 10 });
-  };
+  // const handleDecline = () => {
+  //   setIsModalVisible(true);
+  //   declineGiftCard({
+  //     transactionId:
+  //       giftCardDetails &&
+  //       giftCardDetails.transaction &&
+  //       giftCardDetails.transaction.id,
+  //     comment,
+  //   });
+  //   getAllGiftCard({ skip: 0, limit: 10 });
+  //   getNewGiftCard({ skip: 0, limit: 10 });
+  // };
 
-  const content = (
-    <div>
-      <p>
-        Please provide a reason for declining the request.(min of ten
-        characters)
-      </p>
-      <div style={{ marginBottom: 10 }}>
-        <TextArea
-          required
-          value={comment}
-          minLength={10}
-          rows={4}
-          onChange={(e) => setComment(e.target.value)}
-        />
-      </div>
-      <Popconfirm
-        placement="top"
-        title={"Are you sure you want to Decline this request?"}
-        onConfirm={handleDecline}
-        okText="Decline"
-        cancelText="No"
-      >
-        <Button
-          type="primary"
-          danger
-          disabled={!comment || comment.length < 10}
-        >
-          Decline
-        </Button>
-      </Popconfirm>
-    </div>
-  );
   const [form] = Form.useForm();
 
   const onFinish = (value) => {
-    console.log(value);
     const data = {
       updateBody: {
         availability: {
@@ -501,28 +468,6 @@ const BuyGiftCard = ({
                 />
               </List.Item>
             </div>
-            {giftCardDetails &&
-              giftCardDetails.transaction &&
-              giftCardDetails.transaction.status === "SUBMITTED" && (
-                <div style={{ display: "flex" }}>
-                  <Popconfirm
-                    placement="top"
-                    title={"Are you sure you want to Approve this request?"}
-                    onConfirm={handleApproval}
-                    okText="Approve"
-                    cancelText="No"
-                  >
-                    <Button type="primary" style={{ marginRight: 10 }}>
-                      Approve
-                    </Button>
-                  </Popconfirm>
-                  <Popover content={content} title="Title" trigger="click">
-                    <Button type="primary" danger>
-                      Decline
-                    </Button>
-                  </Popover>
-                </div>
-              )}
           </div>
         </ModalWrapper>
       )}
@@ -629,10 +574,27 @@ const BuyGiftCard = ({
             <TabPane
               tab={
                 <div>
-                  <span>New Submitted Gift Card</span>
+                  <span>All Gift Card</span>
                 </div>
               }
               key="1"
+            >
+              {/* <DataTable
+                columns={columns}
+                transaction={giftCard}
+                fetchTrans={getAllGiftCard}
+                title={"Gift Card"}
+                data={giftCard && giftCard.transactions}
+              /> */}
+              <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} />
+            </TabPane>
+            <TabPane
+              tab={
+                <div>
+                  <span>New Submitted Gift Card</span>
+                </div>
+              }
+              key="2"
             >
               <DataTable
                 columns={columns}
@@ -640,22 +602,6 @@ const BuyGiftCard = ({
                 fetchTrans={getNewGiftCard}
                 title={"New Submitted Withdrawal"}
                 data={newGiftCard && newGiftCard.transactions}
-              />
-            </TabPane>
-            <TabPane
-              tab={
-                <div>
-                  <span>All Gift Card</span>
-                </div>
-              }
-              key="2"
-            >
-              <DataTable
-                columns={columns}
-                transaction={giftCard}
-                fetchTrans={getAllGiftCard}
-                title={"Gift Card"}
-                data={giftCard && giftCard.transactions}
               />
             </TabPane>
           </Tabs>
@@ -693,6 +639,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updateBuyGiftCardSettings: (data) => {
     dispatch(updateBuyGiftCardSettings(data));
+  },
+  updateBuyGiftCardStatus: (data) => {
+    dispatch(updateBuyGiftCardStatus(data));
   },
 });
 

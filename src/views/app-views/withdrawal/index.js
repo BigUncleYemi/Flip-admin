@@ -14,7 +14,10 @@ import {
   Input,
   Form,
   Switch,
+  Modal,
+  Select
 } from "antd";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { date, Money } from "utils/helper";
 import styles from "../../styles.module.scss";
 import DataTable from "components/layout-components/DataTable";
@@ -29,6 +32,9 @@ import {
   updateWithdrawalsSettings,
 } from "redux/actions/withdrawal";
 import { getUserDetailsById } from "redux/actions/user";
+
+const { confirm } = Modal;
+const { Option } = Select;
 
 const Withdrawal = ({
   loading,
@@ -53,8 +59,26 @@ const Withdrawal = ({
   const { TextArea } = Input;
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [comment, setComment] = useState("");
+  const [debitWallet, setDebitWallet] = useState("");
+  const [Trigger, setTrigger] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if(Trigger) {
+      setIsModalVisible(true);
+      approveWithdrawal({
+        transactionId:
+          withdrawalDetails &&
+          withdrawalDetails.transaction &&
+          withdrawalDetails.transaction.id,
+          debitWallet,
+      });
+      getAllWithdrawals({ skip: 0, limit: 10 });
+      getNewWithdrawals({ skip: 0, limit: 10 });
+      setTrigger(false)
+    }
+    // eslint-disable-next-line
+  }, [Trigger])
   function callback(key) {
     console.log(key);
   }
@@ -248,15 +272,24 @@ const Withdrawal = ({
   };
 
   const handleApproval = () => {
-    setIsModalVisible(true);
-    approveWithdrawal({
-      transactionId:
-        withdrawalDetails &&
-        withdrawalDetails.transaction &&
-        withdrawalDetails.transaction.id,
+    confirm({
+      title: `Please select wallet to complete the action with.`,
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          <Select onChange={(value) => setDebitWallet(value)} style={{ width: "100%" }} >
+            <Option value="NGN">NGN Wallet</Option>
+            <Option value="GHS">GHS Wallet</Option>
+          </Select>
+        </div>
+      ),
+      onOk() {
+        setTrigger(true)
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
     });
-    getAllWithdrawals({ skip: 0, limit: 10 });
-    getNewWithdrawals({ skip: 0, limit: 10 });
   };
 
   const handleDecline = () => {
@@ -316,7 +349,7 @@ const Withdrawal = ({
   };
 
   const onFinish = (value) => {
-    console.log(value);
+    // console.log(value);
     const data = {
       updateBody: {
         rates: {
@@ -344,7 +377,7 @@ const Withdrawal = ({
         withdrawalDelay: value.withdrawalDelay,
       },
     };
-    updateWithdrawalsSettings({ ...data });
+    updateWithdrawalsSettings(data);
   };
 
   return (
@@ -749,8 +782,8 @@ const mapDispatchToProps = (dispatch) => ({
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));
   },
-  updateWithdrawalsSettings: () => {
-    dispatch(updateWithdrawalsSettings());
+  updateWithdrawalsSettings: (data) => {
+    dispatch(updateWithdrawalsSettings(data));
   },
   getWithdrawalsSettings: () => {
     dispatch(getWithdrawalsSettings());

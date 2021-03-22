@@ -9,11 +9,13 @@ const initState = {
   BuyGiftCardDetails: null,
   BuyGiftCardTransactionSettings: null,
   UpdateBuyGiftCardTransactionSettings: null,
+  UpdateBuyGiftCardTransactionStatus: null,
 }
 const key = actionTypes.KEY;
 
 const buyGiftCardsReducer = (state = initState, action) => {
 	switch (action.type) {
+    case actionTypes.UPDATE_BUY_GIFT_CARD_STATUS:
     case actionTypes.GET_NEW_BUY_GIFT_CARD_TRANSACTIONS:
     case actionTypes.GET_ALL_BUY_GIFT_CARD_TRANSACTIONS:
     case actionTypes.UPDATE_BUY_GIFT_CARD_SETTING:
@@ -95,6 +97,19 @@ const buyGiftCardsReducer = (state = initState, action) => {
         loading: false,
         error: null,
       }
+    case actionTypes.UPDATE_BUY_GIFT_CARD_STATUS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        description: action.payload.message,
+        key,
+      })
+      return{
+        ...state,
+        UpdateBuyGiftCardTransactionStatus: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.UPDATE_BUY_GIFT_CARD_STATUS_FAILED:
     case actionTypes.GET_NEW_BUY_GIFT_CARD_TRANSACTIONS_FAILED:
     case actionTypes.GET_ALL_BUY_GIFT_CARD_TRANSACTIONS_FAILED:
     case actionTypes.GET_BUY_GIFT_CARD_DETAILS_FAILED:

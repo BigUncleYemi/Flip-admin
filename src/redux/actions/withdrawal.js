@@ -6,7 +6,6 @@ const ApproveWithdrawalTransaction = data => async dispatch => {
   dispatch({
     type: ActionTypes.APPROVE_WITHDRAWAL_TRANSACTION,
   })
-  console.log(data)
   await withdrawalService
     .approveWithdrawalTransaction(data)
     .then((response) => {
@@ -150,6 +149,7 @@ const UpdateWithdrawalsSettings = data => async dispatch => {
         type: ActionTypes.UPDATE_WITHDRAWAL_SETTINGS_SUCCESS,
         payload: response.data
       });
+      dispatch(getWithdrawalsSettings());
     })
     .catch(err => {
       dispatch({

@@ -16,8 +16,8 @@ giftCardService.approveGiftCardTransaction = function (data) {
   return fetch({
     url: `/api/admin/cards/${data.transactionId}/approve-transaction`,
     method: 'post',
-    data: { //INFO this is set default cos we only doing naira here
-      "debitWallet": "NGN"
+    data: { 
+      "debitWallet": data.debitWallet,
     }
   })
 }
@@ -26,7 +26,7 @@ giftCardService.declineGiftCardTransaction = function (data) {
   return fetch({
     url: `/api/admin/cards/${data.transactionId}/decline-transaction`,
     method: 'post',
-    data: { //INFO this is set default cos we only doing naira here
+    data: { 
       "comments": data.comment
     }
   })
@@ -75,7 +75,6 @@ giftCardService.updateCardRate = function (data) {
   //     }
   //   ]
   // }
-  console.log(data)
   let payload = { };
   payload.rates = data.rates;
 

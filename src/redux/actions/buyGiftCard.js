@@ -83,7 +83,6 @@ const UpdateBuyGiftCardSettings = data => async dispatch => {
   dispatch({
     type: ActionTypes.UPDATE_BUY_GIFT_CARD_SETTING,
   })
-  console.log(data)
   await buyGiftCoinService
     .updateBuyGiftCardSettings(data)
     .then((response) => {
@@ -91,6 +90,7 @@ const UpdateBuyGiftCardSettings = data => async dispatch => {
         type: ActionTypes.UPDATE_BUY_GIFT_CARD_SETTING_SUCCESS,
         payload: response.data
       });
+      dispatch(getBuyGiftCardSettings());
     })
     .catch(err => {
       dispatch({
@@ -105,6 +105,31 @@ export const updateBuyGiftCardSettings = data => async dispatch => {
   dispatch(UpdateBuyGiftCardSettings(data))
 }
 
+const UpdateBuyGiftCardStatus = data => async dispatch => {
+  dispatch({
+    type: ActionTypes.UPDATE_BUY_GIFT_CARD_STATUS,
+  })
+  await buyGiftCoinService
+    .updateBuyGiftCardStatus(data)
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.UPDATE_BUY_GIFT_CARD_STATUS_SUCCESS,
+        payload: response.data
+      });
+      dispatch(getAllBuyGiftCardTransactions({skip: 0, limit: 999999}))
+    })
+    .catch(err => {
+      dispatch({
+        type: ActionTypes.UPDATE_BUY_GIFT_CARD_STATUS_FAILED,
+        payload: err
+      });
+    });
+    return;
+}
+
+export const updateBuyGiftCardStatus = data => async dispatch => {
+  dispatch(UpdateBuyGiftCardStatus(data))
+}
 
 const GetBuyGiftCardSettings = () => async dispatch => {
   dispatch({

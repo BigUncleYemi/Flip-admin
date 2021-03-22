@@ -15,7 +15,10 @@ import {
   Drawer,
   Switch,
   Form,
+  Modal,
+  Select as AntSelect
 } from "antd";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   date,
   Money,
@@ -38,6 +41,9 @@ import {
   updateGiftCardsSettings,
 } from "redux/actions/giftCard";
 import Select from "components/select";
+
+const { confirm } = Modal;
+const { Option } = AntSelect;
 
 const rules = {
   min: [
@@ -100,6 +106,8 @@ const GiftCard = ({
   const [meta, setMeta] = useState(null);
   const [avaCurr, setAvaCurr] = useState([]);
   const [avaCard, setAvaCard] = useState([]);
+  const [debitWallet, setDebitWallet] = useState("");
+  const [Trigger, setTrigger] = useState(false);
   const [state, setState] = useState({
     btc: 0,
     usd: 0,
@@ -159,6 +167,22 @@ const GiftCard = ({
   function callback(key) {
     console.log(key);
   }
+  useEffect(() => {
+    if(Trigger) {
+      setIsModalVisible(true);
+      approveGiftCard({
+        transactionId:
+          giftCardDetails &&
+          giftCardDetails.transaction &&
+          giftCardDetails.transaction.id,
+          debitWallet,
+      });
+      getAllGiftCard({ skip: 0, limit: 10 });
+      getNewGiftCard({ skip: 0, limit: 10 });
+      setTrigger(false)
+    }
+    // eslint-disable-next-line
+  }, [Trigger, ])
   useEffect(() => {
     getAllGiftCard({ skip: 0, limit: 10 });
     getNewGiftCard({ skip: 0, limit: 10 });
@@ -358,15 +382,24 @@ const GiftCard = ({
   };
 
   const handleApproval = () => {
-    setIsModalVisible(true);
-    approveGiftCard({
-      transactionId:
-        giftCardDetails &&
-        giftCardDetails.transaction &&
-        giftCardDetails.transaction.id,
+    confirm({
+      title: `Please select wallet to complete the action with.`,
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          <AntSelect onChange={(value) => setDebitWallet(value)} style={{ width: "100%" }} >
+            <Option value="NGN">NGN Wallet</Option>
+            <Option value="GHS">GHS Wallet</Option>
+          </AntSelect>
+        </div>
+      ),
+      onOk() {
+        setTrigger(true)
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
     });
-    getAllGiftCard({ skip: 0, limit: 10 });
-    getNewGiftCard({ skip: 0, limit: 10 });
   };
 
   const handleDecline = () => {

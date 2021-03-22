@@ -10,8 +10,13 @@ import {
   Form,
   Input,
   Timeline,
-  Pagination
+  Pagination,
+  Statistic,
+  Collapse,
+  Select,
+  message,
 } from "antd";
+import StatisticWidget from "components/shared-components/StatisticWidget";
 import { MailOutlined } from "@ant-design/icons";
 import DataTable from "components/layout-components/DataTable";
 import { date } from "utils/helper";
@@ -23,6 +28,57 @@ import {
 } from "redux/actions/SuperAdmin";
 import styles from "../../styles.module.scss";
 import ModalWrapper from "components/layout-components/Modal";
+import AppFetch from "auth/FetchInterceptor";
+import { Money } from "utils/helper";
+
+const convertToProperName = (text) => {
+  var result = text.replace(/([A-Z])/g, " $1");
+  var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+  return finalResult;
+};
+
+const generateMessage = (Data) => {
+  let message = "";
+  for (const [key, value] of Object.entries(Data)) {
+    if (typeof value === "object") {
+      message += `<h5>${convertToProperName(key)}</h5>`;
+      message += `<h5>-------</h5>`;
+      for (const [a, b] of Object.entries(value)) {
+        if (typeof b === "object") {
+          message += `<code>${JSON.stringify(b)}</code>`;
+        } else {
+          message += `<p><strong>${convertToProperName(a)}</strong>: ${
+            typeof b === "object" ? <code>${JSON.stringify(b)}</code> : b
+          }</p>`;
+        }
+        if (typeof b === "object") {
+          message += `<h5>${convertToProperName(a)}</h5>`;
+          message += `<h5>--------</h5>`;
+          for (const [x, y] of Object.entries(b)) {
+            if (typeof y === "object") {
+              message += `<p><strong>${convertToProperName(
+                x
+              )}</strong>: ${""}</p>`;
+              message += `<code>${JSON.stringify(y)}</code>`;
+            } else {
+              message += `<p><strong>${convertToProperName(x)}</strong>: ${
+                typeof y === "object" ? <code>${JSON.stringify(y)}</code> : y
+              }</p>`;
+            }
+          }
+        }
+      }
+      message += `<h5>--------</h5>`;
+    } else {
+      message += `<p><strong>${convertToProperName(
+        key
+      )}</strong>: ${value}</p>`;
+    }
+  }
+  return message;
+};
+
+const { Option } = Select;
 
 const SuperAdmin = ({
   getAllAdminInvite,
@@ -35,19 +91,66 @@ const SuperAdmin = ({
   loading,
 }) => {
   const { Title } = Typography;
+  const { Panel } = Collapse;
   const { TabPane } = Tabs;
+  const [wallet, setWallet] = useState({});
+  const [queryDate, setQueryData] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [page, setPage] = useState(1);
-  useEffect(() => {
-    getAllAdminInvite({ skip: 0, limit: 10 });
-    getAllAdminUserLogs({ skip: 0, limit: 10 });
-  }, [getAllAdminInvite, getAllAdminUserLogs]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: adminLog && adminLog.meta && adminLog.meta.limit,
+    total: adminLog && adminLog.meta && adminLog.meta.count,
+  });
   useEffect(() => {
     if (inviteAdminDone && isModalVisible) {
       setIsModalVisible(false);
     }
     // eslint-disable-next-line
   }, [inviteAdminDone]);
+  useEffect(() => {
+    getAllAdminInvite({ skip: 0, limit: 10 });
+    getAllAdminUserLogs({ skip: 0, limit: 10 });
+  }, [getAllAdminInvite, getAllAdminUserLogs]);
+  useEffect(() => {
+    setPagination((pagination) => ({
+      current: pagination.current,
+      pageSize: adminLog && adminLog.meta && adminLog.meta.limit,
+      total: adminLog && adminLog.meta && adminLog.meta.count,
+    }));
+    // setLoading(false);
+  }, [adminLog]);
+
+  useEffect(() => {
+    AppFetch({
+      url: `/api/admin/super/misc/wallet-balances`,
+      method: "GET",
+    }).then((response) => {
+      setWallet(response.data);
+    });
+  }, []);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    debugger;
+    fetch({
+      pagination: {
+        current: pagination,
+        pageSize: adminLog && adminLog.meta && adminLog.meta.limit,
+        total: adminLog && adminLog.meta && adminLog.meta.count,
+      },
+    });
+  };
+
+  const fetch = async (params = {}) => {
+    await getAllAdminUserLogs({
+      skip: (params.pagination.current - 1) * params.pagination.pageSize,
+      limit: params.pagination.pageSize,
+    });
+    setPagination({
+      ...params.pagination,
+      total: adminLog && adminLog.meta && adminLog.meta.count,
+    });
+  };
 
   const handleAction = (id) => {
     deleteAdminInvite({ id });
@@ -94,9 +197,27 @@ const SuperAdmin = ({
     });
   };
 
-  const onChange = page => {
-    console.log(page);
-    setPage(page)
+  const onQuery = ({ amount, currency, debitWallet }) => {
+    setLoader(true);
+    setQueryData();
+    AppFetch({
+      url: `/api/admin/misc/check-balance`,
+      method: "GET",
+      params: {
+        amount,
+        currency,
+        debitWallet,
+      },
+    })
+      .then((response) => {
+        setQueryData(response.data);
+        message.success(response.message);
+        setLoader(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoader(false);
+      });
   };
 
   return (
@@ -118,6 +239,8 @@ const SuperAdmin = ({
           <Form.Item
             name="email"
             label="Email"
+            hasFeedback
+            required
             rules={[
               {
                 required: true,
@@ -139,10 +262,7 @@ const SuperAdmin = ({
         </Form>
       </ModalWrapper>
 
-      <Tabs
-        defaultActiveKey="1"
-        style={{ background: "white" }}
-      >
+      <Tabs defaultActiveKey="1" style={{ background: "white" }}>
         <TabPane
           tab={
             <div>
@@ -150,7 +270,7 @@ const SuperAdmin = ({
             </div>
           }
           key="1"
-          style={{padding: 10}}
+          style={{ padding: 10 }}
         >
           <div
             style={{
@@ -192,7 +312,7 @@ const SuperAdmin = ({
             </div>
           }
           key="2"
-          style={{padding: 10}}
+          style={{ padding: 10 }}
         >
           <div
             style={{
@@ -211,14 +331,267 @@ const SuperAdmin = ({
               sm={24}
               md={24}
               lg={24}
-            >{console.log(adminLog)}
-              <Timeline mode={'right'}>
-                <Timeline.Item label="2015-09-01">Create a services</Timeline.Item>
-                <Timeline.Item label="2015-09-01 09:12:11">Solve initial network problems</Timeline.Item>
-                <Timeline.Item>Technical testing</Timeline.Item>
-                <Timeline.Item label="2015-09-01 09:12:11">Network problems being solved</Timeline.Item>
+            >
+              <Timeline mode={"left"}>
+                {adminLog?.activities.map((log, index) => (
+                  <Timeline.Item label={date(log?.createdAt)}>
+                    <Collapse ghost>
+                      <Panel
+                        header={`${log.actionType
+                          .replace("_", " ")
+                          .replace(
+                            "_",
+                            " "
+                          )} by ${log?.actionedBy?.type.replace("_", " ")}-${
+                          log?.actionedBy?.email
+                        } `}
+                        key="1"
+                      >
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: generateMessage(log),
+                          }}
+                        />
+                      </Panel>
+                    </Collapse>
+                  </Timeline.Item>
+                ))}
               </Timeline>
-              <Pagination current={page} onChange={onChange} total={50} />
+              <Pagination
+                pageSize={pagination.pageSize}
+                current={pagination.current}
+                onChange={handleTableChange}
+                total={adminLog && adminLog.meta && adminLog.meta.count}
+              />
+            </Col>
+          </Row>
+        </TabPane>
+        <TabPane
+          tab={
+            <div>
+              <span>Admin Wallet Management</span>
+            </div>
+          }
+          key="3"
+          style={{ padding: 10 }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <Title level={2}>Admin Wallet Management</Title>
+          </div>
+
+          <Title level={4}>Master Wallet Balance</Title>
+          <Row gutter={16}>
+            <Col
+              style={{ flex: 1, maxWidth: "100%" }}
+              xs={24}
+              sm={24}
+              md={24}
+              lg={24}
+            >
+              <Row gutter={16} style={{ marginBottom: 20 }}>
+                <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+                  <StatisticWidget
+                    title={"NGN Master Wallet Stat"}
+                    value={
+                      <>
+                        <Statistic
+                          title={"Available Balance"}
+                          value={Money(
+                            (wallet &&
+                              wallet.fwBalances &&
+                              wallet.fwBalances[0]?.available_balance) ||
+                              0,
+                            (wallet &&
+                              wallet.fwBalances &&
+                              wallet.fwBalances[0]?.currency) ||
+                              "NGN"
+                          )}
+                        />
+                        <Statistic
+                          title={"Ledger Balance"}
+                          value={Money(
+                            (wallet &&
+                              wallet.fwBalances &&
+                              wallet.fwBalances[0]?.ledger_balance) ||
+                              0,
+                            (wallet &&
+                              wallet.fwBalances &&
+                              wallet.fwBalances[0]?.currency) ||
+                              "NGN"
+                          )}
+                        />
+                      </>
+                    }
+                  />
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+                  <StatisticWidget
+                    title={"GHS Master Wallet Stat"}
+                    value={
+                      <>
+                        <Statistic
+                          title={"Available Balance"}
+                          value={Money(
+                            (wallet &&
+                              wallet.wallets &&
+                              wallet.wallets[1].available_balance) ||
+                              0,
+                            (wallet &&
+                              wallet.wallets &&
+                              wallet.wallets[1].currency) ||
+                              "GHS"
+                          )}
+                        />
+                        <Statistic
+                          title={"Ledger Balance"}
+                          value={Money(
+                            (wallet &&
+                              wallet.wallets &&
+                              wallet.wallets[1].ledger_balance) ||
+                              0,
+                            (wallet &&
+                              wallet.wallets &&
+                              wallet.wallets[1].currency) ||
+                              "GHS"
+                          )}
+                        />
+                      </>
+                    }
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Title level={4}>Master Wallet Balances Sufficient Checker</Title>
+          <Row gutter={16}>
+            <Col
+              style={{ flex: 1, maxWidth: "100%" }}
+              xs={24}
+              sm={24}
+              md={24}
+              lg={12}
+            >
+              <Row gutter={16} style={{ marginBottom: 20 }}>
+                <Form
+                  layout="vertical"
+                  name="admin-form"
+                  style={{ padding: "20px 10px" }}
+                  onFinish={onQuery}
+                >
+                  <p>Please enter the email of the new admin to invite.</p>
+                  <Form.Item
+                    name="amount"
+                    label="Amount"
+                    hasFeedback
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your amount",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    name="currency"
+                    label="Currency to query For"
+                    hasFeedback
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select your Currency",
+                      },
+                    ]}
+                  >
+                    <Select style={{ width: "100%" }}>
+                      <Option value="NGN">NGN</Option>
+                      <Option value="GHS">GHS</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name="debitWallet"
+                    label="Wallet to Debit from"
+                    hasFeedback
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select your Wallet",
+                      },
+                    ]}
+                  >
+                    <Select style={{ width: "100%" }}>
+                      <Option value="NGN">NGN Wallet</Option>
+                      <Option value="GHS">GHS Wallet</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      block
+                      loading={loader}
+                    >
+                      Query
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Row>
+            </Col>
+            <Col
+              style={{ flex: 1, maxWidth: "100%" }}
+              xs={24}
+              sm={24}
+              md={24}
+              lg={12}
+            >
+              <Row gutter={16} style={{ marginBottom: 20 }}>
+                {queryDate && queryDate.wallets && queryDate.wallets[0] && (
+                  <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <StatisticWidget
+                      title={`${
+                        queryDate &&
+                        queryDate.wallets &&
+                        queryDate.wallets[0].currency
+                      } Gallant`}
+                      value={
+                        queryDate &&
+                        queryDate.wallets &&
+                        queryDate.wallets[0].isGallant
+                          ? "Yes"
+                          : "NO"
+                      }
+                    />
+                  </Col>
+                )}
+                {queryDate && queryDate.wallets && queryDate.wallets[1] && (
+                  <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <StatisticWidget
+                      title={`${
+                        queryDate &&
+                        queryDate.wallets &&
+                        queryDate.wallets[1].currency
+                      } Gallant`}
+                      value={
+                        queryDate &&
+                        queryDate.wallets &&
+                        queryDate.wallets[1].isGallant
+                          ? "Yes"
+                          : "NO"
+                      }
+                    />
+                  </Col>
+                )}
+              </Row>
             </Col>
           </Row>
         </TabPane>

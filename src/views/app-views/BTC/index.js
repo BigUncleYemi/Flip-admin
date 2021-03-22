@@ -256,7 +256,6 @@ const BTC = ({
   const [form] = Form.useForm();
 
   const onFinish = (value) => {
-    console.log(value);
     const data = {
       updateBody: {
         availability: {

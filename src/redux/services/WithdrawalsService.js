@@ -6,8 +6,8 @@ withdrawalService.approveWithdrawalTransaction = function (data) {
   return fetch({
     url: `/api/admin/withdrawals/${data.transactionId}/approve-transaction`,
     method: 'post',
-    data: { //INFO this is set default cos we only doing naira here
-      "debitWallet": "NGN"
+    data: {
+      "debitWallet": data.debitWallet,
     }
   })
 }
@@ -60,44 +60,10 @@ withdrawalService.updateWithdrawalSettings = function (data) {
 }
 
 withdrawalService.getWithdrawalSettings = function () {
-  // return fetch({
-  //   url: '/api/admin/withdrawals/settings',
-  //   method: 'get',
-  // })
-
-  const response = {
-    "code": 200,
-    "message": "Withdrawal settings fetched successfully",
-    "data": {
-        "settings": {
-            "rates": {
-                "NGN": [
-                    {
-                        "min": 0,
-                        "max": 10000000,
-                        "charge": {
-                            "value": 50,
-                            "isPercent": false
-                        }
-                    }
-                ],
-                "GHS": [
-                    {
-                        "min": 0,
-                        "max": 1000000,
-                        "charge": {
-                            "value": 10,
-                            "isPercent": false
-                        }
-                    }
-                ]
-            },
-            "withdrawalDelay": 60
-        }
-    }
-};
-
-  return Promise.resolve(response);
+  return fetch({
+    url: '/api/admin/withdrawals/settings',
+    method: 'get',
+  })
 }
 
 export default withdrawalService;
