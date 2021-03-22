@@ -104,6 +104,39 @@ const User = ({getAllUsers, getUserDetailsById, users, selectedUser}) => {
 						</List.Item>
 						<List.Item>
 							<List.Item.Meta
+								title={"NGN Wallet Balance"}
+								description={
+									<div>
+										<span>Available Balance: {selectedUser && selectedUser.user && selectedUser.user.wallets.NGN.balance.toLocaleString()}</span>
+										<span style={{paddingLeft: 10}}>Locked Balance: {selectedUser && selectedUser.user && selectedUser.user.wallets.NGN.locked.toLocaleString()}</span>
+									</div>
+								}
+							/>
+						</List.Item>
+						<List.Item>
+							<List.Item.Meta
+								title={"GHS Wallet Balance"}
+								description={
+									<div>
+										<span>Available Balance: {selectedUser && selectedUser.user && selectedUser.user.wallets.GHS.balance.toLocaleString()}</span>
+										<span style={{paddingLeft: 10}}>Locked Balance: {selectedUser && selectedUser.user && selectedUser.user.wallets.GHS.locked.toLocaleString()}</span>
+									</div>
+								}
+							/>
+						</List.Item>
+						<List.Item>
+							<List.Item.Meta
+								title={"BTC Wallet Balance"}
+								description={
+									<div>
+										<span>Available Balance: {selectedUser && selectedUser.user && selectedUser.user.wallets.BTC.balance.toLocaleString()}</span>
+										<span style={{paddingLeft: 10}}>Locked Balance: {selectedUser && selectedUser.user && selectedUser.user.wallets.BTC.locked.toLocaleString()}</span>
+									</div>
+								}
+							/>
+						</List.Item>
+						<List.Item>
+							<List.Item.Meta
 								title={"Date Created"}
 								description={date(selectedUser && selectedUser.user && selectedUser.user.createdAt)}
 							/>
