@@ -147,6 +147,22 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
             </List.Item>
             <List.Item>
               <List.Item.Meta
+                title={"User Name"}
+                description={
+                  selectedUser && selectedUser.user && selectedUser.user.username
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"User Referral Code"}
+                description={
+                  selectedUser && selectedUser.user && selectedUser.user.referralCode
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
                 title={"NGN Wallet Balance"}
                 description={
                   <div>
