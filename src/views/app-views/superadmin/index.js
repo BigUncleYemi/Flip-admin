@@ -31,11 +31,16 @@ import ModalWrapper from "components/layout-components/Modal";
 import AppFetch from "auth/FetchInterceptor";
 import { Money } from "utils/helper";
 
-const convertToProperName = (text) => {
-  var result = text.replace(/([A-Z])/g, " $1");
-  var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
-  return finalResult;
+const convertToProperName = (name) => {
+  return name.split("_").map(word => `${word[0].toUpperCase()}${word.slice(1,)}`).join(" ")
 };
+
+const ActionType = [
+  "APPROVED_CARD_TRX", "DECLINED_CARD_TRX",
+  "APPROVED_WITHDRAWAL_TRX", "DECLINED_WITHDRAWAL_TRX",
+  "UPDATED_CARD_RATES", "UPDATED_COIN_RATES", "UPDATED_WITHDRAWAL_RATES", "UPDATED_BUYCARD_SETTINGS",
+  "PROCESSING_CARD_TRX", "COMPLETED_CARD_TRX",
+]
 
 const generateMessage = (Data) => {
   let message = "";
@@ -92,9 +97,12 @@ const SuperAdmin = ({
 }) => {
   const { Title } = Typography;
   const { Panel } = Collapse;
+  const { Search } = Input;
   const { TabPane } = Tabs;
   const [wallet, setWallet] = useState({});
   const [queryDate, setQueryData] = useState(false);
+  const [actionTypeSel, setActionTypeSel] = useState("");
+  const [actionBy, setActionBy] = useState("");
   const [loader, setLoader] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
@@ -120,6 +128,16 @@ const SuperAdmin = ({
     }));
     // setLoading(false);
   }, [adminLog]);
+  useEffect(() => {
+    getAllAdminUserLogs({
+      skip: 0,
+      limit: pagination.pageSize,
+      actionType: actionTypeSel,
+      actionBy
+    });
+    // setLoading(false);
+    // eslint-disable-next-line
+  }, [actionTypeSel, actionBy]);
 
   useEffect(() => {
     AppFetch({
@@ -131,7 +149,6 @@ const SuperAdmin = ({
   }, []);
 
   const handleTableChange = (pagination, filters, sorter) => {
-    debugger;
     fetch({
       pagination: {
         current: pagination,
@@ -145,6 +162,8 @@ const SuperAdmin = ({
     await getAllAdminUserLogs({
       skip: (params.pagination.current - 1) * params.pagination.pageSize,
       limit: params.pagination.pageSize,
+      actionType: actionTypeSel,
+      actionBy
     });
     setPagination({
       ...params.pagination,
@@ -219,6 +238,13 @@ const SuperAdmin = ({
         setLoader(false);
       });
   };
+
+  function handleChange(value) {
+    console.log(`selected ${value}`);
+    setActionTypeSel(value);
+  }
+
+const onSearch = value => setActionBy(value);
 
   return (
     <div>
@@ -324,6 +350,27 @@ const SuperAdmin = ({
           >
             <Title level={2}>Admin Logs</Title>
           </div>
+          <Row align="start">
+            <Col span={6}>
+              <p>Filter By Action Type</p>
+              <Select style={{minWidth: 200}} allowClear onChange={handleChange}>
+                <Option value="">Select Action Type</Option>
+                {ActionType.map((item) => <Option key={item} value={item}>{convertToProperName(item)}</Option>)}
+              </Select>
+            </Col>
+            <Col span={6}>
+              <p>Filter By Action By</p>
+              <Search
+                placeholder="Search by admin email"
+                allowClear
+                enterButton="Search"
+                style={{minWidth: 280}}
+                onSearch={onSearch}
+              />
+            </Col>
+          </Row>
+          <br />
+          <br/>
           <Row gutter={16}>
             <Col
               style={{ flex: 1, maxWidth: "100%" }}

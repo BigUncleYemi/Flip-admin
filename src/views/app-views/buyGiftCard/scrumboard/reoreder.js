@@ -6,7 +6,6 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 export const reorderQuoteMap = ({ quoteMap, source, destination }) => {
-  debugger;
   const current = [...quoteMap[source.droppableId]];
   const next = [...quoteMap[destination.droppableId]];
   const target = current[source.index];
