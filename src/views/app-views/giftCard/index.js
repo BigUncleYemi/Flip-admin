@@ -735,7 +735,7 @@ const GiftCard = ({
                 <Input type="number" />
               </Form.Item>
               <Form.Item
-                name="NGN"
+                name="GHS"
                 label="Rate in GHS"
                 rules={rules.GHS}
                 hasFeedback
