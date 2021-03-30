@@ -34,8 +34,6 @@ const BuyGiftCard = ({
   getAllGiftCard,
   getNewGiftCard,
   getGiftCardById,
-  approveGiftCard,
-  declineGiftCard,
   giftCard,
   newGiftCard,
   giftCardDetails,

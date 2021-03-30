@@ -532,7 +532,6 @@ const onSearch = value => setActionBy(value);
                   style={{ padding: "20px 10px" }}
                   onFinish={onQuery}
                 >
-                  <p>Please enter the email of the new admin to invite.</p>
                   <Form.Item
                     name="amount"
                     label="Amount"

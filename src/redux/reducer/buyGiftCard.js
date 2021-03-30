@@ -38,7 +38,7 @@ const buyGiftCardsReducer = (state = initState, action) => {
       return{
         ...state,
         BuyGiftCardDetails: null,
-        loading: false,
+        loading: true,
         error: null,
       }
     case actionTypes.GET_BUY_GIFT_CARD_SETTING_SUCCESS:
@@ -50,7 +50,7 @@ const buyGiftCardsReducer = (state = initState, action) => {
       return {
         ...state,
         BuyGiftCardTransactionSettings: action.payload.settings,
-        loading: true,
+        loading: false,
         error: null,
       }
     case actionTypes.GET_NEW_BUY_GIFT_CARD_TRANSACTIONS_SUCCESS:
