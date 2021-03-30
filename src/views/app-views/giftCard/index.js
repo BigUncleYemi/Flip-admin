@@ -16,9 +16,9 @@ import {
   Switch,
   Form,
   Modal,
-  Select as AntSelect
+  Select as AntSelect,
 } from "antd";
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   date,
   Money,
@@ -168,21 +168,21 @@ const GiftCard = ({
     console.log(key);
   }
   useEffect(() => {
-    if(Trigger) {
+    if (Trigger) {
       setIsModalVisible(true);
       approveGiftCard({
         transactionId:
           giftCardDetails &&
           giftCardDetails.transaction &&
           giftCardDetails.transaction.id,
-          debitWallet,
+        debitWallet,
       });
       getAllGiftCard({ skip: 0, limit: 10 });
       getNewGiftCard({ skip: 0, limit: 10 });
-      setTrigger(false)
+      setTrigger(false);
     }
     // eslint-disable-next-line
-  }, [Trigger, ])
+  }, [Trigger]);
   useEffect(() => {
     getAllGiftCard({ skip: 0, limit: 10 });
     getNewGiftCard({ skip: 0, limit: 10 });
@@ -221,10 +221,6 @@ const GiftCard = ({
       dataIndex: "amount",
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-    },
-    {
       title: "Card Code",
       dataIndex: "cardCode",
     },
@@ -232,6 +228,10 @@ const GiftCard = ({
       title: "Rate",
       dataIndex: "rate",
       render: (rate) => <span>{rate.amount}</span>,
+    },
+    {
+      title: "Rate Currency",
+      dataIndex: "referenceCurrency",
     },
     {
       title: "Status",
@@ -387,17 +387,20 @@ const GiftCard = ({
       icon: <ExclamationCircleOutlined />,
       content: (
         <div>
-          <AntSelect onChange={(value) => setDebitWallet(value)} style={{ width: "100%" }} >
+          <AntSelect
+            onChange={(value) => setDebitWallet(value)}
+            style={{ width: "100%" }}
+          >
             <Option value="NGN">NGN Wallet</Option>
             <Option value="GHS">GHS Wallet</Option>
           </AntSelect>
         </div>
       ),
       onOk() {
-        setTrigger(true)
+        setTrigger(true);
       },
       onCancel() {
-        console.log('Cancel');
+        console.log("Cancel");
       },
     });
   };
@@ -555,22 +558,15 @@ const GiftCard = ({
               </List.Item>
               <List.Item>
                 <List.Item.Meta
-                  title={"Quantity"}
-                  description={
-                    giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.quantity
-                  }
-                />
-              </List.Item>
-              <List.Item>
-                <List.Item.Meta
                   title={"Rate"}
                   description={Money(
                     giftCardDetails &&
                       giftCardDetails.transaction &&
                       giftCardDetails.transaction.rate.amount,
-                    "NGN"
+                    (giftCardDetails &&
+                      giftCardDetails.transaction &&
+                      giftCardDetails.transaction.referenceCurrency) ||
+                      "ngn"
                   )}
                 />
               </List.Item>
@@ -597,6 +593,16 @@ const GiftCard = ({
                           />
                         ))}
                     </div>
+                  }
+                />
+              </List.Item>
+              <List.Item>
+                <List.Item.Meta
+                  title={"Image Remarks"}
+                  description={
+                    giftCardDetails &&
+                    giftCardDetails.transaction &&
+                    giftCardDetails.transaction.remark
                   }
                 />
               </List.Item>
