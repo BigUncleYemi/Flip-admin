@@ -598,11 +598,11 @@ const GiftCard = ({
               </List.Item>
               <List.Item>
                 <List.Item.Meta
-                  title={"Image Remarks"}
+                  title={"Sellers Remarks"}
                   description={
                     giftCardDetails &&
                     giftCardDetails.transaction &&
-                    giftCardDetails.transaction.remark
+                    giftCardDetails.transaction.sellerRemarks
                   }
                 />
               </List.Item>
