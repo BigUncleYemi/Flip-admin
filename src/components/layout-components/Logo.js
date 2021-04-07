@@ -1,6 +1,6 @@
 import React from 'react'
 import { SIDE_NAV_WIDTH, SIDE_NAV_COLLAPSED_WIDTH, NAV_TYPE_TOP } from 'constants/ThemeConstant';
-import { APP_NAME } from 'configs/AppConfig';
+import { APP_NAME1 } from 'configs/AppConfig';
 import { connect } from "react-redux";
 import utils from 'utils';
 import { Grid } from 'antd';
@@ -52,7 +52,7 @@ export const Logo = (props) => {
     <div
       className={getLogoDisplay(isMobile, props.mobileLogo)} 
       style={{width: `${getLogoWidthGutter(props, isMobile)}`}}>
-      <img src={getLogo(props)} alt={`${APP_NAME} logo`}/>
+      <img src={getLogo(props)} alt={`${APP_NAME1} logo`}/>
     </div>
   )
 }

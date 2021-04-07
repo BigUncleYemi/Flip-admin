@@ -1,4 +1,5 @@
 import * as ActionTypes from "../constants/index";
+import { notification } from "antd";
 
 const initialState = {
   getDashboardData: null,
@@ -14,13 +15,29 @@ const initialState = {
   updateWithdrawalsSettings: null,
 };
 
+const key = ActionTypes.KEY;
+
 export default function reducer (state = initialState, action) {
   switch (action.type) {
     case ActionTypes.GET_DASHBOARD_DATA_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
       return{
         ...state,
         getDashboardData: action.payload,
       };
+
+    case ActionTypes.GET_DASHBOARD_DATA:
+      notification.info({
+        message: "Loading.....",
+        duration: 0,
+        key,
+      })
+      return {
+        ...state,
+      }
     case ActionTypes.APPROVE_GIFTCARD_TRANSACTION_SUCCESS:
       return{
         ...state,
