@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Statistic } from "antd";
 import StatisticWidget from "components/shared-components/StatisticWidget";
@@ -7,9 +7,76 @@ import { Money } from "utils/helper";
 
 const Home = ({ getDashboardData, dashboardData }) => {
   const typeUser = localStorage.getItem("type");
+  const [totalUserData, setTotalUserData] = useState(0);
+  const [ngn_available_balance, setNgnavailable_balance] = useState(0);
+  const [ngn_ledger_balance, setNgnLedger_balance] = useState(0);
+  const [currency_ngn, setCurrency_ngn] = useState("");
+  const [ghs_available_balance, setGhs_available_balance] = useState(0);
+  const [ghs_ledger_balance, setGhs_ledger_balance] = useState(0);
+  const [currency_ghs, setCurrency_ghs] = useState("");
+  const [newUsersCount, setNewUsersCount] = useState(0);
+  const [new_withdraw_req, setNew_withdraw_req] = useState(0);
+  const [today_btc_count, setToday_btc_count] = useState(0);
+  const [today_gift_card_count, setToday_gift_card_count] = useState(0);
+  const [new_gift_card_transaction, setNew_gift_card_transaction] = useState(0);
   useEffect(() => {
     getDashboardData();
   }, [getDashboardData]);
+  useEffect(() => {
+    dashboardData &&
+      dashboardData.dbMetrics &&
+      dashboardData.dbMetrics.NoOfAllUsers &&
+      setTotalUserData(dashboardData.dbMetrics.NoOfAllUsers);
+
+    dashboardData &&
+      dashboardData.fwBalances &&
+      dashboardData.fwBalances[0]?.available_balance &&
+      setNgnavailable_balance(dashboardData.fwBalances[0]?.available_balance);
+
+    dashboardData &&
+      dashboardData.fwBalances &&
+      dashboardData.fwBalances[0]?.ledger_balance &&
+      setNgnLedger_balance(dashboardData.fwBalances[0]?.ledger_balance);
+
+    dashboardData &&
+      dashboardData.fwBalances &&
+      dashboardData.fwBalances[1].available_balance &&
+      setGhs_available_balance(dashboardData.fwBalances[1].available_balance);
+
+    dashboardData &&
+      dashboardData.fwBalances &&
+      dashboardData.fwBalances[1]?.ledger_balance &&
+      setGhs_ledger_balance(dashboardData.fwBalances[1]?.ledger_balance);
+
+    dashboardData &&
+      dashboardData.dbMetrics &&
+      dashboardData.dbMetrics.NoOfNewUsersToday &&
+      setNewUsersCount(dashboardData.dbMetrics.NoOfNewUsersToday);
+
+    dashboardData &&
+      dashboardData.dbMetrics &&
+      dashboardData.dbMetrics.NoOfNewWithdrawalRequests &&
+      setNew_withdraw_req(dashboardData.dbMetrics.NoOfNewWithdrawalRequests);
+
+    dashboardData &&
+      dashboardData.dbMetrics &&
+      dashboardData.dbMetrics.NoOfBTCTransactionsToday &&
+      setToday_btc_count(dashboardData.dbMetrics.NoOfBTCTransactionsToday);
+
+    dashboardData &&
+      dashboardData.dbMetrics &&
+      dashboardData.dbMetrics.NoOfCardsTransactionsToday &&
+      setToday_gift_card_count(
+        dashboardData.dbMetrics.NoOfCardsTransactionsToday
+      );
+
+    dashboardData &&
+      dashboardData.dbMetrics &&
+      dashboardData.dbMetrics.NoOfNewCardTransactions &&
+      setNew_gift_card_transaction(
+        dashboardData.dbMetrics.NoOfNewCardTransactions
+      );
+  }, [dashboardData]);
   return (
     <div>
       <Row gutter={16}>
@@ -25,30 +92,23 @@ const Home = ({ getDashboardData, dashboardData }) => {
               <StatisticWidget
                 title={"Total User Base"}
                 value={
-                  dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.NoOfAllUsers
+                  totalUserData
+                  // dashboardData &&
+                  // dashboardData.dbMetrics &&
+                  // dashboardData.dbMetrics.NoOfAllUsers
                 }
               />
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={8}>
               <StatisticWidget
                 title={"No of New User count"}
-                value={
-                  dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.NoOfNewUsersToday
-                }
+                value={newUsersCount}
               />
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={8}>
               <StatisticWidget
                 title={"No of New Withdrawal Request"}
-                value={
-                  dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.NoOfNewWithdrawalRequests
-                }
+                value={new_withdraw_req}
               />
             </Col>
           </Row>
@@ -56,30 +116,20 @@ const Home = ({ getDashboardData, dashboardData }) => {
             <Col xs={24} sm={24} md={24} lg={24} xl={8}>
               <StatisticWidget
                 title={"Today's BTC Transaction count"}
-                value={
-                  dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.NoOfBTCTransactionsToday
-                }
+                value={today_btc_count}
               />
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={8}>
               <StatisticWidget
                 title={"Today's Gift Card Transaction count"}
-                value={
-                  dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.NoOfCardsTransactionsToday
-                }
+                value={today_gift_card_count}
               />
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={8}>
               <StatisticWidget
                 title={"No of New Gift card Transaction"}
                 value={
-                  dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.NoOfNewCardTransactions
+                  new_gift_card_transaction
                 }
               />
             </Col>
@@ -136,9 +186,7 @@ const Home = ({ getDashboardData, dashboardData }) => {
                       <Statistic
                         title={"Available Balance"}
                         value={Money(
-                          dashboardData &&
-                            dashboardData.fwBalances &&
-                            dashboardData.fwBalances[0]?.available_balance,
+                          ngn_available_balance,
                           (dashboardData &&
                             dashboardData.fwBalances &&
                             dashboardData.fwBalances[0]?.currency) ||
@@ -148,9 +196,7 @@ const Home = ({ getDashboardData, dashboardData }) => {
                       <Statistic
                         title={"Ledger Balance"}
                         value={Money(
-                          dashboardData &&
-                            dashboardData.fwBalances &&
-                            dashboardData.fwBalances[0]?.ledger_balance,
+                          ngn_ledger_balance,
                           (dashboardData &&
                             dashboardData.fwBalances &&
                             dashboardData.fwBalances[0]?.currency) ||
@@ -169,9 +215,7 @@ const Home = ({ getDashboardData, dashboardData }) => {
                       <Statistic
                         title={"Available Balance"}
                         value={Money(
-                          dashboardData &&
-                            dashboardData.fwBalances &&
-                            dashboardData.fwBalances[1].available_balance,
+                          ghs_available_balance,
                           (dashboardData &&
                             dashboardData.fwBalances &&
                             dashboardData.fwBalances[1].currency) ||
@@ -181,9 +225,7 @@ const Home = ({ getDashboardData, dashboardData }) => {
                       <Statistic
                         title={"Ledger Balance"}
                         value={Money(
-                          dashboardData &&
-                            dashboardData.fwBalances &&
-                            dashboardData.fwBalances[1].ledger_balance,
+                          ghs_ledger_balance,
                           (dashboardData &&
                             dashboardData.fwBalances &&
                             dashboardData.fwBalances[1].currency) ||
