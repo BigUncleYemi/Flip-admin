@@ -2,7 +2,7 @@ import dashboardService from "redux/services/DashboardService";
 import * as ActionTypes from "../constants/index";
 
 //Dashboard
-const GetDashboardData = () => async dispatch => {
+const getDashboardData = () => async dispatch => {
   dispatch({
     type: ActionTypes.GET_DASHBOARD_DATA,
   })
@@ -24,6 +24,6 @@ const GetDashboardData = () => async dispatch => {
     return;
 }
 
-export const getDashboardData = () => dispatch => {
-  dispatch(GetDashboardData());
-};
+export {
+  getDashboardData
+} 

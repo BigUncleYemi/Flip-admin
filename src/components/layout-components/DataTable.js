@@ -51,6 +51,7 @@ const DataTable = ({ fetchTrans, transaction, columns, title, data }) => {
             current: pagination.current,
             pageSize: pagination.pageSize,
             total: transaction.meta && transaction.meta.count,
+            position:'bottomCenter'
           }}
           loading={loading}
           onChange={handleTableChange}

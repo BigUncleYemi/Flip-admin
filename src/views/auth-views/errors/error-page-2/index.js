@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from "antd";
-import { APP_NAME } from 'configs/AppConfig';
+import { APP_NAME1 } from 'configs/AppConfig';
 import { Link } from 'react-router-dom'
 import Flex from 'components/shared-components/Flex'
 
@@ -21,7 +21,7 @@ const ErrorTwo = () => {
 					</div>
 				</div>
 				<Flex mobileFlex={false} justifyContent="between">
-					<span>Copyright  &copy;  {`${new Date().getFullYear()}`} <span className="font-weight-semibold">{`${APP_NAME}`}</span></span>
+					<span>Copyright  &copy;  {`${new Date().getFullYear()}`} <span className="font-weight-semibold">{`${APP_NAME1}`}</span></span>
 					<div>
 						<a className="text-gray" href="/#" onClick={e => e.preventDefault()}>Term & Conditions</a>
 						<span className="mx-2 text-muted"> | </span>

@@ -2,6 +2,7 @@ import { SIDE_NAV_LIGHT, NAV_TYPE_TOP } from 'constants/ThemeConstant';
 import { env } from './EnvironmentConfig'
 
 export const APP_NAME = 'flip_afrika';
+export const APP_NAME1 = 'Flip Afrika';
 export const API_BASE_URL = env.API_ENDPOINT_URL
 export const APP_PREFIX_PATH = '/app';
 export const AUTH_PREFIX_PATH = '/auth';
