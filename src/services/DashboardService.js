@@ -4,7 +4,7 @@ const dashboardService = {}
 
 dashboardService.getDashboardStat = function () {
   return fetch({
-    url: '/api/admin/dashboard',
+    url: '/admin/misc/dashboard',
     method: 'get',
   })
 }

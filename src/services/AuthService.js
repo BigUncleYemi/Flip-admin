@@ -12,7 +12,7 @@ authService.loginAdmin = function (payload) {
   data.password = payload.password;
 
   return fetch({
-    url: '/api/admin/log-in',
+    url: '/admin/user-account/sign-in',
     method: 'post',
     data: data,
     headers: {
