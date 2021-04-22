@@ -24,23 +24,43 @@ import DataTable from "components/layout-components/DataTable";
 import ModalWrapper from "components/layout-components/Modal";
 import { getUserDetailsById } from "redux/actions/user";
 import {
-  getAllBTCTransactions,
-  getBTCTransactionsById,
   getBTCSettings,
   updateBTCSettings,
+  getBuyCoinTransactions,
+  getSellCoinTransactions,
+  getSendCoinTransactions,
+  getBuyCoinTransactionsById,
+  getSellCoinTransactionsById,
+  getSendCoinTransactionsById,
+  getP2PCoinTransactions,
+  getP2PCoinTransactionsById,
 } from "redux/actions/btc";
 
 const BTC = ({
-  getAllBTCTrans,
-  getBTCTransById,
-  BTCTransaction,
+  getAllBuyTrans,
+  getAllSellTrans,
+  getAllSendTrans,
+  getAllP2PTrans,
+  getBuyTransById,
+  getSellTransById,
+  getSendTransById,
+  getP2PTransById,
+  // getBTCTransById,
+  buyTransactions,
+  sellTransactions,
+  sendTransactions,
+  p2pTransactions,
+  buyDetails,
+  sellDetails,
+  sendDetails,
+  p2pDetails,
   BTCDetails,
   getUserDetailsById,
   selectedUser,
   updateBTCSettings,
   getBTCTransSettings,
   loading,
-  BTCTransactionSettings,
+  buyTransactionsSettings,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -69,13 +89,13 @@ const BTC = ({
     console.log(key);
   }
   useEffect(() => {
-    getAllBTCTrans({ skip: 0, limit: 10 });
+    getAllBuyTrans({ skip: 0, limit: 10 });
     getBTCTransSettings({ cardCode: "all" });
-  }, [getAllBTCTrans, getBTCTransSettings]);
+  }, [getAllBuyTrans, getBTCTransSettings]);
 
   const handleAction = (id) => {
     setIsModalVisible(true);
-    getBTCTransById({ transactionId: id });
+    getBuyTransById({ transactionId: id });
   };
 
   const columns = [
@@ -302,7 +322,7 @@ const BTC = ({
         },
       },
     };
-    updateBTCSettings({...data})
+    updateBTCSettings({ ...data });
   };
 
   return (
@@ -451,7 +471,7 @@ const BTC = ({
       >
         <Title level={2}>BTC</Title>
         <Button type="primary" onClick={showDrawer}>
-          Edit BTC Transaction Settings
+          Edit Coin Transaction Settings
         </Button>
       </div>
       <Drawer
@@ -469,59 +489,59 @@ const BTC = ({
           onFinish={onFinish}
           initialValues={{
             availabilityBuyMaxVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.availability.buy.maxVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.availability.buy.maxVolume,
             availabilityBuyMinVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.availability.buy.minVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.availability.buy.minVolume,
             availabilityBuyValue:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.availability.buy.value,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.availability.buy.value,
             availabilitySellMaxVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.availability.sell.maxVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.availability.sell.maxVolume,
             availabilitySellMinVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.availability.sell.minVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.availability.sell.minVolume,
             availabilitySellValue:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.availability.sell.value,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.availability.sell.value,
             conversionRatesBuyHighMaxVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[0].maxVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[0].maxVolume,
             conversionRatesBuyHighMinVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[0].minVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[0].minVolume,
             conversionRatesBuyHighValueGHS:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[0].value.GHS,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[0].value.GHS,
             conversionRatesBuyHighValueNGN:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[0].value.NGN,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[0].value.NGN,
             conversionRatesBuyLowMaxVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[1].maxVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[1].maxVolume,
             conversionRatesBuyLowMinVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[1].minVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[1].minVolume,
             conversionRatesBuyLowValueGHS:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[1].value.GHS,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[1].value.GHS,
             conversionRatesBuyLowValueNGN:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.buy[1].value.NGN,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.buy[1].value.NGN,
             conversionRatesSellMaxVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.sell[0].maxVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.sell[0].maxVolume,
             conversionRatesSellMinVolume:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.sell[0].minVolume,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.sell[0].minVolume,
             conversionRatesSellValueGHS:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.sell[0].value.GHS,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.sell[0].value.GHS,
             conversionRatesSellValueNGN:
-              BTCTransactionSettings &&
-              BTCTransactionSettings.conversionRates.sell[0].value.NGN,
+              buyTransactionsSettings &&
+              buyTransactionsSettings.conversionRates.sell[0].value.NGN,
           }}
         >
           <Title level={3}>Availability</Title>
@@ -795,17 +815,65 @@ const BTC = ({
             <TabPane
               tab={
                 <div>
-                  <span>All BTC</span>
+                  <span>Buy Coins</span>
                 </div>
               }
               key="1"
             >
               <DataTable
                 columns={columns}
-                transaction={BTCTransaction}
-                fetchTrans={getAllBTCTrans}
-                title={"BTC"}
-                data={BTCTransaction && BTCTransaction.transactions}
+                transaction={buyTransactions}
+                fetchTrans={getAllBuyTrans}
+                title={"Buy Coins"}
+                data={buyTransactions && buyTransactions.transactions}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <div>
+                  <span>Sell Coins</span>
+                </div>
+              }
+              key="2"
+            >
+              <DataTable
+                columns={columns}
+                transaction={sellTransactions}
+                fetchTrans={getAllSellTrans}
+                title={"Sell Coin"}
+                data={sellTransactions && sellTransactions.transactions}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <div>
+                  <span>Send Coins</span>
+                </div>
+              }
+              key="3"
+            >
+              <DataTable
+                columns={columns}
+                transaction={sendTransactions}
+                fetchTrans={getAllSendTrans}
+                title={"Send Coin"}
+                data={sendTransactions && sendTransactions.transactions}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <div>
+                  <span>P2P Coin Transfer</span>
+                </div>
+              }
+              key="4"
+            >
+              <DataTable
+                columns={columns}
+                transaction={p2pTransactions}
+                fetchTrans={getAllP2PTrans}
+                title={"P2P Coin TRansfer"}
+                data={p2pTransactions && p2pTransactions.transactions}
               />
             </TabPane>
           </Tabs>
@@ -817,18 +885,49 @@ const BTC = ({
 
 const mapStateToProps = (state) => ({
   loading: state.btc.loading,
-  BTCTransaction: state.btc.BTCTransaction,
+  buyTransactions: state.btc.buyTransactions,
+  sellTransactions: state.btc.sellTransactions,
+  sendTransactions: state.btc.sendTransactions,
+  p2pTransactions: state.btc.p2pTransactions,
+  buyDetails: state.btc.buyDetails,
+  sellDetails: state.btc.sellDetails,
+  sendDetails: state.btc.sendDetails,
+  p2pDetails: state.btc.p2pDetails,
   BTCDetails: state.btc.BTCDetails,
   selectedUser: state.users.userById,
-  BTCTransactionSettings: state.btc.BTCTransactionSettings,
+  buyTransactionsSettings: state.btc.buyTransactionsSettings,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getAllBTCTrans: (data) => {
-    dispatch(getAllBTCTransactions(data));
+  // getAllBTCTrans: (data) => {
+  //   dispatch(getAllbuyTransactionss(data));
+  // },
+  getAllBuyTrans: (data) => {
+    dispatch(getBuyCoinTransactions(data));
   },
-  getBTCTransById: (data) => {
-    dispatch(getBTCTransactionsById(data));
+  getAllSellTrans: (data) => {
+    dispatch(getSellCoinTransactions(data));
+  },
+  getAllSendTrans: (data) => {
+    dispatch(getSendCoinTransactions(data));
+  },
+  getAllP2PTrans: (data) => {
+    dispatch(getP2PCoinTransactions(data));
+  },
+  // getBTCTransById: (data) => {
+  //   dispatch(getbuyTransactionssById(data));
+  // },
+  getBuyTransById: (data) => {
+    dispatch(getBuyCoinTransactionsById(data));
+  },
+  getSellTransById: (data) => {
+    dispatch(getSellCoinTransactionsById(data));
+  },
+  getSendTransById: (data) => {
+    dispatch(getSendCoinTransactionsById(data));
+  },
+  getP2PTransById: (data) => {
+    dispatch(getP2PCoinTransactionsById(data));
   },
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));

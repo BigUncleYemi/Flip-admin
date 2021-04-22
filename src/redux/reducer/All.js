@@ -3,6 +3,7 @@ import { notification } from "antd";
 
 const initialState = {
   getDashboardData: null,
+  getWalletData: null,
   approveGiftCardTransaction: null,
   declineGiftCardTransaction: null,
   getNewGiftCardTransactions: null,
@@ -27,6 +28,15 @@ export default function reducer (state = initialState, action) {
       return{
         ...state,
         getDashboardData: action.payload,
+      };
+    case ActionTypes.GET_WALLET_BALANCES_DATA_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        getWalletData: action.payload,
       };
 
     case ActionTypes.GET_DASHBOARD_DATA:

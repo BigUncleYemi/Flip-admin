@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Statistic } from "antd";
 import StatisticWidget from "components/shared-components/StatisticWidget";
-import { getDashboardData } from "redux/actions/all";
+import { getDashboardData, getWalletBalances } from "redux/actions/all";
 import { Money } from "utils/helper";
+import { AUTH_TOKEN } from "redux/constants";
 
-const Home = ({ getDashboardData, dashboardData }) => {
+const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
   const typeUser = localStorage.getItem("type");
   const [totalUserData, setTotalUserData] = useState(0);
   const [ngn_available_balance, setNgnavailable_balance] = useState(0);
@@ -20,13 +21,15 @@ const Home = ({ getDashboardData, dashboardData }) => {
   const [today_gift_card_count, setToday_gift_card_count] = useState(0);
   const [new_gift_card_transaction, setNew_gift_card_transaction] = useState(0);
   useEffect(() => {
-    getDashboardData();
-  }, [getDashboardData]);
+    getDashboard();
+    getBalances();
+  }, [getDashboard, getBalances]);
   useEffect(() => {
+    console.log('data',dashboardData)
     dashboardData &&
-      dashboardData.dbMetrics &&
-      dashboardData.dbMetrics.NoOfAllUsers &&
-      setTotalUserData(dashboardData.dbMetrics.NoOfAllUsers);
+      dashboardData.metrics &&
+      dashboardData.metrics.NoOfAllUsers &&
+      setTotalUserData(dashboardData.metrics.NoOfAllUsers);
 
     dashboardData &&
       dashboardData.fwBalances &&
@@ -49,32 +52,32 @@ const Home = ({ getDashboardData, dashboardData }) => {
       setGhs_ledger_balance(dashboardData.fwBalances[1]?.ledger_balance);
 
     dashboardData &&
-      dashboardData.dbMetrics &&
-      dashboardData.dbMetrics.NoOfNewUsersToday &&
-      setNewUsersCount(dashboardData.dbMetrics.NoOfNewUsersToday);
+      dashboardData.metrics &&
+      dashboardData.metrics.NoOfNewUsersToday &&
+      setNewUsersCount(dashboardData.metrics.NoOfNewUsersToday);
 
     dashboardData &&
-      dashboardData.dbMetrics &&
-      dashboardData.dbMetrics.NoOfNewWithdrawalRequests &&
-      setNew_withdraw_req(dashboardData.dbMetrics.NoOfNewWithdrawalRequests);
+      dashboardData.metrics &&
+      dashboardData.metrics.NoOfNewWithdrawalRequests &&
+      setNew_withdraw_req(dashboardData.metrics.NoOfNewWithdrawalRequests);
 
     dashboardData &&
-      dashboardData.dbMetrics &&
-      dashboardData.dbMetrics.NoOfBTCTransactionsToday &&
-      setToday_btc_count(dashboardData.dbMetrics.NoOfBTCTransactionsToday);
+      dashboardData.metrics &&
+      dashboardData.metrics.NoOfBTCTransactionsToday &&
+      setToday_btc_count(dashboardData.metrics.NoOfBTCTransactionsToday);
 
     dashboardData &&
-      dashboardData.dbMetrics &&
-      dashboardData.dbMetrics.NoOfCardsTransactionsToday &&
+      dashboardData.metrics &&
+      dashboardData.metrics.NoOfCardsTransactionsToday &&
       setToday_gift_card_count(
-        dashboardData.dbMetrics.NoOfCardsTransactionsToday
+        dashboardData.metrics.NoOfCardsTransactionsToday
       );
 
     dashboardData &&
-      dashboardData.dbMetrics &&
-      dashboardData.dbMetrics.NoOfNewCardTransactions &&
+      dashboardData.metrics &&
+      dashboardData.metrics.NoOfNewCardTransactions &&
       setNew_gift_card_transaction(
-        dashboardData.dbMetrics.NoOfNewCardTransactions
+        dashboardData.metrics.NoOfNewCardTransactions
       );
   }, [dashboardData]);
   return (
@@ -94,8 +97,8 @@ const Home = ({ getDashboardData, dashboardData }) => {
                 value={
                   totalUserData
                   // dashboardData &&
-                  // dashboardData.dbMetrics &&
-                  // dashboardData.dbMetrics.NoOfAllUsers
+                  // dashboardData.metrics &&
+                  // dashboardData.metrics.NoOfAllUsers
                 }
               />
             </Col>
@@ -144,9 +147,9 @@ const Home = ({ getDashboardData, dashboardData }) => {
             >
               <Row gutter={16}>
                 {dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.VolumeOfBTCTransactionsToday &&
-                  dashboardData.dbMetrics.VolumeOfBTCTransactionsToday.map(
+                  dashboardData.metrics &&
+                  dashboardData.metrics.VolumeOfBTCTransactionsToday &&
+                  dashboardData.metrics.VolumeOfBTCTransactionsToday.map(
                     (elm, i) => (
                       <Col xs={24} sm={24} md={24} lg={24} xl={8} key={i}>
                         <StatisticWidget
@@ -160,9 +163,9 @@ const Home = ({ getDashboardData, dashboardData }) => {
                     )
                   )}
                 {dashboardData &&
-                  dashboardData.dbMetrics &&
-                  dashboardData.dbMetrics.VolumeOfCardsTransactionsToday &&
-                  dashboardData.dbMetrics.VolumeOfCardsTransactionsToday.map(
+                  dashboardData.metrics &&
+                  dashboardData.metrics.VolumeOfCardsTransactionsToday &&
+                  dashboardData.metrics.VolumeOfCardsTransactionsToday.map(
                     (elm, i) => (
                       <Col xs={24} sm={24} md={24} lg={24} xl={8} key={i}>
                         <StatisticWidget
@@ -176,7 +179,8 @@ const Home = ({ getDashboardData, dashboardData }) => {
               </Row>
             </Col>
           </Row>
-          {typeUser !== "ADMIN_USER" && (
+          
+          {typeUser !== "SUPER_USER" && (
             <Row gutter={16} style={{ marginBottom: 20 }}>
               <Col xs={24} sm={24} md={24} lg={24} xl={12}>
                 <StatisticWidget
@@ -239,19 +243,57 @@ const Home = ({ getDashboardData, dashboardData }) => {
             </Row>
           )}
         </Col>
+        
       </Row>
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        {console.log('wallet', walletData)}
+        {typeUser === "SUPER_USER" && walletData &&Object.keys(walletData).map((item) => (
+            
+              
+              <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+                
+                <StatisticWidget
+                  title={`${item} Master Wallet Stat`}
+                  value={
+                    <div>
+                      <Statistic
+                        title={"Available Balance"}
+                        value={Money(
+                          walletData[item].available_balance | 0 ,
+                          item
+                        )}
+                      />
+                      <Statistic
+                        title={"Ledger Balance"}
+                        value={Money(
+                          walletData[item].ledger_balance,
+                          item
+                        )}
+                      />
+                    </div>
+                  }
+                />
+              </Col>
+              
+          ))}
+      </Row>
+      
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
   dashboardData: state.all.getDashboardData,
+  walletData: state.all.getWalletData,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDashboardData: () => {
+  getDashboard: () => {
     dispatch(getDashboardData());
   },
+  getBalances: () => {
+    dispatch(getWalletBalances());
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

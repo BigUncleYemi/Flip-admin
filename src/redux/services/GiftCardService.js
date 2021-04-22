@@ -14,7 +14,7 @@ giftCardService.getGiftCardCodes = function (params) {
 
 giftCardService.approveGiftCardTransaction = function (data) {
   return fetch({
-    url: `/api/admin/cards/${data.transactionId}/approve-transaction`,
+    url: `/admin/cards/${data.transactionId}/approve`,
     method: 'post',
     data: { 
       "debitWallet": data.debitWallet,
@@ -24,7 +24,7 @@ giftCardService.approveGiftCardTransaction = function (data) {
 
 giftCardService.declineGiftCardTransaction = function (data) {
   return fetch({
-    url: `/api/admin/cards/${data.transactionId}/decline-transaction`,
+    url: `/admin/cards/${data.transactionId}/decline`,
     method: 'post',
     data: { 
       "comments": data.comment
@@ -45,7 +45,7 @@ giftCardService.getNewGiftCardTransactions = function (params) {
 
 giftCardService.getGiftCardTransactions = function (params) {
   return fetch({
-    url: `/api/admin/cards/get-all-transactions`,
+    url: `/admin/cards/transactions`,
     method: 'get',
     params: {
       skip: params.skip,
@@ -56,7 +56,7 @@ giftCardService.getGiftCardTransactions = function (params) {
 
 giftCardService.getGiftCardTransactionDetails = function (data) {
   return fetch({
-    url: `/api/admin/cards/${data.transactionId}`,
+    url: `/admin/cards/${data.transactionId}`,
     method: 'get',
   })
 }

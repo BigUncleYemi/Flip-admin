@@ -67,7 +67,8 @@ DataTable.propTypes = {
   fetchTrans: PropTypes.func,
   transaction: PropTypes.object,
   columns: PropTypes.array,
-  title: PropTypes.string
+  title: PropTypes.string,
+  data: PropTypes.array
 }
 
 export default DataTable;

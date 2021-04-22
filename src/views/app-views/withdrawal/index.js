@@ -108,7 +108,7 @@ const Withdrawal = ({
   const columns = [
     {
       title: "Date",
-      dataIndex: "createdAt",
+      dataIndex: "created_at",
       render: (createdAt) => `${date(createdAt)}`,
     },
     {
@@ -418,7 +418,7 @@ const Withdrawal = ({
                 description={date(
                   withdrawalDetails &&
                     withdrawalDetails.transaction &&
-                    withdrawalDetails.transaction.createdAt
+                    withdrawalDetails.transaction.created_at
                 )}
               />
             </List.Item>

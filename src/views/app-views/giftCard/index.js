@@ -185,7 +185,7 @@ const GiftCard = ({
   }, [Trigger]);
   useEffect(() => {
     getAllGiftCard({ skip: 0, limit: 10 });
-    getNewGiftCard({ skip: 0, limit: 10 });
+    // getNewGiftCard({ skip: 0, limit: 10 });
     getGiftCardList({ cardCode: "all" });
   }, [getAllGiftCard, getNewGiftCard, getGiftCardList]);
   useEffect(() => {
@@ -795,10 +795,26 @@ const GiftCard = ({
             <TabPane
               tab={
                 <div>
-                  <span>New Submitted Gift Card</span>
+                  <span>All Gift Card</span>
                 </div>
               }
               key="1"
+            >
+              <DataTable
+                columns={columns}
+                transaction={giftCard}
+                fetchTrans={getAllGiftCard}
+                title={"Gift Card"}
+                data={giftCard && giftCard.transactions}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <div>
+                  <span>New Submitted Gift Card</span>
+                </div>
+              }
+              key="2"
             >
               <DataTable
                 columns={columns}
@@ -808,7 +824,7 @@ const GiftCard = ({
                 data={newGiftCard && newGiftCard.transactions}
               />
             </TabPane>
-            <TabPane
+            {/* <TabPane
               tab={
                 <div>
                   <span>All Gift Card</span>
@@ -823,7 +839,7 @@ const GiftCard = ({
                 title={"Gift Card"}
                 data={giftCard && giftCard.transactions}
               />
-            </TabPane>
+            </TabPane> */}
           </Tabs>
         </Col>
       </Row>

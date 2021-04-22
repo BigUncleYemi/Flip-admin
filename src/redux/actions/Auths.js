@@ -14,6 +14,7 @@ const LoginUser = data => async dispatch => {
         type: actionTypes.LOGIN_SUCCESS,
         payload: response.data
       });
+      // console.log('response login',response.data.data )
       localStorage.setItem(actionTypes.AUTH_TOKEN, response.data.token);
       localStorage.setItem(actionTypes.AUTH_TOKEN_ID, response.data.user.id);
       localStorage.setItem("type", response.data.user.type);

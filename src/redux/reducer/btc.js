@@ -4,8 +4,16 @@ import * as actionTypes from "../constants";
 const initState = {
   loading: false,
   error: null,
-  BTCTransaction: null,
-  BTCDetails: null,
+  buyTransactions:null,
+  sellTransactions:null,
+  sendTransactions:null,
+  p2pTransactions:null,
+  // BTCTransaction: null,
+  // BTCDetails: null,
+  buyDetails:null,
+  sellDetails:null,
+  sendDetails:null,
+  p2pDetails:null,
   BTCTransactionSettings: null,
   UpdateBTCTransactionSettings: null,
 }
@@ -13,9 +21,12 @@ const key = actionTypes.KEY;
 
 const BTCTransactionReducer = (state = initState, action) => {
 	switch (action.type) {
-    case actionTypes.GET_ALL_BTC_TRANSACTIONS:
-    case actionTypes.UPDATE_BTC_SETTING:
-    case actionTypes.GET_BTC_SETTING:
+    case actionTypes.GET_ALL_COINS_BUY_TRANSACTIONS_PENDING:
+    case actionTypes.GET_ALL_COINS_SELL_TRANSACTIONS_PENDING:
+    case actionTypes.GET_ALL_COINS_SEND_TRANSACTIONS_PENDING:
+    case actionTypes.GET_ALL_COINS_P2P_TRANSACTIONS_PENDING:
+    case actionTypes.UPDATE_COINS_SETTING_PENDING:
+    case actionTypes.GET_COINS_SETTING_PENDING:
       notification.info({
         message: "Loading.....",
         duration: 0,
@@ -26,18 +37,21 @@ const BTCTransactionReducer = (state = initState, action) => {
         loading: true,
         error: null,
       }
-    case actionTypes.GET_BTC_DETAILS:
+    case actionTypes.GET_COIN_DETAILS_BUY_TRANSACTIONS_PENDING:
+    case actionTypes.GET_COIN_DETAILS_SELL_TRANSACTIONS_PENDING:
+    case actionTypes.GET_COIN_DETAILS_SEND_TRANSACTIONS_PENDING:
+    case actionTypes.GET_COIN_DETAILS_P2P_TRANSACTIONS_PENDING:
       notification.info({
         message: "loading.....",
         key,
       })
       return{
         ...state,
-        BTCDetails: null,
+        // BTCDetails: null,
         loading: false,
         error: null,
       }
-    case actionTypes.GET_BTC_SETTING_SUCCESS:
+    case actionTypes.GET_COINS_SETTING_SUCCESS:
       notification.success({
         message: "Successful",
         duration: 0,
@@ -49,29 +63,95 @@ const BTCTransactionReducer = (state = initState, action) => {
         loading: true,
         error: null,
       }
-    case actionTypes.GET_ALL_BTC_TRANSACTIONS_SUCCESS:
+    case actionTypes.GET_ALL_COINS_BUY_TRANSACTIONS_SUCCESS:
       notification.success({
         message: "Successful",
         key,
       })
       return{
         ...state,
-        BTCTransaction: action.payload,
+        buyTransactions: action.payload,
         loading: false,
         error: null,
       }
-    case actionTypes.GET_BTC_DETAILS_SUCCESS:
+    case actionTypes.GET_ALL_COINS_SELL_TRANSACTIONS_SUCCESS:
       notification.success({
         message: "Successful",
         key,
       })
       return{
         ...state,
-        BTCDetails: action.payload,
+        sellTransactions: action.payload,
         loading: false,
         error: null,
       }
-    case actionTypes.UPDATE_BTC_SETTING_SUCCESS:
+    case actionTypes.GET_ALL_COINS_SEND_TRANSACTIONS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        sendTransactions: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.GET_ALL_COINS_P2P_TRANSACTIONS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        p2pTransactions: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.GET_COIN_DETAILS_BUY_TRANSACTIONS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        buyDetails: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.GET_COIN_DETAILS_SELL_TRANSACTIONS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        sellDetails: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.GET_COIN_DETAILS_SEND_TRANSACTIONS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        sendDetails: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.GET_COIN_DETAILS_P2P_TRANSACTIONS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        p2pDetails: action.payload,
+        loading: false,
+        error: null,
+      }
+    case actionTypes.UPDATE_COINS_SETTING_SUCCESS:
       notification.success({
         message: "Successful",
         key,
@@ -82,10 +162,16 @@ const BTCTransactionReducer = (state = initState, action) => {
         loading: false,
         error: null,
       }
-    case actionTypes.GET_ALL_BTC_TRANSACTIONS_FAILED:
-    case actionTypes.GET_BTC_DETAILS_FAILED:
-    case actionTypes.UPDATE_BTC_SETTING_FAILED:
-    case actionTypes.GET_BTC_SETTING_FAILED:
+    case actionTypes.GET_COIN_DETAILS_BUY_TRANSACTIONS_FAILED:
+    case actionTypes.GET_COIN_DETAILS_SELL_TRANSACTIONS_FAILED:
+    case actionTypes.GET_COIN_DETAILS_SEND_TRANSACTIONS_FAILED:
+    case actionTypes.GET_COIN_DETAILS_P2P_TRANSACTIONS_FAILED:
+    case actionTypes.GET_ALL_COINS_BUY_TRANSACTIONS_FAILED:
+    case actionTypes.GET_ALL_COINS_SELL_TRANSACTIONS_FAILED:
+    case actionTypes.GET_ALL_COINS_SEND_TRANSACTIONS_FAILED:
+    case actionTypes.GET_ALL_COINS_P2P_TRANSACTIONS_FAILED:
+    case actionTypes.UPDATE_COINS_SETTING_FAILED:
+    case actionTypes.GET_COINS_SETTING_FAILED:
       return{
         ...state,
         loading: false,

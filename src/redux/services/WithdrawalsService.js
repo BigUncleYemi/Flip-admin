@@ -4,7 +4,7 @@ const withdrawalService = {}
 
 withdrawalService.approveWithdrawalTransaction = function (data) {
   return fetch({
-    url: `/api/admin/withdrawals/${data.transactionId}/approve-transaction`,
+    url: `/admin/withdrawals/${data.transactionId}/approve`,
     method: 'post',
     data: {
       "debitWallet": data.debitWallet,
@@ -14,7 +14,7 @@ withdrawalService.approveWithdrawalTransaction = function (data) {
 
 withdrawalService.declineWithdrawalTransaction = function (data) {
   return fetch({
-    url: `/api/admin/withdrawals/${data.transactionId}/decline-transaction`,
+    url: `/admin/withdrawals/${data.transactionId}/decline`,
     method: 'post',
     data: { //INFO this is set default cos we only doing naira here
       "comments": data.comment
@@ -24,7 +24,7 @@ withdrawalService.declineWithdrawalTransaction = function (data) {
 
 withdrawalService.getNewWithdrawalTransactions = function (params) {
   return fetch({
-    url: `/api/admin/withdrawals/get-new-transactions`,
+    url: `/admin/withdrawals/get-new-transactions`,
     method: 'get',
     params: {
       skip: params.skip,
@@ -35,25 +35,25 @@ withdrawalService.getNewWithdrawalTransactions = function (params) {
 
 withdrawalService.getWithdrawalTransactions = function (params) {
   return fetch({
-    url: `/api/admin/withdrawals/get-all-transactions`,
+    url: `/admin/withdrawals/transactions`,
     method: 'get',
     params: {
-      skip: params.skip,
-      limit: params.limit
+      page: params.skip,
+      per_page: params.limit
     }
   })
 }
 
 withdrawalService.getWithdrawalTransactionDetails = function (data) {
   return fetch({
-    url: `/api/admin/withdrawals/${data.transactionId}`,
+    url: `/admin/withdrawals/${data.transactionId}`,
     method: 'get',
   })
 }
 
 withdrawalService.updateWithdrawalSettings = function (data) {
   return fetch({
-    url: '/api/admin/withdrawals/settings',
+    url: '/admin/withdrawals/settings',
     method: 'put',
     data: data
   })
@@ -61,7 +61,7 @@ withdrawalService.updateWithdrawalSettings = function (data) {
 
 withdrawalService.getWithdrawalSettings = function () {
   return fetch({
-    url: '/api/admin/withdrawals/settings',
+    url: '/admin/withdrawals/settings',
     method: 'get',
   })
 }

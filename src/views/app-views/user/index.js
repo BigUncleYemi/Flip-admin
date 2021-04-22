@@ -23,7 +23,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
   const columns = [
     {
       title: "Date Created",
-      dataIndex: "createdAt",
+      dataIndex: "created_at",
       render: (createdAt) => `${date(createdAt)}`,
     },
     {
@@ -32,11 +32,13 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
     },
     {
       title: "First Name",
-      dataIndex: "firstName",
+      dataIndex: "Profile",
+      render: (data) => `${data.first_name}`,
     },
     {
       title: "Last Name",
-      dataIndex: "lastName",
+      dataIndex: "Profile",
+      render: (data) => `${data.last_name}`,
     },
     {
       title: "User Type",
@@ -48,16 +50,16 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
     },
     {
       title: "Verification",
-      dataIndex: "verification",
+      dataIndex: "is_verified",
       render: (verification) => (
         <p
           className={
-            verification.email.isVerified
+            verification
               ? "ant-tag ant-tag-green"
               : "ant-tag ant-tag-warning"
           }
         >
-          {verification.email.isVerified ? "Verified" : "Unverified"}
+          {verification ? "Verified" : "Unverified"}
         </p>
       ),
     },
@@ -75,6 +77,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
 
   return (
     <>
+    {console.log('user', selectedUser)}
       <ModalWrapper
         isModalVisible={
           selectedUser && selectedUser.user ? isModalVisible : false
@@ -90,18 +93,18 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
               {`${
                 selectedUser &&
                 selectedUser.user &&
-                selectedUser.user.firstName[0]
+                selectedUser.user.Profile.first_name[0]
               } ${
                 selectedUser &&
                 selectedUser.user &&
-                selectedUser.user.lastName[0]
+                selectedUser.user.Profile.last_name[0]
               }`}
             </Avatar>
             <span>
-              {selectedUser && selectedUser.user && selectedUser.user.firstName}
+              {selectedUser && selectedUser.user && selectedUser.user.Profile.first_name}
             </span>{" "}
             <span>
-              {selectedUser && selectedUser.user && selectedUser.user.lastName}
+              {selectedUser && selectedUser.user && selectedUser.user.Profile.last_name}
             </span>
           </div>
           <div style={{ margin: 10 }}>
@@ -119,7 +122,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                 description={
                   selectedUser &&
                   selectedUser.user &&
-                  selectedUser.user.firstName
+                  selectedUser.user.Profile.first_name
                 }
               />
             </List.Item>
@@ -129,7 +132,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                 description={
                   selectedUser &&
                   selectedUser.user &&
-                  selectedUser.user.lastName
+                  selectedUser.user.Profile.last_name
                 }
               />
             </List.Item>
@@ -161,11 +164,11 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
               <List.Item.Meta
                 title={"User Referral Code"}
                 description={
-                  selectedUser && selectedUser.user && selectedUser.user.referralCode
+                  selectedUser && selectedUser.user && selectedUser.user.referral_code
                 }
               />
             </List.Item>
-            <List.Item>
+            {/* <List.Item>
               <List.Item.Meta
                 title={"NGN Wallet Balance"}
                 description={
@@ -189,8 +192,8 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                   </div>
                 }
               />
-            </List.Item>
-            <List.Item>
+            </List.Item> */}
+            {/* <List.Item>
               <List.Item.Meta
                 title={"GHS Wallet Balance"}
                 description={
@@ -214,8 +217,8 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                   </div>
                 }
               />
-            </List.Item>
-            <List.Item>
+            </List.Item> */}
+            {/* <List.Item>
               <List.Item.Meta
                 title={"BTC Wallet Balance"}
                 description={
@@ -239,14 +242,14 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                   </div>
                 }
               />
-            </List.Item>
+            </List.Item> */}
             <List.Item>
               <List.Item.Meta
                 title={"Date Created"}
                 description={date(
                   selectedUser &&
                     selectedUser.user &&
-                    selectedUser.user.createdAt
+                    selectedUser.user.created_at
                 )}
               />
             </List.Item>
@@ -256,7 +259,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                 description={date(
                   selectedUser &&
                     selectedUser.user &&
-                    selectedUser.user.updatedAt
+                    selectedUser.user.updated_at
                 )}
               />
             </List.Item>
@@ -269,7 +272,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                       Email:{" "}
                       {selectedUser &&
                       selectedUser.user &&
-                      selectedUser.user.verification.email.isVerified
+                      selectedUser.user.is_verified
                         ? "✅"
                         : "🚫"}
                     </span>
@@ -277,7 +280,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                       Phone Number:{" "}
                       {selectedUser &&
                       selectedUser.user &&
-                      selectedUser.user.verification.phoneNumber.isVerified
+                      selectedUser.user.Profile.is_phone_verified
                         ? "✅"
                         : "🚫"}
                     </span>

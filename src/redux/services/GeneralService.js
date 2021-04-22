@@ -4,7 +4,7 @@ const generalService = {}
 
 generalService.checkHealth = function () {
   return fetch({
-    url: '/api/health',
+    url: '/health',
     method: 'get',
     headers: {
       "public-request": "true",
@@ -14,7 +14,7 @@ generalService.checkHealth = function () {
 
 generalService.getAllUsers = function (params) {
   return fetch({
-    url: '/api/admin/user-account',
+    url: '/user-account',
     method: 'get',
     params: {
       skip: params.skip,
@@ -25,7 +25,7 @@ generalService.getAllUsers = function (params) {
 
 generalService.getUserDetails = function (params) {
   return fetch({
-    url: `/api/admin/user-account/${params.id}`,
+    url: `/user-account/${params.id}`,
     method: 'get',
   })
 }
