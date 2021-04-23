@@ -1,15 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Typography, Avatar, List } from "antd";
-import { getAllUser, getUserDetailsById } from "redux/actions/user";
+import {
+  Row,
+  Col,
+  Typography,
+  Avatar,
+  List,
+  Button,
+  Popconfirm,
+  Select,
+  Input,
+  Popover,
+  Modal,
+} from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  getAllUser,
+  getUserDetailsById,
+  makeUserAdmin,
+  removeUserAdmin,
+} from "redux/actions/user";
 import DataTable from "components/layout-components/DataTable";
 import { date } from "utils/helper";
 import styles from "../../styles.module.scss";
 import ModalWrapper from "components/layout-components/Modal";
 
-const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
+const { Option } = Select;
+const { confirm } = Modal;
+
+const User = ({
+  getAllUsers,
+  getUserDetailsById,
+  users,
+  selectedUser,
+  makeAdmin,
+  removeAdmin,
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [Trigger, setTrigger] = useState(false);
+  const [comment, setComment] = useState("");
   const { Title } = Typography;
+  const { TextArea } = Input;
   useEffect(() => {
     getAllUsers({ skip: 0, limit: 10 });
     // getUserDetailsById({id: "ac65bd59-a8b9-4f6c-98d8-ac32da3107a1"})
@@ -18,6 +49,75 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
   const handleAction = (id) => {
     setIsModalVisible(true);
     getUserDetailsById({ id });
+  };
+
+  const content = (
+    <div>
+      <p>
+        Please provide a reason for declining the request.(min of ten
+        characters)
+      </p>
+      <div style={{ marginBottom: 10 }}>
+        <TextArea
+          required
+          value={comment}
+          minLength={10}
+          rows={4}
+          // onChange={(e) => setComment(e.target.value)}
+        />
+      </div>
+      <Popconfirm
+        placement="top"
+        title={"Are you sure you want to Decline this request?"}
+        onConfirm={() => console.log("declined")}
+        okText="Decline"
+        cancelText="No"
+      >
+        <Button
+          type="primary"
+          danger
+          disabled={!comment || comment.length < 10}
+        >
+          Decline
+        </Button>
+      </Popconfirm>
+    </div>
+  );
+  // const handleApproval = () => {
+  //   confirm({
+  //     title: `Please select wallet to complete the action with.`,
+  //     icon: <ExclamationCircleOutlined />,
+  //     content: (
+  //       <div>
+  //         <Select
+  //           // onChange={(value) => setDebitWallet(value)}
+  //           style={{ width: "100%" }}
+  //         >
+  //           <Option value="NGN">NGN Wallet</Option>
+  //           <Option value="GHS">GHS Wallet</Option>
+  //         </Select>
+  //       </div>
+  //     ),
+  //     onOk() {
+  //       setTrigger(true);
+  //     },
+  //     onCancel() {
+  //       console.log("Cancel");
+  //     },
+  //   });
+  // };
+  const handleDecline = () => {
+    console.log("decline");
+    // setIsModalVisible(true);
+    // declineWithdrawal({
+    //   transactionId:
+    //     withdrawalDetails &&
+    //     withdrawalDetails.transaction &&
+    //     withdrawalDetails.transaction.id,
+    //   comment,
+    // });
+    // getAllWithdrawals({ skip: 0, limit: 10 });
+    // getNewWithdrawals({ skip: 0, limit: 10 });
   };
 
   const columns = [
@@ -54,9 +154,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
       render: (verification) => (
         <p
           className={
-            verification
-              ? "ant-tag ant-tag-green"
-              : "ant-tag ant-tag-warning"
+            verification ? "ant-tag ant-tag-green" : "ant-tag ant-tag-warning"
           }
         >
           {verification ? "Verified" : "Unverified"}
@@ -77,7 +175,7 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
 
   return (
     <>
-    {console.log('user', selectedUser)}
+      {console.log("user", selectedUser)}
       <ModalWrapper
         isModalVisible={
           selectedUser && selectedUser.user ? isModalVisible : false
@@ -101,10 +199,14 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
               }`}
             </Avatar>
             <span>
-              {selectedUser && selectedUser.user && selectedUser.user.Profile.first_name}
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.Profile.first_name}
             </span>{" "}
             <span>
-              {selectedUser && selectedUser.user && selectedUser.user.Profile.last_name}
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.Profile.last_name}
             </span>
           </div>
           <div style={{ margin: 10 }}>
@@ -156,7 +258,9 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
               <List.Item.Meta
                 title={"User Name"}
                 description={
-                  selectedUser && selectedUser.user && selectedUser.user.username
+                  selectedUser &&
+                  selectedUser.user &&
+                  selectedUser.user.username
                 }
               />
             </List.Item>
@@ -164,10 +268,13 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
               <List.Item.Meta
                 title={"User Referral Code"}
                 description={
-                  selectedUser && selectedUser.user && selectedUser.user.referral_code
+                  selectedUser &&
+                  selectedUser.user &&
+                  selectedUser.user.referral_code
                 }
               />
             </List.Item>
+
             {/* <List.Item>
               <List.Item.Meta
                 title={"NGN Wallet Balance"}
@@ -287,6 +394,61 @@ const User = ({ getAllUsers, getUserDetailsById, users, selectedUser }) => {
                   </div>
                 }
               />
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.type in {BASIC_USER:"1"} && (
+                  <div style={{ display: "flex" }}>
+                    <Popconfirm
+                      placement="top"
+                      title={"Are you sure you want to make this user admin?"}
+                      onConfirm={() =>
+                        makeAdmin({ userId: selectedUser.user.Profile.user_id })
+                      }
+                      okText="Approve"
+                      cancelText="No"
+                    >
+                      <Button type="primary" style={{ marginRight: 10 }}>
+                        Make Admin
+                      </Button>
+                    </Popconfirm>
+                    {/* <Popover content={content} title="Title" trigger="click">
+                    <Button type="primary" danger>
+                      Decline
+                    </Button>
+                  </Popover> */}
+                  </div>
+                )}
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.type in {SUPER_USER:"1", ADMIN_USER:"2"} && (
+                  <div style={{ display: "flex" }}>
+                    {/* <Popconfirm
+                    placement="top"
+                    title={"Are you sure you want to Approve this request?"}
+                    onConfirm={handleApproval}
+                    okText="Approve"
+                    cancelText="No"
+                  >
+                    <Button type="primary" style={{ marginRight: 10 }}>
+                      Approve
+                    </Button>
+                  </Popconfirm> */}
+                    <Popconfirm 
+                    placement="top"
+                    title={"Are you sure you want to remove this user's admin privilege?"}
+                    onConfirm={()=>{
+                      removeAdmin({userId:selectedUser.user.Profile.user_id })
+                    }}
+                    okText="Remove"
+                    cancelText="No"
+                    // content={content}
+                    >
+                      <Button type="primary" danger>
+                        Remove Admin
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                )}
             </List.Item>
           </div>
         </div>
@@ -326,6 +488,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getUserDetailsById: (userId) => {
     dispatch(getUserDetailsById(userId));
+  },
+  makeAdmin: (data) => {
+    dispatch(makeUserAdmin(data));
+  },
+  removeAdmin: (data) => {
+    dispatch(removeUserAdmin(data));
   },
 });
 

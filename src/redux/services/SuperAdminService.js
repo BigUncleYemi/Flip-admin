@@ -12,6 +12,16 @@ superAdminServices.inviteAdmin = function (data) {
   });
 };
 
+superAdminServices.makeAdmin = function (data) {
+  return fetch({
+    url: "/admin/user-account/add-admin",
+    method: "post",
+    data: {
+      userId: data.userId,
+    },
+  });
+};
+
 superAdminServices.getAllAdminInvite = function (params) {
   return fetch({
     url: "/api/admin/super/user-account/user-invite",
@@ -33,13 +43,25 @@ superAdminServices.deleteUserInvite = function (params) {
   });
 };
 
+superAdminServices.removeAdmin = function (params) {
+  let data = {};
+  data.userId = params.id;
+  return fetch({
+    url: `/admin/user-account/remove-admin/${params.id}`,
+    method: "post",
+    data: {
+      userId: data.userId,
+    },
+  });
+};
+
 superAdminServices.getAdminLogs = function (params) {
   return fetch({
-    url: "/api/admin/super/activities",
+    url: "/admin/user-account/activities",
     method: "get",
     params: {
-      skip: params.skip,
-      limit: params.limit,
+      page: params.skip | 0,
+      per_page: params.limit | 0,
       ...params,
     },
   });

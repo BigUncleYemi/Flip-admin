@@ -382,7 +382,7 @@ const Withdrawal = ({
 
   return (
     <div>
-      <UserModal />
+      {/* <UserModal /> */}
       <ModalWrapper
         isModalVisible={
           withdrawalDetails && withdrawalDetails.transaction

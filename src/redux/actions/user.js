@@ -1,3 +1,4 @@
+import superAdminServices from "redux/services/SuperAdminService";
 import * as actionTypes from "../constants";
 import generalService from "../services/GeneralService";
 // import { history } from "../store";
@@ -52,6 +53,59 @@ const GetAllUser = (params) => async dispatch => {
 export const getAllUser = (params) => dispatch => {
   dispatch(GetAllUser(params));
 };// done
+
+const MakeUserAdmin = data => async dispatch => {
+  dispatch({
+    type: actionTypes.MAKE_USER_ADMIN_PENDING,
+  })
+  await superAdminServices
+    .makeAdmin(data)
+    .then((response) => {
+      dispatch({
+        type: actionTypes.MAKE_USER_ADMIN_SUCCESS,
+        payload: response.data
+      });
+      dispatch(GetAllUser({skip: 0, limit: 10}));
+    })
+    .catch(err => {
+      dispatch({
+        type: actionTypes.MAKE_USER_ADMIN_FAILED,
+        payload: err
+      });
+    });
+  return;
+}// done
+
+export const makeUserAdmin = data => dispatch => {
+  dispatch(MakeUserAdmin(data));
+};// done
+
+const RemoveUserAdmin = data => async dispatch => {
+  dispatch({
+    type: actionTypes.REMOVE_USER_ADMIN_PENDING,
+  })
+  await superAdminServices
+    .makeAdmin(data)
+    .then((response) => {
+      dispatch({
+        type: actionTypes.REMOVE_USER_ADMIN_SUCCESS,
+        payload: response.data
+      });
+      dispatch(GetAllUser({skip: 0, limit: 10}));
+    })
+    .catch(err => {
+      dispatch({
+        type: actionTypes.REMOVE_USER_ADMIN_FAILED,
+        payload: err
+      });
+    });
+  return;
+}// done
+
+export const removeUserAdmin = data => dispatch => {
+  dispatch(RemoveUserAdmin(data));
+};// done
+
 
 const LogOutUser = () => async (dispatch) => {
   dispatch({

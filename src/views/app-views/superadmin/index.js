@@ -102,7 +102,7 @@ const SuperAdmin = ({
   const [wallet, setWallet] = useState({});
   const [queryDate, setQueryData] = useState(false);
   const [actionTypeSel, setActionTypeSel] = useState("");
-  const [actionBy, setActionBy] = useState("");
+  const [actionByEmail, setActionBy] = useState("");
   const [loader, setLoader] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
@@ -117,7 +117,7 @@ const SuperAdmin = ({
     // eslint-disable-next-line
   }, [inviteAdminDone]);
   useEffect(() => {
-    getAllAdminInvite({ skip: 0, limit: 10 });
+    // getAllAdminInvite({ skip: 0, limit: 10 });
     getAllAdminUserLogs({ skip: 0, limit: 10 });
   }, [getAllAdminInvite, getAllAdminUserLogs]);
   useEffect(() => {
@@ -133,15 +133,15 @@ const SuperAdmin = ({
       skip: 0,
       limit: pagination.pageSize,
       actionType: actionTypeSel,
-      actionBy
+      actionByEmail
     });
     // setLoading(false);
     // eslint-disable-next-line
-  }, [actionTypeSel, actionBy]);
+  }, [actionTypeSel,actionByEmail]);
 
   useEffect(() => {
     AppFetch({
-      url: `/api/admin/super/misc/wallet-balances`,
+      url: `/admin/misc/wallet-balances`,
       method: "GET",
     }).then((response) => {
       setWallet(response.data);
@@ -163,7 +163,7 @@ const SuperAdmin = ({
       skip: (params.pagination.current - 1) * params.pagination.pageSize,
       limit: params.pagination.pageSize,
       actionType: actionTypeSel,
-      actionBy
+      actionByEmail
     });
     setPagination({
       ...params.pagination,
@@ -244,7 +244,10 @@ const SuperAdmin = ({
     setActionTypeSel(value);
   }
 
-const onSearch = value => setActionBy(value);
+const onSearch = value => {
+  setActionBy(value)
+  console.log('searched', value)
+};
 
   return (
     <div>
@@ -359,7 +362,7 @@ const onSearch = value => setActionBy(value);
               </Select>
             </Col>
             <Col span={6}>
-              <p>Filter By Action By</p>
+              <p>Filter By Admin Email</p>
               <Search
                 placeholder="Search by admin email"
                 allowClear
@@ -404,12 +407,12 @@ const onSearch = value => setActionBy(value);
                   </Timeline.Item>
                 ))}
               </Timeline>
-              <Pagination
+              {/* <Pagination
                 pageSize={pagination.pageSize}
                 current={pagination.current}
                 onChange={handleTableChange}
                 total={adminLog && adminLog.meta && adminLog.meta.count}
-              />
+              /> */}
             </Col>
           </Row>
         </TabPane>
