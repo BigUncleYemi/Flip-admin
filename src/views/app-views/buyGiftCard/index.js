@@ -564,7 +564,8 @@ const BuyGiftCard = ({
           md={24}
           lg={18}
         >
-          <Tabs
+          <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} />
+          {/* <Tabs
             defaultActiveKey="1"
             onChange={callback}
             style={{ background: "white" }}
@@ -577,13 +578,13 @@ const BuyGiftCard = ({
               }
               key="1"
             >
-              {/* <DataTable
+              <DataTable
                 columns={columns}
                 transaction={giftCard}
                 fetchTrans={getAllGiftCard}
                 title={"Gift Card"}
                 data={giftCard && giftCard.transactions}
-              /> */}
+              />
               <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} />
             </TabPane>
             <TabPane
@@ -602,7 +603,7 @@ const BuyGiftCard = ({
                 data={newGiftCard && newGiftCard.transactions}
               />
             </TabPane>
-          </Tabs>
+          </Tabs> */}
         </Col>
       </Row>
     </div>

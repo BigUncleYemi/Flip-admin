@@ -98,6 +98,12 @@ export default function reducer (state = initialState, action) {
         ...state,
         updateWithdrawalsSettings: action.payload,
       };
+    case ActionTypes.GET_WALLET_BALANCES_DATA_FAILED:
+      notification.error({
+        message: "Failed",
+        key,
+      })
+      return state
     default:
       return state;
   }

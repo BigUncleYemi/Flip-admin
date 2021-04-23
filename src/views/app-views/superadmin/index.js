@@ -30,6 +30,7 @@ import styles from "../../styles.module.scss";
 import ModalWrapper from "components/layout-components/Modal";
 import AppFetch from "auth/FetchInterceptor";
 import { Money } from "utils/helper";
+import { getAllUser } from "redux/actions/user";
 
 const convertToProperName = (name) => {
   return name.split("_").map(word => `${word[0].toUpperCase()}${word.slice(1,)}`).join(" ")
@@ -104,12 +105,21 @@ const SuperAdmin = ({
   const [actionTypeSel, setActionTypeSel] = useState("");
   const [actionByEmail, setActionBy] = useState("");
   const [loader, setLoader] = useState(false);
+  const [usersFromAdmin, setUsersFromAdmin] = useState([])
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: adminLog && adminLog.meta && adminLog.meta.limit,
     total: adminLog && adminLog.meta && adminLog.meta.count,
   });
+
+  useEffect(() => {
+    console.log('admin users', admins)
+    setUsersFromAdmin(
+      admins?.users?.filter((item)=> item.type !== "BASIC_USER")
+    )
+  }, [admins])
+
   useEffect(() => {
     if (inviteAdminDone && isModalVisible) {
       setIsModalVisible(false);
@@ -178,12 +188,16 @@ const SuperAdmin = ({
   const columns = [
     {
       title: "Date Created",
-      dataIndex: "createdAt",
+      dataIndex: "created_at",
       render: (createdAt) => `${date(createdAt)}`,
     },
     {
       title: "Email",
       dataIndex: "email",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
     },
     {
       title: "Invite Used",
@@ -325,10 +339,10 @@ const onSearch = value => {
               <Row gutter={16}>
                 <DataTable
                   columns={columns}
-                  transaction={admins}
+                  transaction={usersFromAdmin}
                   fetchTrans={getAllAdminInvite}
                   title={"Admins"}
-                  data={admins && admins.invites}
+                  data={usersFromAdmin}
                 />
               </Row>
             </Col>
@@ -650,7 +664,7 @@ const onSearch = value => {
 };
 
 const mapStateToProps = (state) => ({
-  admins: state.super.admins,
+  admins: state.users.users,
   loading: state.super.loading,
   inviteAdminDone: state.super.inviteAdminUser,
   deleteAdminDone: state.super.deleteAdminUser,
@@ -662,7 +676,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(inviteAdminUser(data));
   },
   getAllAdminInvite: (data) => {
-    dispatch(getAllAdminUserInvites(data));
+    dispatch(getAllUser(data));
   },
   getAllAdminUserLogs: (data) => {
     dispatch(getAllAdminLogs(data));

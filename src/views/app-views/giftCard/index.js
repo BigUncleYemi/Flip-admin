@@ -78,6 +78,15 @@ const rules = {
   ],
 };
 
+const ActionType = ["SUBMITTED", "ALL"];
+
+const convertToProperName = (name) => {
+  return name
+    .split("_")
+    .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+};
+
 const GiftCard = ({
   getAllGiftCard,
   getNewGiftCard,
@@ -108,6 +117,12 @@ const GiftCard = ({
   const [avaCard, setAvaCard] = useState([]);
   const [debitWallet, setDebitWallet] = useState("");
   const [Trigger, setTrigger] = useState(false);
+  const [actionTypeSel, setActionTypeSel] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: giftCard && giftCard.meta && giftCard.meta.limit,
+    total: giftCard && giftCard.meta && giftCard.meta.count,
+  });
   const [state, setState] = useState({
     btc: 0,
     usd: 0,
@@ -120,6 +135,15 @@ const GiftCard = ({
     amount: 0,
     total: 0,
   });
+  useEffect(() => {
+    getAllGiftCard({
+      skip: 0,
+      limit: pagination.pageSize,
+      actionType: actionTypeSel,
+    });
+    // setLoading(false);
+    // eslint-disable-next-line
+  }, [actionTypeSel, pagination]);
   let b = giftCardList;
   let list = sortData(b).map((i) => i[0]);
   const onAssetChange = (value) => {
@@ -178,7 +202,7 @@ const GiftCard = ({
         debitWallet,
       });
       getAllGiftCard({ skip: 0, limit: 10 });
-      getNewGiftCard({ skip: 0, limit: 10 });
+      // getNewGiftCard({ skip: 0, limit: 10 });
       setTrigger(false);
     }
     // eslint-disable-next-line
@@ -187,7 +211,7 @@ const GiftCard = ({
     getAllGiftCard({ skip: 0, limit: 10 });
     // getNewGiftCard({ skip: 0, limit: 10 });
     getGiftCardList({ cardCode: "all" });
-  }, [getAllGiftCard, getNewGiftCard, getGiftCardList]);
+  }, [getAllGiftCard, getGiftCardList]);
   useEffect(() => {
     if (declineGiftCardTransaction && isModalVisible) {
       setIsModalVisible(false);
@@ -205,6 +229,10 @@ const GiftCard = ({
     setIsModalVisible(true);
     getGiftCardById({ transactionId: id });
   };
+  function handleTypeChange(value) {
+    console.log(`selected ${value}`);
+    setActionTypeSel(value);
+  }
 
   const columns = [
     {
@@ -415,7 +443,7 @@ const GiftCard = ({
       comment,
     });
     getAllGiftCard({ skip: 0, limit: 10 });
-    getNewGiftCard({ skip: 0, limit: 10 });
+    // getNewGiftCard({ skip: 0, limit: 10 });
   };
 
   const content = (
@@ -779,6 +807,33 @@ const GiftCard = ({
           )}
         </div>
       </Drawer>
+      <Row align="start">
+        <Col span={6}>
+          <p>Filter By Status</p>
+          <AntSelect
+            style={{ minWidth: 200 }}
+            allowClear
+            onChange={handleTypeChange}
+          >
+            <Option value="">Select Status</Option>
+            {ActionType.map((item) => (
+              <Option key={item} value={item}>
+                {convertToProperName(item)}
+              </Option>
+            ))}
+          </AntSelect>
+        </Col>
+        {/* <Col span={6}>
+              <p>Filter By Admin Email</p>
+              <Search
+                placeholder="Search by admin email"
+                allowClear
+                enterButton="Search"
+                style={{minWidth: 280}}
+                onSearch={onSearch}
+              />
+            </Col> */}
+      </Row>
       <Row gutter={16}>
         <Col
           style={{ flex: 1, maxWidth: "100%" }}
@@ -787,60 +842,14 @@ const GiftCard = ({
           md={24}
           lg={18}
         >
-          <Tabs
-            defaultActiveKey="1"
-            onChange={callback}
-            style={{ background: "white" }}
-          >
-            <TabPane
-              tab={
-                <div>
-                  <span>All Gift Card</span>
-                </div>
-              }
-              key="1"
-            >
-              <DataTable
+          <DataTable
                 columns={columns}
                 transaction={giftCard}
                 fetchTrans={getAllGiftCard}
                 title={"Gift Card"}
                 data={giftCard && giftCard.transactions}
               />
-            </TabPane>
-            <TabPane
-              tab={
-                <div>
-                  <span>New Submitted Gift Card</span>
-                </div>
-              }
-              key="2"
-            >
-              <DataTable
-                columns={columns}
-                transaction={newGiftCard}
-                fetchTrans={getNewGiftCard}
-                title={"New Submitted Withdrawal"}
-                data={newGiftCard && newGiftCard.transactions}
-              />
-            </TabPane>
-            {/* <TabPane
-              tab={
-                <div>
-                  <span>All Gift Card</span>
-                </div>
-              }
-              key="2"
-            >
-              <DataTable
-                columns={columns}
-                transaction={giftCard}
-                fetchTrans={getAllGiftCard}
-                title={"Gift Card"}
-                data={giftCard && giftCard.transactions}
-              />
-            </TabPane> */}
-          </Tabs>
+          
         </Col>
       </Row>
     </div>

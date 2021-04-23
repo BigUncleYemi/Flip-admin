@@ -14,6 +14,7 @@ import {
   Divider,
   Form,
   Switch,
+  Select,
 } from "antd";
 import {
   date,
@@ -35,6 +36,17 @@ import {
   getP2PCoinTransactions,
   getP2PCoinTransactionsById,
 } from "redux/actions/btc";
+
+const { Option } = Select;
+
+const ActionType = ["SUBMITTED", "ALL"];
+
+const convertToProperName = (name) => {
+  return name
+    .split("_")
+    .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+};
 
 const BTC = ({
   getAllBuyTrans,
@@ -67,6 +79,38 @@ const BTC = ({
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [actionTypeSel, setActionTypeSel] = useState("");
+  const [buypagination, setBuyPagination] = useState({
+    current: 1,
+    pageSize:
+      buyTransactions && buyTransactions.meta && buyTransactions.meta.limit,
+    total:
+      buyTransactions && buyTransactions.meta && buyTransactions.meta.count,
+  });
+  const [sellactionTypeSel, setSellActionTypeSel] = useState("");
+  const [sellpagination, setSellPagination] = useState({
+    current: 1,
+    pageSize:
+      sellTransactions && sellTransactions.meta && sellTransactions.meta.limit,
+    total:
+      sellTransactions && sellTransactions.meta && sellTransactions.meta.count,
+  });
+  const [sendactionTypeSel, setSendActionTypeSel] = useState("");
+  const [sendpagination, setSendPagination] = useState({
+    current: 1,
+    pageSize:
+      sendTransactions && sendTransactions.meta && sendTransactions.meta.limit,
+    total:
+      sendTransactions && sendTransactions.meta && sendTransactions.meta.count,
+  });
+  const [p2pactionTypeSel, setP2PActionTypeSel] = useState("");
+  const [p2ppagination, setP2PPagination] = useState({
+    current: 1,
+    pageSize:
+      p2pTransactions && p2pTransactions.meta && p2pTransactions.meta.limit,
+    total:
+      p2pTransactions && p2pTransactions.meta && p2pTransactions.meta.count,
+  });
   // const [state, setState] = useState({
   //   btc: 0,
   //   usd: 0,
@@ -97,11 +141,65 @@ const BTC = ({
     setIsModalVisible(true);
     getBuyTransById({ transactionId: id });
   };
+  function handleTypeChange(value) {
+    console.log(`selected ${value}`);
+    setActionTypeSel(value);
+  }
+  useEffect(() => {
+    getAllBuyTrans({
+      skip: 0,
+      limit: buypagination.pageSize,
+      status: actionTypeSel,
+    });
+    // eslint-disable-next-line
+  }, [actionTypeSel, buypagination]);
+
+  // Sell crypto sorting
+  function handleSellTypeChange(value) {
+    console.log(`selected ${value}`);
+    setSellActionTypeSel(value);
+  }
+  useEffect(() => {
+    getAllSellTrans({
+      skip: 0,
+      limit: sellpagination.pageSize,
+      status: sellactionTypeSel,
+    });
+    // eslint-disable-next-line
+  }, [sellactionTypeSel, sellpagination]);
+
+  // Send crypto sorting
+  function handleSendTypeChange(value) {
+    console.log(`selected ${value}`);
+    setSendActionTypeSel(value);
+  }
+  useEffect(() => {
+    getAllSendTrans({
+      skip: 0,
+      limit: sendpagination.pageSize,
+      status: sendactionTypeSel,
+    });
+    // eslint-disable-next-line
+  }, [sendactionTypeSel, sendpagination]);
+
+  // P2P crypto sorting
+  function handleP2PTypeChange(value) {
+    console.log(`selected ${value}`);
+    setP2PActionTypeSel(value);
+  }
+  useEffect(() => {
+    getAllP2PTrans({
+      skip: 0,
+      limit: p2ppagination.pageSize,
+      status: p2pactionTypeSel,
+    });
+    // eslint-disable-next-line
+  }, [p2pactionTypeSel, p2ppagination]);
 
   const columns = [
     {
       title: "Date",
-      dataIndex: "createdAt",
+      dataIndex: "created_at",
       render: (createdAt) => `${date(createdAt)}`,
     },
     {
@@ -469,7 +567,7 @@ const BTC = ({
           flexWrap: "wrap",
         }}
       >
-        <Title level={2}>BTC</Title>
+        <Title level={2}>Crypto</Title>
         <Button type="primary" onClick={showDrawer}>
           Edit Coin Transaction Settings
         </Button>
@@ -820,6 +918,33 @@ const BTC = ({
               }
               key="1"
             >
+              <Row align="start">
+                <Col span={6}>
+                  <p>Filter By Status</p>
+                  <Select
+                    style={{ minWidth: 200 }}
+                    allowClear
+                    onChange={handleTypeChange}
+                  >
+                    <Option value="">Select Status</Option>
+                    {ActionType.map((item) => (
+                      <Option key={item} value={item}>
+                        {convertToProperName(item)}
+                      </Option>
+                    ))}
+                  </Select>
+                </Col>
+                {/* <Col span={6}>
+              <p>Filter By Admin Email</p>
+              <Search
+                placeholder="Search by admin email"
+                allowClear
+                enterButton="Search"
+                style={{minWidth: 280}}
+                onSearch={onSearch}
+              />
+            </Col> */}
+              </Row>
               <DataTable
                 columns={columns}
                 transaction={buyTransactions}
@@ -836,6 +961,23 @@ const BTC = ({
               }
               key="2"
             >
+              <Row align="start">
+                <Col span={6}>
+                  <p>Filter By Status</p>
+                  <Select
+                    style={{ minWidth: 200 }}
+                    allowClear
+                    onChange={handleSellTypeChange}
+                  >
+                    <Option value="">Select Status</Option>
+                    {ActionType.map((item) => (
+                      <Option key={item} value={item}>
+                        {convertToProperName(item)}
+                      </Option>
+                    ))}
+                  </Select>
+                </Col>
+              </Row>
               <DataTable
                 columns={columns}
                 transaction={sellTransactions}
@@ -852,6 +994,23 @@ const BTC = ({
               }
               key="3"
             >
+              <Row align="start">
+                <Col span={6}>
+                  <p>Filter By Status</p>
+                  <Select
+                    style={{ minWidth: 200 }}
+                    allowClear
+                    onChange={handleSendTypeChange}
+                  >
+                    <Option value="">Select Status</Option>
+                    {ActionType.map((item) => (
+                      <Option key={item} value={item}>
+                        {convertToProperName(item)}
+                      </Option>
+                    ))}
+                  </Select>
+                </Col>
+              </Row>
               <DataTable
                 columns={columns}
                 transaction={sendTransactions}
@@ -868,6 +1027,23 @@ const BTC = ({
               }
               key="4"
             >
+              <Row align="start">
+                <Col span={6}>
+                  <p>Filter By Status</p>
+                  <Select
+                    style={{ minWidth: 200 }}
+                    allowClear
+                    onChange={handleP2PTypeChange}
+                  >
+                    <Option value="">Select Status</Option>
+                    {ActionType.map((item) => (
+                      <Option key={item} value={item}>
+                        {convertToProperName(item)}
+                      </Option>
+                    ))}
+                  </Select>
+                </Col>
+              </Row>
               <DataTable
                 columns={columns}
                 transaction={p2pTransactions}

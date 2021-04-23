@@ -1,4 +1,4 @@
-import fetch from "./FetchInterceptor";
+import fetch from '../../auth/FetchInterceptor'
 
 const buyGiftCoinService = {};
 

@@ -15,9 +15,9 @@ import {
   Form,
   Switch,
   Modal,
-  Select
+  Select,
 } from "antd";
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { date, Money } from "utils/helper";
 import styles from "../../styles.module.scss";
 import DataTable from "components/layout-components/DataTable";
@@ -35,6 +35,15 @@ import { getUserDetailsById } from "redux/actions/user";
 
 const { confirm } = Modal;
 const { Option } = Select;
+
+const ActionType = ["SUBMITTED", "ALL"];
+
+const convertToProperName = (name) => {
+  return name
+    .split("_")
+    .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+};
 
 const Withdrawal = ({
   loading,
@@ -63,30 +72,36 @@ const Withdrawal = ({
   const [Trigger, setTrigger] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [actionTypeSel, setActionTypeSel] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: withdrawals && withdrawals.meta && withdrawals.meta.limit,
+    total: withdrawals && withdrawals.meta && withdrawals.meta.count,
+  });
   useEffect(() => {
-    if(Trigger) {
+    if (Trigger) {
       setIsModalVisible(true);
       approveWithdrawal({
         transactionId:
           withdrawalDetails &&
           withdrawalDetails.transaction &&
           withdrawalDetails.transaction.id,
-          debitWallet,
+        debitWallet,
       });
       getAllWithdrawals({ skip: 0, limit: 10 });
-      getNewWithdrawals({ skip: 0, limit: 10 });
-      setTrigger(false)
+      // getNewWithdrawals({ skip: 0, limit: 10 });
+      setTrigger(false);
     }
     // eslint-disable-next-line
-  }, [Trigger])
+  }, [Trigger]);
   function callback(key) {
     console.log(key);
   }
   useEffect(() => {
     getWithdrawalsSettings();
     getAllWithdrawals({ skip: 0, limit: 10 });
-    getNewWithdrawals({ skip: 0, limit: 10 });
-  }, [getAllWithdrawals, getNewWithdrawals, getWithdrawalsSettings]);
+    // getNewWithdrawals({ skip: 0, limit: 10 });
+  }, [getAllWithdrawals, getWithdrawalsSettings]);
   useEffect(() => {
     if (declineWithdrawalTransaction && isModalVisible) {
       setIsModalVisible(false);
@@ -99,6 +114,16 @@ const Withdrawal = ({
     }
     // eslint-disable-next-line
   }, [approveWithdrawalTransaction]);
+
+  useEffect(() => {
+    getAllWithdrawals({
+      skip: 0,
+      limit: pagination.pageSize,
+      actionType: actionTypeSel,
+    });
+    // setLoading(false);
+    // eslint-disable-next-line
+  }, [actionTypeSel, pagination]);
 
   const handleAction = (id) => {
     setIsModalVisible(true);
@@ -143,6 +168,11 @@ const Withdrawal = ({
     setUserIsModalVisible(true);
     getUserDetailsById({ id });
   };
+
+  function handleTypeChange(value) {
+    console.log(`selected ${value}`);
+    setActionTypeSel(value);
+  }
 
   const UserModal = () => {
     return (
@@ -277,17 +307,20 @@ const Withdrawal = ({
       icon: <ExclamationCircleOutlined />,
       content: (
         <div>
-          <Select onChange={(value) => setDebitWallet(value)} style={{ width: "100%" }} >
+          <Select
+            onChange={(value) => setDebitWallet(value)}
+            style={{ width: "100%" }}
+          >
             <Option value="NGN">NGN Wallet</Option>
             <Option value="GHS">GHS Wallet</Option>
           </Select>
         </div>
       ),
       onOk() {
-        setTrigger(true)
+        setTrigger(true);
       },
       onCancel() {
-        console.log('Cancel');
+        console.log("Cancel");
       },
     });
   };
@@ -536,36 +569,55 @@ const Withdrawal = ({
           layout="vertical"
           name="login-form"
           onFinish={onFinish}
-          initialValues={{
-            ratesNGNMIn:
-              withdrawalSettings && withdrawalSettings.rates.NGN[0].min,
-            ratesNGNMax:
-              withdrawalSettings && withdrawalSettings.rates.NGN[0].max,
-            ratesNGNChargeValue:
-              withdrawalSettings &&
-              withdrawalSettings.rates.NGN[0].charge &&
-              withdrawalSettings.rates.NGN[0].charge.value,
-            ratesNGNChargeIsPercent:
-              withdrawalSettings &&
-              withdrawalSettings.rates.NGN[0].charge &&
-              withdrawalSettings.rates.NGN[0].charge.isPercent,
-            ratesGHSMIn:
-              withdrawalSettings && withdrawalSettings.rates.GHS[0].min,
-            ratesGHSMax:
-              withdrawalSettings && withdrawalSettings.rates.GHS[0].max,
-            ratesGHSChargeValue:
-              withdrawalSettings &&
-              withdrawalSettings.rates.GHS[0].charge &&
-              withdrawalSettings.rates.GHS[0].charge.value,
-            ratesGHSChargeIsPercent:
-              withdrawalSettings &&
-              withdrawalSettings.rates.GHS[0].charge &&
-              withdrawalSettings.rates.GHS[0].charge.isPercent,
-            withdrawalDelay:
-              withdrawalSettings && withdrawalSettings.withdrawalDelay,
-          }}
+          // initialValues={{
+          //   ratesNGNMIn:
+          //     withdrawalSettings && withdrawalSettings.rates.NGN[0].min,
+          //   ratesNGNMax:
+          //     withdrawalSettings && withdrawalSettings.rates.NGN[0].max,
+          //   ratesNGNChargeValue:
+          //     withdrawalSettings &&
+          //     withdrawalSettings.rates.NGN[0].charge &&
+          //     withdrawalSettings.rates.NGN[0].charge.value,
+          //   ratesNGNChargeIsPercent:
+          //     withdrawalSettings &&
+          //     withdrawalSettings.rates.NGN[0].charge &&
+          //     withdrawalSettings.rates.NGN[0].charge.isPercent,
+          //   ratesGHSMIn:
+          //     withdrawalSettings && withdrawalSettings.rates.GHS[0].min,
+          //   ratesGHSMax:
+          //     withdrawalSettings && withdrawalSettings.rates.GHS[0].max,
+          //   ratesGHSChargeValue:
+          //     withdrawalSettings &&
+          //     withdrawalSettings.rates.GHS[0].charge &&
+          //     withdrawalSettings.rates.GHS[0].charge.value,
+          //   ratesGHSChargeIsPercent:
+          //     withdrawalSettings &&
+          //     withdrawalSettings.rates.GHS[0].charge &&
+          //     withdrawalSettings.rates.GHS[0].charge.isPercent,
+          //   withdrawalDelay:
+          //     withdrawalSettings && withdrawalSettings.withdrawalDelay,
+          // }}
         >
-          <Title level={3}>Rates</Title>
+          {withdrawalSettings && Object.keys(withdrawalSettings).map((item)=> (
+            <div key={withdrawalSettings[item].id.toString()}>
+            {/* <Title level={3}>{withdrawalSettings[item]?.description}</Title> */}
+            <Form.Item
+            label={withdrawalSettings[item]?.description}
+            >
+              {withdrawalSettings[item]?.type === "boolean" && (
+                <Switch defaultChecked={JSON.parse(withdrawalSettings[item]?.value)["data"]}/>
+              )}
+              {withdrawalSettings[item]?.type === "string" && (
+                <Input type="text" defaultValue={JSON.parse(withdrawalSettings[item]?.value)["data"]} />
+              )}
+              {withdrawalSettings[item]?.type === "number" && (
+                <Input type="number" defaultValue={JSON.parse(withdrawalSettings[item]?.value)["data"]} />
+              )}
+              
+            </Form.Item>
+            </div>
+          ))}
+          {/* <Title level={3}>Rates</Title>
           <br />
           <Title level={4}>NGN</Title>
           <Form.Item
@@ -690,7 +742,7 @@ const Withdrawal = ({
             hasFeedback
           >
             <Input type="number" />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Update Settings
@@ -698,6 +750,33 @@ const Withdrawal = ({
           </Form.Item>
         </Form>
       </Drawer>
+      <Row align="start">
+        <Col span={6}>
+          <p>Filter By Status</p>
+          <Select
+            style={{ minWidth: 200 }}
+            allowClear
+            onChange={handleTypeChange}
+          >
+            <Option value="">Select Status</Option>
+            {ActionType.map((item) => (
+              <Option key={item} value={item}>
+                {convertToProperName(item)}
+              </Option>
+            ))}
+          </Select>
+        </Col>
+        {/* <Col span={6}>
+              <p>Filter By Admin Email</p>
+              <Search
+                placeholder="Search by admin email"
+                allowClear
+                enterButton="Search"
+                style={{minWidth: 280}}
+                onSearch={onSearch}
+              />
+            </Col> */}
+      </Row>
       <Row gutter={16}>
         <Col
           style={{ flex: 1, maxWidth: "100%" }}
@@ -706,7 +785,14 @@ const Withdrawal = ({
           md={24}
           lg={18}
         >
-          <Tabs
+          <DataTable
+            columns={columns}
+            transaction={withdrawals}
+            fetchTrans={getAllWithdrawals}
+            title={"Withdrawals"}
+            data={withdrawals && withdrawals.transactions}
+          />
+          {/* <Tabs
             defaultActiveKey="1"
             onChange={callback}
             style={{ background: "white" }}
@@ -743,7 +829,7 @@ const Withdrawal = ({
                 data={withdrawals && withdrawals.transactions}
               />
             </TabPane>
-          </Tabs>
+          </Tabs> */}
         </Col>
       </Row>
     </div>

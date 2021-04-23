@@ -1,4 +1,4 @@
-import fetch from './FetchInterceptor'
+import fetch from '../../auth/FetchInterceptor'
 
 const btcService = {}
 
@@ -7,9 +7,9 @@ btcService.getBuyCoinTransactions = function (params) {
     url: '/admin/coins/buy/transactions',
     method: 'get',
     params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
+      page: params.skip,
+      per_page: params.limit,
+      status: params.status || "",
     }
   })
 }
@@ -19,9 +19,9 @@ btcService.getSellCoinTransactions = function (params) {
     url: '/admin/coins/sell/transactions',
     method: 'get',
     params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
+      page: params.skip,
+      per_page: params.limit,
+      status: params.status || "",
     }
   })
 }
@@ -31,9 +31,9 @@ btcService.getSendCoinTransactions = function (params) {
     url: '/admin/coins/send/transactions',
     method: 'get',
     params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
+      page: params.skip,
+      per_page: params.limit,
+      status: params.status || "",
     }
   })
 }
@@ -43,9 +43,9 @@ btcService.getP2PCoinTransactions = function (params) {
     url: '/admin/coins/p2ptransfer/transactions',
     method: 'get',
     params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
+      page: params.skip,
+      per_page: params.limit,
+      status: params.status || "",
     }
   })
 }
@@ -54,11 +54,11 @@ btcService.getBuyCoinTransactionDetails = function (params) {
   return fetch({
     url: `admin/coins/buy/${params.transactionId}`,
     method: 'get',
-    params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
-    }
+    // params: {
+    //   page: params.skip,
+    //   limit: params.limit,
+    //   types: params.types || "",
+    // }
   })
 }
 
@@ -66,11 +66,11 @@ btcService.getSellCoinTransactionDetails = function (params) {
   return fetch({
     url: `/admin/coins/sell/${params.transactionId}`,
     method: 'get',
-    params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
-    }
+    // params: {
+    //   page: params.skip,
+    //   limit: params.limit,
+    //   types: params.types || "",
+    // }
   })
 }
 
@@ -78,11 +78,11 @@ btcService.getSendCoinTransactionDetails = function (params) {
   return fetch({
     url: `/admin/coins/send/${params.transactionId}`,
     method: 'get',
-    params: {
-      skip: params.skip,
-      limit: params.limit,
-      types: params.types || "",
-    }
+    // params: {
+    //   skip: params.skip,
+    //   limit: params.limit,
+    //   types: params.types || "",
+    // }
   })
 }
 

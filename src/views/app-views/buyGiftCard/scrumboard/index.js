@@ -176,7 +176,7 @@ const BoardWrapper = ({
         >
           <div className="scrumboard-header">
             <div>
-              <h3>All Buy Gift Card Transaction</h3>
+              <h3>{"          "}</h3>
             </div>
           </div>
           <Scrollbars className="scrumboard-body">

@@ -1,13 +1,14 @@
 import axios from 'axios'
 import { API_BASE_URL } from 'configs/AppConfig'
 import history from '../history'
-import { AUTH_TOKEN } from 'redux/constants'
+import { AUTH_TOKEN, KEY } from 'redux/constants'
 import { notification } from 'antd';
 
 const service = axios.create({
   baseURL: API_BASE_URL,
   timeout: 60000
 })
+const key = KEY;
 
 // Config
 const ENTRY_ROUTE = '/auth/login'
@@ -40,35 +41,19 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use( (response) => {
 	return response.data
 }, (error) => {
-
 	let notificationParam = {
-		message: ''
+	  message: "",
+	  key,
+	};
+	// console.log("err" + error); // for debug
+	if (error.code === "ECONNABORTED") {
+	  notificationParam.message = "Connection Timeout";
+	} else {
+	  notificationParam.message = error?.response?.data?.message || error.message;
 	}
-	
-	// Remove token and redirect 
-	if (error.response.status === 400 || error.response.status === 403) {
-		notificationParam.message = 'Authentication Fail'
-		notificationParam.description = 'Please login again'
-		localStorage.removeItem(AUTH_TOKEN)
-		history.push(ENTRY_ROUTE)
-		window.location.reload();
-	}
-
-	if (error.response.status === 404) {
-		notificationParam.message = 'Not Found'
-	}
-
-	if (error.response.status === 500) {
-		notificationParam.message = 'Internal Server Error'
-	}
-	
-	if (error.response.status === 508) {
-		notificationParam.message = 'Time Out'
-	}
-
-	notification.error(notificationParam)
+	notification.error(notificationParam);
 
 	return Promise.reject(error);
-});
+  });
 
 export default service

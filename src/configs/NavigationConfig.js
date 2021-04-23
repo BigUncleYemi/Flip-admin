@@ -29,7 +29,7 @@ const dashBoardNavTree = [
   {
     key: "btc",
     path: `${APP_PREFIX_PATH}/btc`,
-    title: "BTC",
+    title: "Crypto",
     icon: DashboardOutlined,
     breadcrumb: false,
     submenu: [],
