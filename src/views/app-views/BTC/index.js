@@ -20,6 +20,7 @@ import {
   date,
   // Money,
 } from "utils/helper";
+
 import styles from "../../styles.module.scss";
 import DataTable from "components/layout-components/DataTable";
 import ModalWrapper from "components/layout-components/Modal";
@@ -36,6 +37,7 @@ import {
   getP2PCoinTransactions,
   getP2PCoinTransactionsById,
 } from "redux/actions/btc";
+import { MailOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -78,6 +80,7 @@ const BTC = ({
   const { Title } = Typography;
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAddNewModalVisible, setIsAddNewModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const [actionTypeSel, setActionTypeSel] = useState("");
   const [buypagination, setBuyPagination] = useState({
@@ -141,6 +144,12 @@ const BTC = ({
     setIsModalVisible(true);
     getBuyTransById({ transactionId: id });
   };
+
+  const onSubmit = ({ email }) => {
+    console.log(email)
+  };
+
+  // buy coin sorting
   function handleTypeChange(value) {
     console.log(`selected ${value}`);
     setActionTypeSel(value);
@@ -426,6 +435,45 @@ const BTC = ({
   return (
     <div>
       <UserModal />
+      <ModalWrapper
+        isModalVisible={isAddNewModalVisible}
+        setIsModalVisible={setIsAddNewModalVisible}
+        className={styles.withdrawInitial}
+        showClose="no"
+        showCancel
+      >
+        <Form
+          layout="vertical"
+          name="admin-form"
+          style={{ padding: "20px 10px" }}
+          onFinish={onSubmit}
+        >
+          <p>Please enter the email of the new admin to invite.</p>
+          <Form.Item
+            name="email"
+            label="Email"
+            hasFeedback
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input your email",
+              },
+              {
+                type: "email",
+                message: "Please enter a validate email!",
+              },
+            ]}
+          >
+            <Input prefix={<MailOutlined className="text-primary" />} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Invite
+            </Button>
+          </Form.Item>
+        </Form>
+      </ModalWrapper>
       {isModalVisible && (
         <ModalWrapper
           isModalVisible={
@@ -568,9 +616,15 @@ const BTC = ({
         }}
       >
         <Title level={2}>Crypto</Title>
+        <div style={{}}>
+        <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
+          Add New Coin
+        </Button>
+
         <Button type="primary" onClick={showDrawer}>
           Edit Coin Transaction Settings
         </Button>
+        </div>
       </div>
       <Drawer
         title="Edit BTC Transaction Settings"

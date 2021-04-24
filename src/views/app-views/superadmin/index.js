@@ -107,6 +107,7 @@ const SuperAdmin = ({
   const [loader, setLoader] = useState(false);
   const [usersFromAdmin, setUsersFromAdmin] = useState([])
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAddCurrencyModalVisible, setIsAddCurrencyModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: adminLog && adminLog.meta && adminLog.meta.limit,
@@ -265,6 +266,45 @@ const onSearch = value => {
 
   return (
     <div>
+      <ModalWrapper
+        isModalVisible={isAddCurrencyModalVisible}
+        setIsModalVisible={setIsAddCurrencyModalVisible}
+        className={styles.withdrawInitial}
+        showClose="no"
+        showCancel
+      >
+        <Form
+          layout="vertical"
+          name="admin-form"
+          style={{ padding: "20px 10px" }}
+          onFinish={onSubmit}
+        >
+          <p>Please enter the name of currency to be added.</p>
+          <Form.Item
+            name="email"
+            label="Email"
+            hasFeedback
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input your email",
+              },
+              {
+                type: "email",
+                message: "Please enter a validate email!",
+              },
+            ]}
+          >
+            <Input prefix={<MailOutlined className="text-primary" />} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Invite
+            </Button>
+          </Form.Item>
+        </Form>
+      </ModalWrapper>
       <ModalWrapper
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
@@ -448,6 +488,9 @@ const onSearch = value => {
             }}
           >
             <Title level={2}>Admin Wallet Management</Title>
+            <Button type="primary" onClick={()=> setIsAddCurrencyModalVisible(true)} style={{marginRight:0}}>
+          Add New Coin
+        </Button>
           </div>
 
           <Title level={4}>Master Wallet Balance</Title>

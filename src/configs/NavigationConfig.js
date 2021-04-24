@@ -1,4 +1,12 @@
-import { DashboardOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  WalletOutlined,
+  PayCircleOutlined,
+  HomeOutlined,
+  SafetyCertificateOutlined,
+  CreditCardOutlined,
+  SwapOutlined,
+} from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
 const dashBoardNavTree = [
@@ -6,7 +14,7 @@ const dashBoardNavTree = [
     key: "home",
     path: `${APP_PREFIX_PATH}/home`,
     title: "home",
-    icon: DashboardOutlined,
+    icon: HomeOutlined,
     breadcrumb: false,
     submenu: [],
   },
@@ -14,7 +22,7 @@ const dashBoardNavTree = [
     key: "user",
     path: `${APP_PREFIX_PATH}/user`,
     title: "User",
-    icon: DashboardOutlined,
+    icon: UserOutlined,
     breadcrumb: false,
     submenu: [],
   },
@@ -22,7 +30,7 @@ const dashBoardNavTree = [
     key: "withdrawal",
     path: `${APP_PREFIX_PATH}/withdrawal`,
     title: "Withdrawal",
-    icon: DashboardOutlined,
+    icon: WalletOutlined,
     breadcrumb: false,
     submenu: [],
   },
@@ -30,7 +38,7 @@ const dashBoardNavTree = [
     key: "btc",
     path: `${APP_PREFIX_PATH}/btc`,
     title: "Crypto",
-    icon: DashboardOutlined,
+    icon: PayCircleOutlined,
     breadcrumb: false,
     submenu: [],
   },
@@ -38,7 +46,7 @@ const dashBoardNavTree = [
     key: "giftCard",
     path: `${APP_PREFIX_PATH}/giftCard`,
     title: "Sell Gift Card",
-    icon: DashboardOutlined,
+    icon: SwapOutlined,
     breadcrumb: false,
     submenu: [],
   },
@@ -46,7 +54,7 @@ const dashBoardNavTree = [
     key: "buy-giftCard",
     path: `${APP_PREFIX_PATH}/buy-giftCard`,
     title: "Buy Gift Card",
-    icon: DashboardOutlined,
+    icon: CreditCardOutlined,
     breadcrumb: false,
     submenu: [],
   },
@@ -54,10 +62,10 @@ const dashBoardNavTree = [
     key: "superAdmin",
     path: `${APP_PREFIX_PATH}/super`,
     title: "Super Admin",
-    icon: DashboardOutlined,
+    icon: SafetyCertificateOutlined,
     breadcrumb: false,
     submenu: [],
-    superAdmin: "ADMIN_USER"
+    superAdmin: "ADMIN_USER",
   },
 ];
 
