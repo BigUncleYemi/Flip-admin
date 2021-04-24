@@ -282,13 +282,13 @@ const onSearch = value => {
           <p>Please enter the name of currency to be added.</p>
           <Form.Item
             name="email"
-            label="Email"
+            label="Currency"
             hasFeedback
             required
             rules={[
               {
                 required: true,
-                message: "Please input your email",
+                message: "Please input a currency",
               },
               {
                 type: "email",
@@ -300,7 +300,7 @@ const onSearch = value => {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
-              Invite
+              Add Currency
             </Button>
           </Form.Item>
         </Form>

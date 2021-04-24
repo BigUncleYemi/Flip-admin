@@ -37,7 +37,7 @@ import {
   getP2PCoinTransactions,
   getP2PCoinTransactionsById,
 } from "redux/actions/btc";
-import { MailOutlined } from "@ant-design/icons";
+import { MailOutlined, PayCircleOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -448,10 +448,10 @@ const BTC = ({
           style={{ padding: "20px 10px" }}
           onFinish={onSubmit}
         >
-          <p>Please enter the email of the new admin to invite.</p>
+          <p>Please enter the name of the coin to add</p>
           <Form.Item
             name="email"
-            label="Email"
+            label="Coin"
             hasFeedback
             required
             rules={[
@@ -465,11 +465,11 @@ const BTC = ({
               },
             ]}
           >
-            <Input prefix={<MailOutlined className="text-primary" />} />
+            <Input prefix={<PayCircleOutlined className="text-primary" />} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
-              Invite
+              Add Coin
             </Button>
           </Form.Item>
         </Form>
@@ -613,6 +613,7 @@ const BTC = ({
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
+          marginBottom:20
         }}
       >
         <Title level={2}>Crypto</Title>
@@ -973,7 +974,7 @@ const BTC = ({
               key="1"
             >
               <Row align="start">
-                <Col span={6}>
+                <Col span={6} style={{marginLeft:20}}>
                   <p>Filter By Status</p>
                   <Select
                     style={{ minWidth: 200 }}
@@ -1016,7 +1017,7 @@ const BTC = ({
               key="2"
             >
               <Row align="start">
-                <Col span={6}>
+                <Col span={6} style={{marginLeft:20}}>
                   <p>Filter By Status</p>
                   <Select
                     style={{ minWidth: 200 }}
@@ -1049,7 +1050,7 @@ const BTC = ({
               key="3"
             >
               <Row align="start">
-                <Col span={6}>
+                <Col span={6} style={{marginLeft:20}}>
                   <p>Filter By Status</p>
                   <Select
                     style={{ minWidth: 200 }}
@@ -1082,7 +1083,7 @@ const BTC = ({
               key="4"
             >
               <Row align="start">
-                <Col span={6}>
+                <Col span={6} style={{marginLeft:20}}>
                   <p>Filter By Status</p>
                   <Select
                     style={{ minWidth: 200 }}

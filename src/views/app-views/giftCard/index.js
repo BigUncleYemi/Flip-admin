@@ -18,7 +18,7 @@ import {
   Modal,
   Select as AntSelect,
 } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, CreditCardOutlined } from "@ant-design/icons";
 import {
   date,
   Money,
@@ -111,6 +111,7 @@ const GiftCard = ({
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAddNewModalVisible, setIsAddNewModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const [meta, setMeta] = useState(null);
   const [avaCurr, setAvaCurr] = useState([]);
@@ -510,6 +511,45 @@ const GiftCard = ({
   return (
     <div>
       <UserModal />
+      <ModalWrapper
+        isModalVisible={isAddNewModalVisible}
+        setIsModalVisible={setIsAddNewModalVisible}
+        className={styles.withdrawInitial}
+        showClose="no"
+        showCancel
+      >
+        <Form
+          layout="vertical"
+          name="admin-form"
+          style={{ padding: "20px 10px" }}
+          // onFinish={onSubmit}
+        >
+          <p>Please enter the name of Giftcard to be added.</p>
+          <Form.Item
+            name="giftcard"
+            label="Gifcard"
+            hasFeedback
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input your email",
+              },
+              {
+                type: "email",
+                message: "Please enter a validate email!",
+              },
+            ]}
+          >
+            <Input prefix={<CreditCardOutlined className="text-primary" />} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              Add GiftCard
+            </Button>
+          </Form.Item>
+        </Form>
+      </ModalWrapper>
       {isModalVisible && (
         <ModalWrapper
           isModalVisible={
@@ -690,9 +730,15 @@ const GiftCard = ({
         }}
       >
         <Title level={2}>Sell Gift Card</Title>
+        <div>
+        <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
+          Add New Giftcard
+        </Button>
         <Button type="primary" onClick={showDrawer}>
           Edit Gift Card Rate
         </Button>
+        </div>
+        
       </div>
       <Drawer
         title="View Gift Cards"
