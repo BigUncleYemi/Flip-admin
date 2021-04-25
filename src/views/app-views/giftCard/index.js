@@ -17,8 +17,10 @@ import {
   Form,
   Modal,
   Select as AntSelect,
+  Progress
 } from "antd";
-import { ExclamationCircleOutlined, CreditCardOutlined } from "@ant-design/icons";
+import Upload from "../../../components/upload";
+import { ExclamationCircleOutlined, CreditCardOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import {
   date,
   Money,
@@ -108,6 +110,32 @@ const GiftCard = ({
   const { TabPane } = Tabs;
   const { Title } = Typography;
   const { TextArea } = Input;
+
+  const onHandleFile = (file) => {
+    setDetails((details) => ({ ...details, file: [...details.file, file] }));
+  };
+
+
+  const INITIAL_STATE = {
+    country: "",
+    cardCurrencyId: "",
+    giftCardId: "",
+    cardType: "",
+    fiatCurrencyId: "",
+    value: null,
+    amount: 0,
+    number: 1,
+    total: 0,
+    file: [],
+    wallet: "",
+    remark: "",
+  };
+  // const INITIAL_STATE2 = {};
+
+  const [details, setDetails] = useState(INITIAL_STATE);
+  // const [state, setState] = useState(INITIAL_STATE2);
+  // const [rate, setRate] = useState({});
+  const [progress, setProgress] = useState();
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -234,6 +262,12 @@ const GiftCard = ({
     console.log(`selected ${value}`);
     setActionTypeSel(value);
   }
+
+  const handleDelete = (index) => {
+    let file = details.file;
+    file = file.filter((f, i) => i !== index);
+    setDetails((details) => ({ ...details, file }));
+  };
 
   const columns = [
     {
@@ -542,6 +576,34 @@ const GiftCard = ({
             ]}
           >
             <Input prefix={<CreditCardOutlined className="text-primary" />} />
+          </Form.Item>
+          <Form.Item>
+
+          <div className={styles.uploads__form__upload}>
+              {progress && (
+                <span>{progress ? `uploading ${progress}%` : ""}</span>
+              )}
+              {progress && <Progress percent={progress} status="active" />}
+              <Upload handleFile={onHandleFile} />
+              {details.file.length > 0 && (
+                <div>
+                  <p>Uploaded files</p>
+                  <ul>
+                    {details.file.map((file, index) => (
+                      <li key={index}>
+                        <span style={{ marginRight: 7 }}>{file.name}</span>
+                        <CloseCircleOutlined
+                          onClick={() => handleDelete(index)}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>

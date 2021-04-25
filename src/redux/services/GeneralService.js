@@ -30,5 +30,19 @@ generalService.getUserDetails = function (params) {
   })
 }
 
+generalService.getValidCoins = function (params) {
+  return fetch({
+    url:"/admin/misc/get-valid-coins/",
+    method:"get",
+  })
+}
+
+generalService.getValidFiats = function (params) {
+  return fetch({
+    url:"/admin/misc/get-valid-fiats/",
+    method:"get",
+  })
+}
+
 
 export default generalService

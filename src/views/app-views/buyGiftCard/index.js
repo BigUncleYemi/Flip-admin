@@ -302,7 +302,7 @@ const BuyGiftCard = ({
 
   return (
     <div>
-      <UserModal />
+      {/* <UserModal /> */}
       {isModalVisible && (
         <ModalWrapper
           isModalVisible={

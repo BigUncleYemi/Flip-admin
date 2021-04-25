@@ -14,12 +14,27 @@ const initialState = {
   getNewWithdrawalsTransactions: null,
   getAllWithdrawalsTransactions: null,
   updateWithdrawalsSettings: null,
+  validFiats:null,
+  validCoins:null,
+  loading:false,
+  error:null
 };
 
 const key = ActionTypes.KEY;
 
 export default function reducer (state = initialState, action) {
   switch (action.type) {
+    case ActionTypes.GET_VALID_COINS_PENDING:
+    case ActionTypes.GET_VALID_FIATS_PENDING:
+      notification.info({
+        message:"Loading",
+        key,
+      })
+      return {
+        ...state,
+        loading:true,
+        error:null
+      }
     case ActionTypes.GET_DASHBOARD_DATA_SUCCESS:
       notification.success({
         message: "Successful",
@@ -28,6 +43,26 @@ export default function reducer (state = initialState, action) {
       return{
         ...state,
         getDashboardData: action.payload,
+      };
+    case ActionTypes.GET_VALID_COINS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        validCoins: action.payload,
+      };
+    case ActionTypes.GET_VALID_FIATS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        validFiats: action.payload,
       };
     case ActionTypes.GET_WALLET_BALANCES_DATA_SUCCESS:
       notification.success({
@@ -98,6 +133,8 @@ export default function reducer (state = initialState, action) {
         ...state,
         updateWithdrawalsSettings: action.payload,
       };
+    case ActionTypes.GET_VALID_FIATS_FAILED:
+    case ActionTypes.GET_VALID_COINS_FAILED:
     case ActionTypes.GET_WALLET_BALANCES_DATA_FAILED:
       notification.error({
         message: "Failed",

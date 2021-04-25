@@ -15,9 +15,10 @@ import {
   Collapse,
   Select,
   message,
+  notification,
 } from "antd";
 import StatisticWidget from "components/shared-components/StatisticWidget";
-import { MailOutlined } from "@ant-design/icons";
+import { MailOutlined, PayCircleOutlined } from "@ant-design/icons";
 import DataTable from "components/layout-components/DataTable";
 import { date } from "utils/helper";
 import {
@@ -31,17 +32,27 @@ import ModalWrapper from "components/layout-components/Modal";
 import AppFetch from "auth/FetchInterceptor";
 import { Money } from "utils/helper";
 import { getAllUser } from "redux/actions/user";
+import { getValidCoins, getValidFiats } from "redux/actions/all";
 
 const convertToProperName = (name) => {
-  return name.split("_").map(word => `${word[0].toUpperCase()}${word.slice(1,)}`).join(" ")
+  return name
+    .split("_")
+    .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+    .join(" ");
 };
 
 const ActionType = [
-  "APPROVED_CARD_TRX", "DECLINED_CARD_TRX",
-  "APPROVED_WITHDRAWAL_TRX", "DECLINED_WITHDRAWAL_TRX",
-  "UPDATED_CARD_RATES", "UPDATED_COIN_RATES", "UPDATED_WITHDRAWAL_RATES", "UPDATED_BUYCARD_SETTINGS",
-  "PROCESSING_CARD_TRX", "COMPLETED_CARD_TRX",
-]
+  "APPROVED_CARD_TRX",
+  "DECLINED_CARD_TRX",
+  "APPROVED_WITHDRAWAL_TRX",
+  "DECLINED_WITHDRAWAL_TRX",
+  "UPDATED_CARD_RATES",
+  "UPDATED_COIN_RATES",
+  "UPDATED_WITHDRAWAL_RATES",
+  "UPDATED_BUYCARD_SETTINGS",
+  "PROCESSING_CARD_TRX",
+  "COMPLETED_CARD_TRX",
+];
 
 const generateMessage = (Data) => {
   let message = "";
@@ -95,6 +106,10 @@ const SuperAdmin = ({
   getAllAdminUserLogs,
   admins,
   loading,
+  validCoins,
+  validFiats,
+  getCoins,
+  getFiats,
 }) => {
   const { Title } = Typography;
   const { Panel } = Collapse;
@@ -105,9 +120,15 @@ const SuperAdmin = ({
   const [actionTypeSel, setActionTypeSel] = useState("");
   const [actionByEmail, setActionBy] = useState("");
   const [loader, setLoader] = useState(false);
-  const [usersFromAdmin, setUsersFromAdmin] = useState([])
+  const [newCurrency, setNewCurrency] = useState("");
+  const [currencyName, setCurrencyName] = useState("");
+  const [buyAmount, setBuyAmount] = useState(0);
+  const [sellAmount, setSellAmount] = useState(0);
+  const [usersFromAdmin, setUsersFromAdmin] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isAddCurrencyModalVisible, setIsAddCurrencyModalVisible] = useState(false);
+  const [isAddCurrencyModalVisible, setIsAddCurrencyModalVisible] = useState(
+    false
+  );
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: adminLog && adminLog.meta && adminLog.meta.limit,
@@ -115,11 +136,11 @@ const SuperAdmin = ({
   });
 
   useEffect(() => {
-    console.log('admin users', admins)
+    console.log("admin users", admins);
     setUsersFromAdmin(
-      admins?.users?.filter((item)=> item.type !== "BASIC_USER")
-    )
-  }, [admins])
+      admins?.users?.filter((item) => item.type !== "BASIC_USER")
+    );
+  }, [admins]);
 
   useEffect(() => {
     if (inviteAdminDone && isModalVisible) {
@@ -144,13 +165,15 @@ const SuperAdmin = ({
       skip: 0,
       limit: pagination.pageSize,
       actionType: actionTypeSel,
-      actionByEmail
+      actionByEmail,
     });
     // setLoading(false);
     // eslint-disable-next-line
-  }, [actionTypeSel,actionByEmail]);
+  }, [actionTypeSel, actionByEmail]);
 
   useEffect(() => {
+    // getCoins();
+    getFiats();
     AppFetch({
       url: `/admin/misc/wallet-balances`,
       method: "GET",
@@ -174,7 +197,7 @@ const SuperAdmin = ({
       skip: (params.pagination.current - 1) * params.pagination.pageSize,
       limit: params.pagination.pageSize,
       actionType: actionTypeSel,
-      actionByEmail
+      actionByEmail,
     });
     setPagination({
       ...params.pagination,
@@ -259,10 +282,31 @@ const SuperAdmin = ({
     setActionTypeSel(value);
   }
 
-const onSearch = value => {
-  setActionBy(value)
-  console.log('searched', value)
-};
+  const onSearch = (value) => {
+    setActionBy(value);
+    console.log("searched", value);
+  };
+  const onAddCurrencySubmit = () => {
+    AppFetch({
+      url: `/admin/fiats`,
+      method: "POST",
+      data: {
+        code: newCurrency,
+        name: currencyName,
+        we_buy: buyAmount,
+        we_sell: sellAmount,
+      },
+    }).then((response) => {
+      notification.success({
+        message:"Successful"
+      })
+    }).catch((err) => {
+      notification.error({
+        message:"Currency Add Failed"
+      })
+    })
+    setIsAddCurrencyModalVisible(false);
+  };
 
   return (
     <div>
@@ -277,26 +321,103 @@ const onSearch = value => {
           layout="vertical"
           name="admin-form"
           style={{ padding: "20px 10px" }}
-          onFinish={onSubmit}
+          onFinish={onAddCurrencySubmit}
         >
           <p>Please enter the name of currency to be added.</p>
           <Form.Item
-            name="email"
+            name="currency"
             label="Currency"
             hasFeedback
             required
             rules={[
               {
                 required: true,
-                message: "Please input a currency",
+                message: "Please pick a currency",
               },
               {
-                type: "email",
+                type: "string",
                 message: "Please enter a validate email!",
               },
             ]}
           >
-            <Input prefix={<MailOutlined className="text-primary" />} />
+            <Select
+              value={newCurrency}
+              onChange={(input) => setNewCurrency(input)}
+              options={
+                validFiats &&
+                validFiats.fiats &&
+                validFiats.fiats.map((item) => ({
+                  render: item,
+                  value: item,
+                }))
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            name="currency name"
+            label="Currency Name"
+            hasFeedback
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input a currency name",
+              },
+            ]}
+          >
+            <Input
+              type="text"
+              prefix={<PayCircleOutlined className="text-primary" />}
+              value={currencyName}
+              onChange={(e) => {
+                setCurrencyName(e.target.value);
+                // console.log('text', e.target.value)
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="buyAmount"
+            label="Buy Amount"
+            hasFeedback
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input a Buy Amount",
+              },
+            ]}
+          >
+            <Input
+              type="number"
+              prefix={<PayCircleOutlined className="text-primary" />}
+              value={buyAmount}
+              onChange={(e) => {
+                setBuyAmount(e.target.value);
+                // console.log('text', e.target.value)
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="sellAmount"
+            label="Sell Amount"
+            hasFeedback
+            required
+            rules={[
+              {
+                required: true,
+                message: "Please input a Sell Amount",
+              },
+            ]}
+          >
+            <Input
+              type="number"
+              prefix={<PayCircleOutlined className="text-primary" />}
+              value={sellAmount}
+              onChange={(e) => {
+                setSellAmount(e.target.value);
+                // console.log('text', e.target.value)
+              }}
+            />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
@@ -410,9 +531,17 @@ const onSearch = value => {
           <Row align="start">
             <Col span={6}>
               <p>Filter By Action Type</p>
-              <Select style={{minWidth: 200}} allowClear onChange={handleChange}>
+              <Select
+                style={{ minWidth: 200 }}
+                allowClear
+                onChange={handleChange}
+              >
                 <Option value="">Select Action Type</Option>
-                {ActionType.map((item) => <Option key={item} value={item}>{convertToProperName(item)}</Option>)}
+                {ActionType.map((item) => (
+                  <Option key={item} value={item}>
+                    {convertToProperName(item)}
+                  </Option>
+                ))}
               </Select>
             </Col>
             <Col span={6}>
@@ -421,13 +550,13 @@ const onSearch = value => {
                 placeholder="Search by admin email"
                 allowClear
                 enterButton="Search"
-                style={{minWidth: 280}}
+                style={{ minWidth: 280 }}
                 onSearch={onSearch}
               />
             </Col>
           </Row>
           <br />
-          <br/>
+          <br />
           <Row gutter={16}>
             <Col
               style={{ flex: 1, maxWidth: "100%" }}
@@ -488,9 +617,13 @@ const onSearch = value => {
             }}
           >
             <Title level={2}>Admin Wallet Management</Title>
-            <Button type="primary" onClick={()=> setIsAddCurrencyModalVisible(true)} style={{marginRight:0}}>
-          Add New Coin
-        </Button>
+            <Button
+              type="primary"
+              onClick={() => setIsAddCurrencyModalVisible(true)}
+              style={{ marginRight: 0 }}
+            >
+              Add New Coin
+            </Button>
           </div>
 
           <Title level={4}>Master Wallet Balance</Title>
@@ -712,6 +845,8 @@ const mapStateToProps = (state) => ({
   inviteAdminDone: state.super.inviteAdminUser,
   deleteAdminDone: state.super.deleteAdminUser,
   adminLog: state.super.adminLog,
+  validFiats: state.all.validFiats,
+  validCoins: state.all.validCoins,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -726,6 +861,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   deleteAdminInvite: (data) => {
     dispatch(deleteAdminUserInvite(data));
+  },
+  getCoins: (data) => {
+    dispatch(getValidCoins(data));
+  },
+  getFiats: (data) => {
+    dispatch(getValidFiats(data));
   },
 });
 
