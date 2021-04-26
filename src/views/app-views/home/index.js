@@ -25,7 +25,7 @@ const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
 
   useEffect(() => {
     getDashboard();
-    getBalances();
+    // getBalances();
   }, []);
 
   return (
@@ -56,10 +56,10 @@ const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
         </Col>
       </Row>
       <Row gutter={16} style={{ marginBottom: 20 }}>
-        {console.log("wallet", walletData)}
+        {console.log("wallet", dashboardData)}
         {typeUser === "SUPER_USER" &&
-          walletData &&
-          Object.keys(walletData).map((item) => (
+          dashboardData?.fwBalances &&
+          Object.keys(dashboardData.fwBalances).map((item) => (
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <StatisticWidget
                 title={`${item} Master Wallet Stat`}
@@ -68,19 +68,49 @@ const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
                     <Statistic
                       title={"Available Balance"}
                       value={Money(
-                        walletData[item].available_balance | 0,
+                        dashboardData.fwBalances[item].available_balance | 0,
                         item
                       )}
                     />
                     <Statistic
                       title={"Ledger Balance"}
-                      value={Money(walletData[item].ledger_balance, item)}
+                      value={Money(dashboardData.fwBalances[item].ledger_balance, item)}
                     />
                   </div>
                 }
               />
             </Col>
           ))}
+
+      </Row>
+
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        {console.log("wallet", dashboardData)}
+        {typeUser === "SUPER_USER" &&
+          dashboardData?.quidaxBalances &&
+          Object.keys(dashboardData.quidaxBalances).map((item) => (
+            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+              <StatisticWidget
+                title={`${item} Master Wallet Stat`}
+                value={
+                  <div>
+                    <Statistic
+                      title={"Available Balance"}
+                      value={Money(
+                        dashboardData.quidaxBalances[item].available_balance | 0,
+                        item
+                      )}
+                    />
+                    <Statistic
+                      title={"Ledger Balance"}
+                      value={Money(dashboardData.quidaxBalances[item].ledger_balance, item)}
+                    />
+                  </div>
+                }
+              />
+            </Col>
+          ))}
+          
       </Row>
     </div>
   );
