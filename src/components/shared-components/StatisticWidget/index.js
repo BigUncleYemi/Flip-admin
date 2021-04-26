@@ -2,6 +2,7 @@ import React from 'react'
 import { Card } from 'antd';
 import PropTypes from "prop-types";
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { Children } from 'react';
 
 const StatisticWidget = ({ title, value, status, subtitle, prefix }) => {
 	return (
@@ -11,6 +12,7 @@ const StatisticWidget = ({ title, value, status, subtitle, prefix }) => {
 				{prefix ? <div className="mr-2">{prefix}</div> : null}
 				<div>
 					<div className="d-flex align-items-center">
+						
 						<h1 className="mb-0 font-weight-bold">{value}</h1>
 						{
 							status ? 

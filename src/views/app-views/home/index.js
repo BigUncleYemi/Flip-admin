@@ -43,7 +43,8 @@ const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
               dashboardData?.metrics &&
               dashboardData.metrics.map((item) => (
                 <>
-                  <Col xs={24} sm={24} md={24} lg={24} xl={8}>
+                  <Col onClick={(rt)=> console.log('new',rt)} 
+                  xs={24} sm={24} md={24} lg={24} xl={8}>
                     <StatisticWidget
                       title={item.description}
                       value={item.value}

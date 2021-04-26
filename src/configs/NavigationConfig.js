@@ -6,6 +6,7 @@ import {
   SafetyCertificateOutlined,
   CreditCardOutlined,
   SwapOutlined,
+  FolderOpenOutlined
 } from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
@@ -63,6 +64,15 @@ const dashBoardNavTree = [
     path: `${APP_PREFIX_PATH}/super`,
     title: "Super Admin",
     icon: SafetyCertificateOutlined,
+    breadcrumb: false,
+    submenu: [],
+    superAdmin: "ADMIN_USER",
+  },
+  {
+    key: "resources",
+    path: `${APP_PREFIX_PATH}/resources`,
+    title: "Resources",
+    icon: FolderOpenOutlined,
     breadcrumb: false,
     submenu: [],
     superAdmin: "ADMIN_USER",

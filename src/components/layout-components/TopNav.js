@@ -23,4 +23,4 @@ const mapStateToProps = ({ theme }) => {
   return { topNavColor }
 };
 
-export default connect(mapStateToProps)(TopNav);
+export default connect(mapStateToProps, null)(TopNav);

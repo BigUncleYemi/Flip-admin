@@ -99,9 +99,10 @@ const SideNavContent = (props) => {
 
 const TopNavContent = (props) => {
   const { topNavColor, localization } = props;
+  const typeUser = localStorage.getItem("type");
   return (
     <Menu mode="horizontal" style={{ backgroundColor: topNavColor }}>
-      {navigationConfig.map((menu) =>
+      {navigationConfig.filter(i => i.superAdmin !== typeUser).map((menu) =>
         menu.submenu.length > 0 ? (
           <SubMenu
             key={menu.key}

@@ -17,7 +17,12 @@ const initialState = {
   validFiats:null,
   validCoins:null,
   loading:false,
-  error:null
+  error:null,
+  userFiats:null,
+  userCoins:null,
+  giftCards:null,
+  cardCurrencies:null,
+  cardDetails:null,
 };
 
 const key = ActionTypes.KEY;
@@ -25,6 +30,11 @@ const key = ActionTypes.KEY;
 export default function reducer (state = initialState, action) {
   switch (action.type) {
     case ActionTypes.GET_VALID_COINS_PENDING:
+    case ActionTypes.GET_CARD_DETAILS_BY_ID_PENDING:
+    case ActionTypes.GET_USERS_FIATS_PENDING:
+    case ActionTypes.GET_USERS_COINS_PENDING:
+    case ActionTypes.GET_GIFTCARDS_PENDNG:
+    case ActionTypes.GET_CARD_CURRENCY_PENDING:
     case ActionTypes.GET_VALID_FIATS_PENDING:
       notification.info({
         message:"Loading",
@@ -63,6 +73,56 @@ export default function reducer (state = initialState, action) {
         ...state,
         loading:false,
         validFiats: action.payload,
+      };
+    case ActionTypes.GET_USERS_FIATS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        userFiats: action.payload,
+      };
+    case ActionTypes.GET_USERS_COINS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        userCoins: action.payload,
+      };
+    case ActionTypes.GET_CARD_CURRENCY_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        cardCurrencies: action.payload,
+      };
+    case ActionTypes.GET_GIFTCARDS_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        giftCards: action.payload,
+      };
+    case ActionTypes.GET_CARD_DETAILS_BY_ID_SUCCESS:
+      notification.success({
+        message: "Successful",
+        key,
+      })
+      return{
+        ...state,
+        loading:false,
+        cardDetails: action.payload,
       };
     case ActionTypes.GET_WALLET_BALANCES_DATA_SUCCESS:
       notification.success({
@@ -133,6 +193,11 @@ export default function reducer (state = initialState, action) {
         ...state,
         updateWithdrawalsSettings: action.payload,
       };
+    case ActionTypes.GET_USERS_FIATS_FAILED:
+    case ActionTypes.GET_CARD_DETAILS_BY_ID_FAILED:
+    case ActionTypes.GET_USERS_COINS_FAILED:
+    case ActionTypes.GET_GIFTCARDS_FAILED:
+    case ActionTypes.GET_CARD_CURRENCY_FAILED:
     case ActionTypes.GET_VALID_FIATS_FAILED:
     case ActionTypes.GET_VALID_COINS_FAILED:
     case ActionTypes.GET_WALLET_BALANCES_DATA_FAILED:
@@ -140,7 +205,11 @@ export default function reducer (state = initialState, action) {
         message: "Failed",
         key,
       })
-      return state
+      return {
+        ...state,
+        loading:false,
+        error:action.payload
+      }
     default:
       return state;
   }

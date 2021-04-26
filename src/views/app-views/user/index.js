@@ -468,7 +468,7 @@ const User = ({
               transaction={users}
               fetchTrans={getAllUsers}
               title={"User"}
-              data={users && users.users}
+              data={users && users.users.filter((item)=> item.type !== "SUPER_USER")}
             />
           </Row>
         </Col>

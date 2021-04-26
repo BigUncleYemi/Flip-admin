@@ -104,3 +104,123 @@ const GetValidFiats = () => async (dispatch) => {
 export const getValidFiats = () => (dispatch) => {
   dispatch(GetValidFiats());
 };
+
+const GetGiftCards = (data) => async (dispatch) => {
+  dispatch({
+    type: ActionTypes.GET_GIFTCARDS_PENDNG,
+  });
+  await generalService
+    .getGiftCards(data)
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.GET_GIFTCARDS_SUCCESS,
+        payload: response.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ActionTypes.GET_GIFTCARDS_FAILED,
+        payload: err,
+      });
+    });
+};
+
+export const getGiftCards = (data) => (dispatch) => {
+  dispatch(GetGiftCards(data));
+};
+
+const GetCardsCurrency = () => async (dispatch) => {
+  dispatch({
+    type: ActionTypes.GET_CARD_CURRENCY_PENDING,
+  });
+  await generalService
+    .getCardCurrency()
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.GET_CARD_CURRENCY_SUCCESS,
+        payload: response.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ActionTypes.GET_CARD_CURRENCY_FAILED,
+        payload: err,
+      });
+    });
+};
+
+export const getCardsCurrency = () => (dispatch) => {
+  dispatch(GetCardsCurrency());
+};
+
+const GetUserFiats = () => async (dispatch) => {
+  dispatch({
+    type: ActionTypes.GET_USERS_FIATS_PENDING,
+  });
+  await generalService
+    .getUserFiats()
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.GET_USERS_FIATS_SUCCESS,
+        payload: response.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ActionTypes.GET_USERS_FIATS_FAILED,
+        payload: err,
+      });
+    });
+};
+
+export const getUserFiats = () => (dispatch) => {
+  dispatch(GetUserFiats());
+};
+
+const GetUserCoins = () => async (dispatch) => {
+  dispatch({
+    type: ActionTypes.GET_USERS_COINS_PENDING,
+  });
+  await generalService
+    .getUserCoins()
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.GET_USERS_COINS_SUCCESS,
+        payload: response.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ActionTypes.GET_USERS_COINS_FAILED,
+        payload: err,
+      });
+    });
+};
+
+export const getUserCoins = () => (dispatch) => {
+  dispatch(GetUserCoins());
+};
+
+const GetGiftCardsById = (data) => async (dispatch) => {
+  dispatch({
+    type: ActionTypes.GET_CARD_DETAILS_BY_ID_PENDING,
+  });
+  await generalService
+    .getGiftCardsDetailsById(data)
+    .then((response) => {
+      dispatch({
+        type: ActionTypes.GET_CARD_DETAILS_BY_ID_SUCCESS,
+        payload: response.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ActionTypes.GET_CARD_DETAILS_BY_ID_FAILED,
+        payload: err,
+      });
+    });
+};
+
+export const getGiftCardsById = (data) => (dispatch) => {
+  dispatch(GetGiftCardsById(data));
+};

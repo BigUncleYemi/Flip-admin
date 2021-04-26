@@ -6,10 +6,12 @@ import {
   Col,
   Typography,
   Button,
+  Avatar,
   Popconfirm,
   Form,
   Input,
   Timeline,
+  List,
   Pagination,
   Statistic,
   Collapse,
@@ -31,7 +33,12 @@ import styles from "../../styles.module.scss";
 import ModalWrapper from "components/layout-components/Modal";
 import AppFetch from "auth/FetchInterceptor";
 import { Money } from "utils/helper";
-import { getAllUser } from "redux/actions/user";
+import {
+  getAllUser,
+  getUserDetailsById,
+  makeUserAdmin,
+  removeUserAdmin,
+} from "redux/actions/user";
 import { getValidCoins, getValidFiats } from "redux/actions/all";
 
 const convertToProperName = (name) => {
@@ -110,6 +117,10 @@ const SuperAdmin = ({
   validFiats,
   getCoins,
   getFiats,
+  selectedUser,
+  makeAdmin,
+  removeAdmin,
+  getUserDetailsById
 }) => {
   const { Title } = Typography;
   const { Panel } = Collapse;
@@ -126,6 +137,7 @@ const SuperAdmin = ({
   const [sellAmount, setSellAmount] = useState(0);
   const [usersFromAdmin, setUsersFromAdmin] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  
   const [isAddCurrencyModalVisible, setIsAddCurrencyModalVisible] = useState(
     false
   );
@@ -138,20 +150,10 @@ const SuperAdmin = ({
   useEffect(() => {
     console.log("admin users", admins);
     setUsersFromAdmin(
-      admins?.users?.filter((item) => item.type !== "BASIC_USER")
+      admins?.users
     );
   }, [admins]);
 
-  useEffect(() => {
-    if (inviteAdminDone && isModalVisible) {
-      setIsModalVisible(false);
-    }
-    // eslint-disable-next-line
-  }, [inviteAdminDone]);
-  useEffect(() => {
-    // getAllAdminInvite({ skip: 0, limit: 10 });
-    getAllAdminUserLogs({ skip: 0, limit: 10 });
-  }, [getAllAdminInvite, getAllAdminUserLogs]);
   useEffect(() => {
     setPagination((pagination) => ({
       current: pagination.current,
@@ -206,7 +208,8 @@ const SuperAdmin = ({
   };
 
   const handleAction = (id) => {
-    deleteAdminInvite({ id });
+    setIsModalVisible(true);
+    getUserDetailsById({ id });
   };
 
   const columns = [
@@ -220,30 +223,44 @@ const SuperAdmin = ({
       dataIndex: "email",
     },
     {
-      title: "Type",
+      title: "First Name",
+      dataIndex: "Profile",
+      render: (data) => `${data.first_name}`,
+    },
+    {
+      title: "Last Name",
+      dataIndex: "Profile",
+      render: (data) => `${data.last_name}`,
+    },
+    {
+      title: "User Type",
       dataIndex: "type",
     },
     {
-      title: "Invite Used",
-      dataIndex: "inviteUsed",
-      render: (inviteUsed) => <p>{inviteUsed ? "Yes" : "No"}</p>,
+      title: "User Name",
+      dataIndex: "username",
+    },
+    {
+      title: "Verification",
+      dataIndex: "is_verified",
+      render: (verification) => (
+        <p
+          className={
+            verification ? "ant-tag ant-tag-green" : "ant-tag ant-tag-warning"
+          }
+        >
+          {verification ? "Verified" : "Unverified"}
+        </p>
+      ),
     },
     {
       title: "Action",
       dataIndex: "id",
       key: "x",
       render: (id) => (
-        <Popconfirm
-          placement="top"
-          title={"Are you sure you want to Delete this invite?"}
-          onConfirm={() => handleAction(id)}
-          okText="Delete"
-          cancelText="No"
-        >
-          <Button type="primary" danger>
-            Delete Invite
-          </Button>
-        </Popconfirm>
+        <p style={{ cursor: "pointer" }} onClick={() => handleAction(id)}>
+          View Details
+        </p>
       ),
     },
   ];
@@ -296,174 +313,303 @@ const SuperAdmin = ({
         we_buy: buyAmount,
         we_sell: sellAmount,
       },
-    }).then((response) => {
-      notification.success({
-        message:"Successful"
-      })
-    }).catch((err) => {
-      notification.error({
-        message:"Currency Add Failed"
-      })
     })
+      .then((response) => {
+        notification.success({
+          message: "Successful",
+        });
+      })
+      .catch((err) => {
+        notification.error({
+          message: "Currency Add Failed",
+        });
+      });
     setIsAddCurrencyModalVisible(false);
   };
 
   return (
     <div>
       <ModalWrapper
-        isModalVisible={isAddCurrencyModalVisible}
-        setIsModalVisible={setIsAddCurrencyModalVisible}
-        className={styles.withdrawInitial}
-        showClose="no"
-        showCancel
-      >
-        <Form
-          layout="vertical"
-          name="admin-form"
-          style={{ padding: "20px 10px" }}
-          onFinish={onAddCurrencySubmit}
-        >
-          <p>Please enter the name of currency to be added.</p>
-          <Form.Item
-            name="currency"
-            label="Currency"
-            hasFeedback
-            required
-            rules={[
-              {
-                required: true,
-                message: "Please pick a currency",
-              },
-              {
-                type: "string",
-                message: "Please enter a validate email!",
-              },
-            ]}
-          >
-            <Select
-              value={newCurrency}
-              onChange={(input) => setNewCurrency(input)}
-              options={
-                validFiats &&
-                validFiats.fiats &&
-                validFiats.fiats.map((item) => ({
-                  render: item,
-                  value: item,
-                }))
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            name="currency name"
-            label="Currency Name"
-            hasFeedback
-            required
-            rules={[
-              {
-                required: true,
-                message: "Please input a currency name",
-              },
-            ]}
-          >
-            <Input
-              type="text"
-              prefix={<PayCircleOutlined className="text-primary" />}
-              value={currencyName}
-              onChange={(e) => {
-                setCurrencyName(e.target.value);
-                // console.log('text', e.target.value)
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="buyAmount"
-            label="Buy Amount"
-            hasFeedback
-            required
-            rules={[
-              {
-                required: true,
-                message: "Please input a Buy Amount",
-              },
-            ]}
-          >
-            <Input
-              type="number"
-              prefix={<PayCircleOutlined className="text-primary" />}
-              value={buyAmount}
-              onChange={(e) => {
-                setBuyAmount(e.target.value);
-                // console.log('text', e.target.value)
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="sellAmount"
-            label="Sell Amount"
-            hasFeedback
-            required
-            rules={[
-              {
-                required: true,
-                message: "Please input a Sell Amount",
-              },
-            ]}
-          >
-            <Input
-              type="number"
-              prefix={<PayCircleOutlined className="text-primary" />}
-              value={sellAmount}
-              onChange={(e) => {
-                setSellAmount(e.target.value);
-                // console.log('text', e.target.value)
-              }}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Add Currency
-            </Button>
-          </Form.Item>
-        </Form>
-      </ModalWrapper>
-      <ModalWrapper
-        isModalVisible={isModalVisible}
+        isModalVisible={
+          selectedUser && selectedUser.user ? isModalVisible : false
+        }
         setIsModalVisible={setIsModalVisible}
         className={styles.withdrawInitial}
         showClose="no"
         showCancel
       >
-        <Form
-          layout="vertical"
-          name="admin-form"
-          style={{ padding: "20px 10px" }}
-          onFinish={onSubmit}
-        >
-          <p>Please enter the email of the new admin to invite.</p>
-          <Form.Item
-            name="email"
-            label="Email"
-            hasFeedback
-            required
-            rules={[
-              {
-                required: true,
-                message: "Please input your email",
-              },
-              {
-                type: "email",
-                message: "Please enter a validate email!",
-              },
-            ]}
-          >
-            <Input prefix={<MailOutlined className="text-primary" />} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Invite
-            </Button>
-          </Form.Item>
-        </Form>
+        <div className={styles.transactionBig}>
+          <div className={styles.transactionBig__tag}>
+            <Avatar size="large" style={{ margin: 10 }}>
+              {`${
+                selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.Profile.first_name[0]
+              } ${
+                selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.Profile.last_name[0]
+              }`}
+            </Avatar>
+            <span>
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.Profile.first_name}
+            </span>{" "}
+            <span>
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.Profile.last_name}
+            </span>
+          </div>
+          <div style={{ margin: 10 }}>
+            <List.Item>
+              <List.Item.Meta
+                title={"ID"}
+                description={
+                  selectedUser && selectedUser.user && selectedUser.user.id
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"First Name"}
+                description={
+                  selectedUser &&
+                  selectedUser.user &&
+                  selectedUser.user.Profile.first_name
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"Last Name"}
+                description={
+                  selectedUser &&
+                  selectedUser.user &&
+                  selectedUser.user.Profile.last_name
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"Email"}
+                description={
+                  selectedUser && selectedUser.user && selectedUser.user.email
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"User Type"}
+                description={
+                  selectedUser && selectedUser.user && selectedUser.user.type
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"User Name"}
+                description={
+                  selectedUser &&
+                  selectedUser.user &&
+                  selectedUser.user.username
+                }
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"User Referral Code"}
+                description={
+                  selectedUser &&
+                  selectedUser.user &&
+                  selectedUser.user.referral_code
+                }
+              />
+            </List.Item>
+
+            {/* <List.Item>
+              <List.Item.Meta
+                title={"NGN Wallet Balance"}
+                description={
+                  <div>
+                    <span>
+                      Available Balance:{" "}
+                      {selectedUser &&
+                        selectedUser.user &&
+                        selectedUser.user.wallets &&
+                        selectedUser.user.wallets.NGN &&
+                        selectedUser.user.wallets.NGN.balance.toLocaleString()}
+                    </span>
+                    <span style={{ paddingLeft: 10 }}>
+                      Locked Balance:{" "}
+                      {selectedUser &&
+                        selectedUser.user &&
+                        selectedUser.user.wallets &&
+                        selectedUser.user.wallets.NGN &&
+                        selectedUser.user.wallets.NGN.locked.toLocaleString()}
+                    </span>
+                  </div>
+                }
+              />
+            </List.Item> */}
+            {/* <List.Item>
+              <List.Item.Meta
+                title={"GHS Wallet Balance"}
+                description={
+                  <div>
+                    <span>
+                      Available Balance:{" "}
+                      {selectedUser &&
+                        selectedUser.user &&
+                        selectedUser.user.wallets &&
+                        selectedUser.user.wallets.GHS &&
+                        selectedUser.user.wallets.GHS.balance.toLocaleString()}
+                    </span>
+                    <span style={{ paddingLeft: 10 }}>
+                      Locked Balance:{" "}
+                      {selectedUser &&
+                        selectedUser.user &&
+                        selectedUser.user.wallets &&
+                        selectedUser.user.wallets.GHS &&
+                        selectedUser.user.wallets.GHS.locked.toLocaleString()}
+                    </span>
+                  </div>
+                }
+              />
+            </List.Item> */}
+            {/* <List.Item>
+              <List.Item.Meta
+                title={"BTC Wallet Balance"}
+                description={
+                  <div>
+                    <span>
+                      Available Balance:{" "}
+                      {selectedUser &&
+                        selectedUser.user &&
+                        selectedUser.user.wallets &&
+                        selectedUser.user.wallets.BTC &&
+                        selectedUser.user.wallets.BTC.balance.toLocaleString()}
+                    </span>
+                    <span style={{ paddingLeft: 10 }}>
+                      Locked Balance:{" "}
+                      {selectedUser &&
+                        selectedUser.user &&
+                        selectedUser.user.wallets &&
+                        selectedUser.user.wallets.BTC &&
+                        selectedUser.user.wallets.BTC.locked.toLocaleString()}
+                    </span>
+                  </div>
+                }
+              />
+            </List.Item> */}
+            <List.Item>
+              <List.Item.Meta
+                title={"Date Created"}
+                description={date(
+                  selectedUser &&
+                    selectedUser.user &&
+                    selectedUser.user.created_at
+                )}
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"Date last updated"}
+                description={date(
+                  selectedUser &&
+                    selectedUser.user &&
+                    selectedUser.user.updated_at
+                )}
+              />
+            </List.Item>
+            <List.Item>
+              <List.Item.Meta
+                title={"verification"}
+                description={
+                  <div>
+                    <span>
+                      Email:{" "}
+                      {selectedUser &&
+                      selectedUser.user &&
+                      selectedUser.user.is_verified
+                        ? "✅"
+                        : "🚫"}
+                    </span>
+                    <span style={{ paddingLeft: 10 }}>
+                      Phone Number:{" "}
+                      {selectedUser &&
+                      selectedUser.user &&
+                      selectedUser.user.Profile.is_phone_verified
+                        ? "✅"
+                        : "🚫"}
+                    </span>
+                  </div>
+                }
+              />
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.type in { BASIC_USER: "1" } && (
+                  <div style={{ display: "flex" }}>
+                    <Popconfirm
+                      placement="top"
+                      title={"Are you sure you want to make this user admin?"}
+                      onConfirm={() =>
+                        makeAdmin({ userId: selectedUser.user.Profile.user_id })
+                      }
+                      okText="Approve"
+                      cancelText="No"
+                    >
+                      <Button type="primary" style={{ marginRight: 10 }}>
+                        Make Admin
+                      </Button>
+                    </Popconfirm>
+                    {/* <Popover content={content} title="Title" trigger="click">
+                    <Button type="primary" danger>
+                      Decline
+                    </Button>
+                  </Popover> */}
+                  </div>
+                )}
+              {selectedUser &&
+                selectedUser.user &&
+                selectedUser.user.type in
+                  { SUPER_USER: "1", ADMIN_USER: "2" } && (
+                  <div style={{ display: "flex" }}>
+                    {/* <Popconfirm
+                    placement="top"
+                    title={"Are you sure you want to Approve this request?"}
+                    onConfirm={handleApproval}
+                    okText="Approve"
+                    cancelText="No"
+                  >
+                    <Button type="primary" style={{ marginRight: 10 }}>
+                      Approve
+                    </Button>
+                  </Popconfirm> */}
+                    <Popconfirm
+                      placement="top"
+                      title={
+                        "Are you sure you want to remove this user's admin privilege?"
+                      }
+                      onConfirm={() => {
+                        removeAdmin({
+                          userId: selectedUser.user.Profile.user_id,
+                        });
+                      }}
+                      okText="Remove"
+                      cancelText="No"
+                      // content={content}
+                    >
+                      <Button type="primary" danger>
+                        Remove Admin
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                )}
+            </List.Item>
+          </div>
+        </div>
       </ModalWrapper>
 
       <Tabs defaultActiveKey="1" style={{ background: "white" }}>
@@ -485,9 +631,9 @@ const SuperAdmin = ({
             }}
           >
             <Title level={2}>Admin Users</Title>
-            <Button type="primary" onClick={() => setIsModalVisible(true)}>
+            {/* <Button type="primary" onClick={() => setIsModalVisible(true)}>
               Invite Admin
-            </Button>
+            </Button> */}
           </div>
           <Row gutter={16}>
             <Col
@@ -599,7 +745,7 @@ const SuperAdmin = ({
             </Col>
           </Row>
         </TabPane>
-        <TabPane
+        {/* <TabPane
           tab={
             <div>
               <span>Admin Wallet Management</span>
@@ -833,7 +979,7 @@ const SuperAdmin = ({
               </Row>
             </Col>
           </Row>
-        </TabPane>
+        </TabPane> */}
       </Tabs>
     </div>
   );
@@ -847,6 +993,7 @@ const mapStateToProps = (state) => ({
   adminLog: state.super.adminLog,
   validFiats: state.all.validFiats,
   validCoins: state.all.validCoins,
+  selectedUser: state.users.userById,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -867,6 +1014,15 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getFiats: (data) => {
     dispatch(getValidFiats(data));
+  },
+  getUserDetailsById: (userId) => {
+    dispatch(getUserDetailsById(userId));
+  },
+  makeAdmin: (data) => {
+    dispatch(makeUserAdmin(data));
+  },
+  removeAdmin: (data) => {
+    dispatch(removeUserAdmin(data));
   },
 });
 

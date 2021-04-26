@@ -17,7 +17,8 @@ import {
   Form,
   Modal,
   Select as AntSelect,
-  Progress
+  Progress,
+  notification
 } from "antd";
 import Upload from "../../../components/upload";
 import { ExclamationCircleOutlined, CreditCardOutlined, CloseCircleOutlined } from "@ant-design/icons";
@@ -28,11 +29,13 @@ import {
   countryOptions,
   DigitalAsset,
   cardOptions,
+  processImageToCloudinary,
 } from "utils/helper";
 import styles from "../../styles.module.scss";
 import DataTable from "components/layout-components/DataTable";
 import ModalWrapper from "components/layout-components/Modal";
 import { getUserDetailsById } from "redux/actions/user";
+import AppFetch from "auth/FetchInterceptor";
 import {
   approveGiftCardTransaction,
   declineGiftCardTransaction,
@@ -136,6 +139,7 @@ const GiftCard = ({
   // const [state, setState] = useState(INITIAL_STATE2);
   // const [rate, setRate] = useState({});
   const [progress, setProgress] = useState();
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   const [comment, setComment] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -145,6 +149,8 @@ const GiftCard = ({
   const [avaCurr, setAvaCurr] = useState([]);
   const [avaCard, setAvaCard] = useState([]);
   const [debitWallet, setDebitWallet] = useState("");
+  const [giftcardName, setGiftcardName] = useState("")
+  const [giftcardUid, setGiftcardUid] = useState("")
   const [Trigger, setTrigger] = useState(false);
   const [actionTypeSel, setActionTypeSel] = useState("");
   const [pagination, setPagination] = useState({
@@ -317,132 +323,7 @@ const GiftCard = ({
     getUserDetailsById({ id });
   };
 
-  const UserModal = () => {
-    return (
-      <ModalWrapper
-        isModalVisible={
-          selectedUser && selectedUser.user ? isUserModalVisible : false
-        }
-        setIsModalVisible={setUserIsModalVisible}
-        className={styles.withdrawInitial}
-        showClose="no"
-        showCancel
-      >
-        <div className={styles.transactionBig}>
-          <div className={styles.transactionBig__tag}>
-            <Avatar size="large" style={{ margin: 10 }}>
-              {`${
-                selectedUser &&
-                selectedUser.user &&
-                selectedUser.user.firstName[0]
-              } ${
-                selectedUser &&
-                selectedUser.user &&
-                selectedUser.user.lastName[0]
-              }`}
-            </Avatar>
-            <span>
-              {selectedUser && selectedUser.user && selectedUser.user.firstName}
-            </span>{" "}
-            <span>
-              {selectedUser && selectedUser.user && selectedUser.user.lastName}
-            </span>
-          </div>
-          <div style={{ margin: 10 }}>
-            <List.Item>
-              <List.Item.Meta
-                title={"ID"}
-                description={
-                  selectedUser && selectedUser.user && selectedUser.user.id
-                }
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"First Name"}
-                description={
-                  selectedUser &&
-                  selectedUser.user &&
-                  selectedUser.user.firstName
-                }
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"Last Name"}
-                description={
-                  selectedUser &&
-                  selectedUser.user &&
-                  selectedUser.user.lastName
-                }
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"Email"}
-                description={
-                  selectedUser && selectedUser.user && selectedUser.user.email
-                }
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"User Type"}
-                description={
-                  selectedUser && selectedUser.user && selectedUser.user.type
-                }
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"Date Created"}
-                description={date(
-                  selectedUser &&
-                    selectedUser.user &&
-                    selectedUser.user.createdAt
-                )}
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"Date last updated"}
-                description={date(
-                  selectedUser &&
-                    selectedUser.user &&
-                    selectedUser.user.updatedAt
-                )}
-              />
-            </List.Item>
-            <List.Item>
-              <List.Item.Meta
-                title={"verification"}
-                description={
-                  <div>
-                    <span>
-                      Email:{" "}
-                      {selectedUser &&
-                      selectedUser.user &&
-                      selectedUser.user.verification.email.isVerified
-                        ? "✅"
-                        : "🚫"}
-                    </span>
-                    <span style={{ paddingLeft: 10 }}>
-                      Phone Number:{" "}
-                      {selectedUser &&
-                      selectedUser.user &&
-                      selectedUser.user.verification.phoneNumber.isVerified
-                        ? "✅"
-                        : "🚫"}
-                    </span>
-                  </div>
-                }
-              />
-            </List.Item>
-          </div>
-        </div>
-      </ModalWrapper>
-    );
-  };
+  
 
   const handleApproval = () => {
     confirm({
@@ -542,9 +423,50 @@ const GiftCard = ({
       });
   };
 
+  const onGiftCardSubmit = async () => {
+    setUploadLoading(true);
+    if (details.file.length === 0) {
+      return;
+    }else if (details.file.length >1) {
+      notification.warn({
+        message:"You can only upload one file",
+      })
+      return;
+    }
+    const resFile = await Promise.all(
+      details.file.map((i) =>
+        processImageToCloudinary(
+          i,
+          console.log,
+          setProgress,
+        )
+      )
+    );
+
+    AppFetch({
+      url: `/admin/cards`,
+      method: "POST",
+      data: {
+        uid: giftcardUid,
+        name: giftcardName,
+        image: resFile[0],
+      },
+    }).then((response) => {
+      notification.success({
+        message:"Successful"
+      })
+    }).catch((err) => {
+      notification.error({
+        message:"Currency Add Failed"
+      })
+    })
+    setUploadLoading(false);
+    setIsAddNewModalVisible(false)
+  };
+
   return (
     <div>
-      <UserModal />
+     
       <ModalWrapper
         isModalVisible={isAddNewModalVisible}
         setIsModalVisible={setIsAddNewModalVisible}
@@ -556,7 +478,7 @@ const GiftCard = ({
           layout="vertical"
           name="admin-form"
           style={{ padding: "20px 10px" }}
-          // onFinish={onSubmit}
+          onFinish={onGiftCardSubmit}
         >
           <p>Please enter the name of Giftcard to be added.</p>
           <Form.Item
@@ -567,15 +489,31 @@ const GiftCard = ({
             rules={[
               {
                 required: true,
-                message: "Please input your email",
-              },
+                message: "Please input name of the Giftcard",
+              }
+            ]}
+          >
+            <Input type="text" 
+            value={giftcardName}
+            onChange={(e)=>setGiftcardName(e.target.value)}
+            prefix={<CreditCardOutlined className="text-primary" />} />
+          </Form.Item>
+          <Form.Item
+            name="giftcarduid"
+            label="Gifcard Unique ID"
+            hasFeedback
+            required
+            rules={[
               {
-                type: "email",
-                message: "Please enter a validate email!",
+                required: true,
+                message: "Please input an id for the Giftcard",
               },
             ]}
           >
-            <Input prefix={<CreditCardOutlined className="text-primary" />} />
+            <Input type="text" 
+            value={giftcardUid}
+            onChange={(e)=>setGiftcardUid(e.target.value)}
+            prefix={<CreditCardOutlined className="text-primary" />} />
           </Form.Item>
           <Form.Item>
 
