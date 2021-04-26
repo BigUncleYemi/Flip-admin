@@ -380,7 +380,7 @@ function Resources(props) {
                     </div>
                   </Card>
                 </Col>
-                <Col
+                {/* <Col
                   onClick={(rt) => console.log("new", rt)}
                   xs={24}
                   sm={24}
@@ -404,7 +404,7 @@ function Resources(props) {
                         ))}
                     </div>
                   </Card>
-                </Col>
+                </Col> */}
               </Row>
             </Col>
           </Row>
@@ -470,7 +470,7 @@ function Resources(props) {
                     </div>
                   </Card>
                 </Col>
-                <Col
+                {/* <Col
                   onClick={(rt) => console.log("new", rt)}
                   xs={24}
                   sm={24}
@@ -494,7 +494,7 @@ function Resources(props) {
                         ))}
                     </div>
                   </Card>
-                </Col>
+                </Col> */}
               </Row>
             </Col>
           </Row>
