@@ -731,9 +731,9 @@ const GiftCard = ({
       >
         <Title level={2}>Sell Gift Card</Title>
         <div>
-        <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
+        {/* <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
           Add New Giftcard
-        </Button>
+        </Button> */}
         <Button type="primary" onClick={showDrawer}>
           Edit Gift Card Rate
         </Button>

@@ -45,7 +45,8 @@ const GiftCards = ({
   giftCards,
   cardDetails,
   getCardsDetails,
-  loading
+  loading,
+  setActive
 }) => {
 
     const onHandleFile = (file) => {
@@ -356,6 +357,10 @@ const GiftCards = ({
             flexDirection: "row",
             alignItems: "center",
           }}
+          onClick={()=>setActive((state)=> ({
+              main:true,
+              giftCards:false
+          }))}
         >
           <ArrowLeftOutlined style={{ fontSize: 20, marginRight: 15 }} />
           <div style={{ fontSize: 20 }}>Gift Cards</div>

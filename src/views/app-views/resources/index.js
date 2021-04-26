@@ -239,7 +239,7 @@ function Resources(props) {
           layout="vertical"
           name="admin-form"
           style={{ padding: "20px 10px" }}
-          onFinish={onAddCurrencySubmit}
+          onFinish={onAddCoinSubmit}
         >
           <p>Please enter the name of coin to be added.</p>
           <Form.Item
