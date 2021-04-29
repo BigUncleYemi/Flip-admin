@@ -3,10 +3,9 @@ import Loading from "../components/Loading";
 import png from "../assets/png";
 import * as SVG from "../assets/svg";
 import styles from "../views/styles.module.scss";
-// import * as actionTypes from "../redux/constants/Auth";
 
-// import QRious from "qrious";
 import Axios from "axios";
+import { API_BASE_URL } from "configs/AppConfig";
 
 // export const QRCode = ({text, size}) => {
 //   const canvas = useRef(null);
@@ -22,30 +21,29 @@ import Axios from "axios";
 //   });
 //   return(<canvas ref={canvas}></canvas>);
 // }
-
 export const processImageToCloudinary = async (
   file,
   error,
-  progress,
-  cloudName,
-  unsignedUploadPreset
+  progress
 ) => {
   // `fieldName` and `meta` are not used for now${moment().format('DDMMMYYYY')}
 
   try {
-    const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+    const url = `${API_BASE_URL}misc/upload-file`;
     const data = new FormData();
     // const userId = localStorage.getItem(actionTypes.AUTH_TOKEN_ID);
 
-    data.append("upload_preset", unsignedUploadPreset);
+    // data.append("upload_preset", unsignedUploadPreset);
     // data.append("tags", ["browser_upload", userId]);
     data.append("file", file);
+    console.log('GCP Upload', url)
     let res = await Axios.post(`${url}`, data, {
       onUploadProgress: progressEvent => {
         progress(parseInt(Math.round(progressEvent.loaded * 100 / progressEvent.total)))
       }
     });
-    return res.data.url;
+    error("urls", res.data)
+    return res.data.data.publicUrl;
   } catch (err) {
     error(err);
   }

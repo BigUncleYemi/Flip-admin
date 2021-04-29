@@ -86,7 +86,7 @@ const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
 
       <Row gutter={16} style={{ marginBottom: 20 }}>
         {console.log("wallet", dashboardData)}
-        {typeUser === "SUPER_USER" &&
+        {typeUser === "SUPER_USER" && dashboardData &&
           dashboardData?.quidaxBalances &&
           Object.keys(dashboardData.quidaxBalances).map((item) => (
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
@@ -96,14 +96,11 @@ const Home = ({ getDashboard, dashboardData, getBalances, walletData }) => {
                   <div>
                     <Statistic
                       title={"Available Balance"}
-                      value={Money(
-                        dashboardData.quidaxBalances[item].available_balance | 0,
-                        item
-                      )}
+                      value={`${item} ${dashboardData.quidaxBalances[item].available_balance || 0}`}
                     />
                     <Statistic
                       title={"Ledger Balance"}
-                      value={Money(dashboardData.quidaxBalances[item].ledger_balance, item)}
+                      value={`${item} ${dashboardData.quidaxBalances[item].ledger_balance || 0}`}
                     />
                   </div>
                 }
