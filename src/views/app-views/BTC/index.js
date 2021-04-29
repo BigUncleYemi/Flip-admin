@@ -451,7 +451,7 @@ const BTC = ({
           <p>Please enter the name of the coin to add</p>
           <Form.Item
             name="email"
-            label="Coin"
+            label="Crypto"
             hasFeedback
             required
             rules={[
@@ -459,17 +459,13 @@ const BTC = ({
                 required: true,
                 message: "Please input your email",
               },
-              {
-                type: "email",
-                message: "Please enter a validate email!",
-              },
             ]}
           >
             <Input prefix={<PayCircleOutlined className="text-primary" />} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
-              Add Coin
+              Add Crypto
             </Button>
           </Form.Item>
         </Form>
@@ -619,11 +615,11 @@ const BTC = ({
         <Title level={2}>Crypto</Title>
         <div style={{}}>
         <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
-          Add New Coin
+          Add New Crypto
         </Button>
 
         <Button type="primary" onClick={showDrawer}>
-          Edit Coin Transaction Settings
+          Crypto Transaction Settings
         </Button>
         </div>
       </div>
@@ -968,7 +964,7 @@ const BTC = ({
             <TabPane
               tab={
                 <div>
-                  <span>Buy Coins</span>
+                  <span>Buy Crypto</span>
                 </div>
               }
               key="1"
@@ -1004,14 +1000,14 @@ const BTC = ({
                 columns={columns}
                 transaction={buyTransactions}
                 fetchTrans={getAllBuyTrans}
-                title={"Buy Coins"}
+                title={"Buy Crypto"}
                 data={buyTransactions && buyTransactions.transactions}
               />
             </TabPane>
             <TabPane
               tab={
                 <div>
-                  <span>Sell Coins</span>
+                  <span>Sell Crypto</span>
                 </div>
               }
               key="2"
@@ -1037,14 +1033,14 @@ const BTC = ({
                 columns={columns}
                 transaction={sellTransactions}
                 fetchTrans={getAllSellTrans}
-                title={"Sell Coin"}
+                title={"Sell Crypto"}
                 data={sellTransactions && sellTransactions.transactions}
               />
             </TabPane>
             <TabPane
               tab={
                 <div>
-                  <span>Send Coins</span>
+                  <span>Send Crypto</span>
                 </div>
               }
               key="3"
@@ -1070,14 +1066,14 @@ const BTC = ({
                 columns={columns}
                 transaction={sendTransactions}
                 fetchTrans={getAllSendTrans}
-                title={"Send Coin"}
+                title={"Send Crypto"}
                 data={sendTransactions && sendTransactions.transactions}
               />
             </TabPane>
             <TabPane
               tab={
                 <div>
-                  <span>P2P Coin Transfer</span>
+                  <span>P2P Crypto Transfer</span>
                 </div>
               }
               key="4"
@@ -1103,7 +1099,7 @@ const BTC = ({
                 columns={columns}
                 transaction={p2pTransactions}
                 fetchTrans={getAllP2PTrans}
-                title={"P2P Coin TRansfer"}
+                title={"P2P Crypto TRansfer"}
                 data={p2pTransactions && p2pTransactions.transactions}
               />
             </TabPane>

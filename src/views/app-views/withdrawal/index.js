@@ -553,11 +553,11 @@ const Withdrawal = ({
       >
         <Title level={2}>Withdrawals</Title>
         <Button type="primary" onClick={showDrawer}>
-          Edit Withdrawals Transaction Settings
+          Withdrawals Transaction Settings
         </Button>
       </div>
       <Drawer
-        title="Edit Withdrawals Transaction Settings"
+        title="Withdrawals Transaction Settings"
         placement="right"
         closable={false}
         onClose={onClose}

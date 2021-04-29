@@ -14,7 +14,7 @@ export const AppViews = () => {
         <Route path={`${APP_PREFIX_PATH}/withdrawal`} component={lazy(() => import('./withdrawal'))} />
         <Route path={`${APP_PREFIX_PATH}/giftCard`} component={lazy(() => import('./giftCard'))} />
         <Route path={`${APP_PREFIX_PATH}/buy-giftCard`} component={lazy(() => import('./buyGiftCard'))} />
-        <Route path={`${APP_PREFIX_PATH}/btc`} component={lazy(() => import('./BTC'))} />
+        <Route path={`${APP_PREFIX_PATH}/crypto`} component={lazy(() => import('./BTC'))} />
         <Route path={`${APP_PREFIX_PATH}/super`} component={lazy(() => import('./superadmin'))} />
         <Route path={`${APP_PREFIX_PATH}/resources`} component={lazy(() => import('./resources'))} />
         <Redirect from={`${APP_PREFIX_PATH}`} to={`${APP_PREFIX_PATH}/home`} />

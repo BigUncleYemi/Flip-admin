@@ -27,6 +27,15 @@ import ModalWrapper from "components/layout-components/Modal";
 
 const { Option } = Select;
 const { confirm } = Modal;
+const ActionType = ["ADMIN_USER", "BASIC_USER"];
+const SActionType = ["SUPER_USER","ADMIN_USER", "BASIC_USER"];
+
+const convertToProperName = (name) => {
+  return name
+    .split("_")
+    .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+};
 
 const User = ({
   getAllUsers,
@@ -36,13 +45,32 @@ const User = ({
   makeAdmin,
   removeAdmin,
 }) => {
+  const typeUser = localStorage.getItem("type");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [Trigger, setTrigger] = useState(false);
   const [comment, setComment] = useState("");
+  const [actionTypeSel, setActionTypeSel] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: users && users.meta && users.meta.limit,
+    total: users && users.meta && users.meta.count,
+  });
   const { Title } = Typography;
   const { TextArea } = Input;
+
   useEffect(() => {
-    getAllUsers({ skip: 0, limit: 10 });
+    getAllUsers({
+      skip: 0,
+      limit: pagination.pageSize,
+      type: actionTypeSel,
+    });
+    // setLoading(false);
+    // eslint-disable-next-line
+  }, [actionTypeSel, pagination]);
+
+
+  useEffect(() => {
+    getAllUsers({ skip: 0, limit: 10,type:"" });
     // getUserDetailsById({id: "ac65bd59-a8b9-4f6c-98d8-ac32da3107a1"})
   }, [getAllUsers]);
 
@@ -50,6 +78,11 @@ const User = ({
     setIsModalVisible(true);
     getUserDetailsById({ id });
   };
+
+  function handleTypeChange(value) {
+    console.log(`selected ${value}`);
+    setActionTypeSel(value);
+  }
 
   const content = (
     <div>
@@ -454,6 +487,29 @@ const User = ({
         </div>
       </ModalWrapper>
       <Title level={2}>Users</Title>
+      <Row align="start" style={{marginBottom:10, marginLeft:10}}>
+        <Col span={6}>
+          <p>Filter By Type</p>
+          <Select
+            style={{ minWidth: 200 }}
+            allowClear
+            onChange={handleTypeChange}
+          >
+            <Option value="">Select User Type</Option>
+            {typeUser === "SUPER_USER" ? SActionType.map((item) => (
+              <Option key={item} value={item}>
+                {convertToProperName(item)}
+              </Option>
+            )): ActionType.map((item) => (
+              <Option key={item} value={item}>
+                {convertToProperName(item)}
+              </Option>
+            ))}
+            
+          </Select>
+        </Col>
+        
+      </Row>
       <Row gutter={16}>
         <Col
           style={{ flex: 1, maxWidth: "100%" }}
@@ -463,13 +519,21 @@ const User = ({
           lg={18}
         >
           <Row gutter={16}>
-            <DataTable
+            {typeUser === "SUPER_USER" ?  
+            (<DataTable
+              columns={columns}
+              transaction={users}
+              fetchTrans={getAllUsers}
+              title={"User"}
+              data={users && users.users}
+            />) :
+            (<DataTable
               columns={columns}
               transaction={users}
               fetchTrans={getAllUsers}
               title={"User"}
               data={users && users.users.filter((item)=> item.type !== "SUPER_USER")}
-            />
+            />) }
           </Row>
         </Col>
       </Row>

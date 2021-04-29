@@ -4,21 +4,21 @@ const withdrawalService = {}
 
 withdrawalService.approveWithdrawalTransaction = function (data) {
   return fetch({
-    url: `/admin/withdrawals/${data.transactionId}/approve`,
+    url: `/admin/withdrawals/transactions/${data.transactionId}/approve`,
     method: 'post',
-    data: {
-      "debitWallet": data.debitWallet,
-    }
+    // data: {
+    //   "debitWallet": data.debitWallet,
+    // }
   })
 }
 
 withdrawalService.declineWithdrawalTransaction = function (data) {
   return fetch({
-    url: `/admin/withdrawals/${data.transactionId}/decline`,
+    url: `/admin/withdrawals/transactions/${data.transactionId}/decline`,
     method: 'post',
-    data: { //INFO this is set default cos we only doing naira here
-      "comments": data.comment
-    }
+    // data: { //INFO this is set default cos we only doing naira here
+    //   "comments": data.comment
+    // }
   })
 }
 
@@ -46,7 +46,7 @@ withdrawalService.getWithdrawalTransactions = function (params) {
 
 withdrawalService.getWithdrawalTransactionDetails = function (data) {
   return fetch({
-    url: `/admin/withdrawals/${data.transactionId}`,
+    url: `/admin/withdrawals/transactions/${data.transactionId}`,
     method: 'get',
   })
 }

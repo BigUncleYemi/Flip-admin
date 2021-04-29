@@ -5,7 +5,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 const InnerCardList = React.memo(function InnerCardList(props) {
   return props.contents?.map((item, index) => (
-    <Draggable key={item.id} draggableId={item.id} index={index}>
+    <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={parseInt(index)}>
       {( dragProvided, dragSnapshot) => (
         <div
           className='mb-3'
@@ -21,12 +21,12 @@ const InnerCardList = React.memo(function InnerCardList(props) {
             onClick={() => props.cardData(item.id)}
           >
             <div style={{display: "flex", flexDirection: "column"}}>
-              <h4 className="mb-2">{item.cardSlug}</h4>
-              <span><strong>Date:</strong> {new Date(item.createdAt).toLocaleString()}</span>
-              <span style={{wordWrap: "break-word"}}><strong>Status:</strong> {item.status}</span>
-              <span style={{wordWrap: "break-word"}}><strong>Ref:</strong> {item.reference}</span>
-              <span style={{wordWrap: "break-word"}}><strong>Ref Currency:</strong> {item.referenceCurrency}</span>
-              <span style={{wordWrap: "break-word"}}><strong>Total Estimated Amount:</strong> {item.totalEstimatedAmount.toLocaleString()}</span>
+              <h4 className="mb-2">{item.card_slug}</h4>
+              <span><strong>Date:</strong> {new Date(item.created_at).toLocaleString()}</span>
+              <span style={{wordWrap: "break-word"}}><strong>Status:</strong> {item?.status}</span>
+              <span style={{wordWrap: "break-word"}}><strong>Ref:</strong> {item?.reference}</span>
+              <span style={{wordWrap: "break-word"}}><strong>Ref Currency:</strong> {item?.description}</span>
+              <span style={{wordWrap: "break-word"}}><strong>Total Estimated Amount:</strong> {item && item.card_detail && parseFloat(item?.card_detail.value) * parseFloat(item.rate) *item.card_detail.quantity}</span>
             </div>
           </Card>
 				</div>

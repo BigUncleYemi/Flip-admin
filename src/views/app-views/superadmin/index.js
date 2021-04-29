@@ -613,7 +613,7 @@ const SuperAdmin = ({
       </ModalWrapper>
 
       <Tabs defaultActiveKey="1" style={{ background: "white" }}>
-        <TabPane
+        {/* <TabPane
           tab={
             <div>
               <span>Admin users</span>
@@ -631,9 +631,7 @@ const SuperAdmin = ({
             }}
           >
             <Title level={2}>Admin Users</Title>
-            {/* <Button type="primary" onClick={() => setIsModalVisible(true)}>
-              Invite Admin
-            </Button> */}
+
           </div>
           <Row gutter={16}>
             <Col
@@ -654,7 +652,7 @@ const SuperAdmin = ({
               </Row>
             </Col>
           </Row>
-        </TabPane>
+        </TabPane> */}
         <TabPane
           tab={
             <div>

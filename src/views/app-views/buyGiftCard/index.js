@@ -63,11 +63,12 @@ const BuyGiftCard = ({
   }
   useEffect(() => {
     getAllGiftCard({ skip: 0, limit: 10 });
-    getNewGiftCard({ skip: 0, limit: 10 });
+    // getNewGiftCard({ skip: 0, limit: 10 });
     getBuyGiftCardSettings();
   }, [getAllGiftCard, getNewGiftCard, getGiftCardList, getBuyGiftCardSettings]);
 
   const handleAction = (id) => {
+    console.log('clicked', id, giftCardDetails)
     setIsModalVisible(true);
     getGiftCardById({ transactionId: id });
   };
@@ -125,6 +126,7 @@ const BuyGiftCard = ({
   ];
 
   const handleUserAction = (id) => {
+    
     setUserIsModalVisible(true);
     getUserDetailsById({ id });
   };
@@ -306,7 +308,7 @@ const BuyGiftCard = ({
       {isModalVisible && (
         <ModalWrapper
           isModalVisible={
-            giftCardDetails && giftCardDetails.transaction
+            giftCardDetails && giftCardDetails.card_detail
               ? isModalVisible
               : false
           }
@@ -321,15 +323,15 @@ const BuyGiftCard = ({
                 <strong>Status:</strong>{" "}
                 <span>
                   {giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.status}
+                    giftCardDetails.status &&
+                    giftCardDetails.status}
                 </span>
               </p>
               <strong>Reference:</strong>{" "}
               <span>
                 {giftCardDetails &&
-                  giftCardDetails.transaction &&
-                  giftCardDetails.transaction.reference}
+                  giftCardDetails.reference &&
+                  giftCardDetails.reference}
               </span>
             </div>
             <div style={{ margin: 10 }}>
@@ -338,8 +340,8 @@ const BuyGiftCard = ({
                   title={"Date Created"}
                   description={date(
                     giftCardDetails &&
-                      giftCardDetails.transaction &&
-                      giftCardDetails.transaction.createdAt
+                      giftCardDetails.created_at &&
+                      giftCardDetails.created_at
                   )}
                 />
               </List.Item>
@@ -348,8 +350,8 @@ const BuyGiftCard = ({
                   title={"ID"}
                   description={
                     giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.id
+                    giftCardDetails.id &&
+                    giftCardDetails.id
                   }
                 />
               </List.Item>
@@ -358,8 +360,8 @@ const BuyGiftCard = ({
                   title={"Card Slug"}
                   description={
                     giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.cardSlug
+                    giftCardDetails.card_slug &&
+                    giftCardDetails.card_slug
                   }
                 />
               </List.Item>
@@ -368,8 +370,8 @@ const BuyGiftCard = ({
                   title={"Quantity"}
                   description={
                     giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.cardDetails.quantity
+                    giftCardDetails.card_detail &&
+                    giftCardDetails.card_detail.quantity
                   }
                 />
               </List.Item>
@@ -378,11 +380,11 @@ const BuyGiftCard = ({
                   title={"Total Estimated Amount"}
                   description={Money(
                     giftCardDetails &&
-                      giftCardDetails.transaction &&
-                      giftCardDetails.transaction.totalEstimatedAmount,
+                      giftCardDetails.card_detail &&
+                      giftCardDetails.card_detail.quantity * parseFloat(giftCardDetails.card_detail.value) * parseFloat(giftCardDetails.rate),
                     (giftCardDetails &&
-                      giftCardDetails.transaction &&
-                      giftCardDetails.transaction.referenceCurrency) ||
+                      giftCardDetails.FiatCurrency &&
+                      giftCardDetails.FiatCurrency.code) ||
                       "usd"
                   )}
                 />
@@ -392,11 +394,8 @@ const BuyGiftCard = ({
                   title={"Estimated USD Amount"}
                   description={Money(
                     giftCardDetails &&
-                      giftCardDetails.transaction &&
-                      giftCardDetails.transaction.cardDetails
-                        .estimatedUSDValue &&
-                      giftCardDetails.transaction.cardDetails.estimatedUSDValue
-                        .amount,
+                      giftCardDetails.card_detail &&
+                      giftCardDetails.card_detail.quantity * parseFloat(giftCardDetails.card_detail.value),
                     "usd"
                   )}
                 />
@@ -406,8 +405,8 @@ const BuyGiftCard = ({
                   title={"Card Currency"}
                   description={
                     giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.cardDetails.cardCurrency
+                    giftCardDetails.card_detail &&
+                    giftCardDetails.card_detail.currency
                   }
                 />
               </List.Item>
@@ -416,8 +415,8 @@ const BuyGiftCard = ({
                   title={"Card Value"}
                   description={
                     giftCardDetails &&
-                    giftCardDetails.transaction &&
-                    giftCardDetails.transaction.cardDetails.cardValue
+                    giftCardDetails.card_detail &&
+                    giftCardDetails.card_detail.value
                   }
                 />
               </List.Item>
@@ -453,14 +452,14 @@ const BuyGiftCard = ({
                       onClick={() =>
                         handleUserAction(
                           giftCardDetails &&
-                            giftCardDetails.transaction &&
-                            giftCardDetails.transaction.userId
+                            giftCardDetails.User &&
+                            giftCardDetails.User.id
                         )
                       }
                     >
                       {giftCardDetails &&
-                        giftCardDetails.transaction &&
-                        giftCardDetails.transaction.userId}
+                            giftCardDetails.User &&
+                            giftCardDetails.User.id}
                     </p>
                   }
                 />
@@ -479,7 +478,7 @@ const BuyGiftCard = ({
       >
         <Title level={2}>Buy Gift Card</Title>
         <Button type="primary" onClick={showDrawer}>
-          Edit Buy Gift Card Settings
+          Buy Gift Card Settings
         </Button>
       </div>
       <Drawer
