@@ -176,12 +176,12 @@ const SuperAdmin = ({
   useEffect(() => {
     // getCoins();
     getFiats();
-    AppFetch({
-      url: `/admin/misc/wallet-balances`,
-      method: "GET",
-    }).then((response) => {
-      setWallet(response.data);
-    });
+    // AppFetch({
+    //   url: `/admin/misc/wallet-balances`,
+    //   method: "GET",
+    // }).then((response) => {
+    //   setWallet(response.data);
+    // });
   }, []);
 
   const handleTableChange = (pagination, filters, sorter) => {
