@@ -19,7 +19,7 @@ generalService.getAllUsers = function (params) {
     params: {
       page: params.skip,
       per_page: params.limit,
-      type:params.type || "",
+      type:params.type || "BASIC_USER",
     },
   });
 };

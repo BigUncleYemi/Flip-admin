@@ -74,7 +74,7 @@ const BTC = ({
   updateBTCSettings,
   getBTCTransSettings,
   loading,
-  buyTransactionsSettings,
+  coinSettings,
 }) => {
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -137,7 +137,7 @@ const BTC = ({
   }
   useEffect(() => {
     getAllBuyTrans({ skip: 0, limit: 10 });
-    getBTCTransSettings({ cardCode: "all" });
+    // getBTCTransSettings({ cardCode: "all" });
   }, [getAllBuyTrans, getBTCTransSettings]);
 
   const handleAction = (id) => {
@@ -619,12 +619,12 @@ const BTC = ({
         </Button>
 
         <Button type="primary" onClick={showDrawer}>
-          Crypto Transaction Settings
+          Crypto Settings
         </Button>
         </div>
       </div>
       <Drawer
-        title="Edit BTC Transaction Settings"
+        title="Edit Crypto Settings"
         placement="right"
         closable={false}
         onClose={onClose}
@@ -636,311 +636,27 @@ const BTC = ({
           layout="vertical"
           name="login-form"
           onFinish={onFinish}
-          initialValues={{
-            availabilityBuyMaxVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.availability.buy.maxVolume,
-            availabilityBuyMinVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.availability.buy.minVolume,
-            availabilityBuyValue:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.availability.buy.value,
-            availabilitySellMaxVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.availability.sell.maxVolume,
-            availabilitySellMinVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.availability.sell.minVolume,
-            availabilitySellValue:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.availability.sell.value,
-            conversionRatesBuyHighMaxVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[0].maxVolume,
-            conversionRatesBuyHighMinVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[0].minVolume,
-            conversionRatesBuyHighValueGHS:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[0].value.GHS,
-            conversionRatesBuyHighValueNGN:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[0].value.NGN,
-            conversionRatesBuyLowMaxVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[1].maxVolume,
-            conversionRatesBuyLowMinVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[1].minVolume,
-            conversionRatesBuyLowValueGHS:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[1].value.GHS,
-            conversionRatesBuyLowValueNGN:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.buy[1].value.NGN,
-            conversionRatesSellMaxVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.sell[0].maxVolume,
-            conversionRatesSellMinVolume:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.sell[0].minVolume,
-            conversionRatesSellValueGHS:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.sell[0].value.GHS,
-            conversionRatesSellValueNGN:
-              buyTransactionsSettings &&
-              buyTransactionsSettings.conversionRates.sell[0].value.NGN,
-          }}
         >
-          <Title level={3}>Availability</Title>
-          <Form.Item
-            name="availabilityBuyMaxVolume"
-            label="Availability Buy Max Volume"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Buy Max Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="availabilityBuyMinVolume"
-            label="Availability Buy Min Volume"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Buy Max Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="availabilityBuyValue"
-            label="Availability Buy Value"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Buy Value",
-              },
-            ]}
-            valuePropName="checked"
-            hasFeedback
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            name="availabilitySellMaxVolume"
-            label="Availability Sell Max Volume"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Sell Max Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="availabilitySellMinVolume"
-            label="Availability Sell Min Volume"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Sell Min Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="availabilitySellValue"
-            label="Availability Sell Value"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Sell Value",
-              },
-            ]}
-            valuePropName="checked"
-            hasFeedback
-          >
-            <Switch />
-          </Form.Item>
-          <Divider />
-          <Title level={3}>Conversion Rate</Title>
-          <Title level={5}>Buy low</Title>
-          <Form.Item
-            name="conversionRatesBuyLowMaxVolume"
-            label="Conversion Rates Buy Low Max Volume"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please input your Conversion Rates Buy Low Max Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesBuyLowMinVolume"
-            label="Conversion Rates Buy Low Min Volume"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please input your Conversion Rates Buy Low Min Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesBuyLowValueGHS"
-            label="Conversion Rates Buy Low Value GHS"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Conversion Rates Buy Low Value GHS",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesBuyLowValueNGN"
-            label="Conversion Rates Buy Low Value NGN"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Conversion Rates Buy Low Value NGN",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Title level={5}>Buy High</Title>
-          <Form.Item
-            name="conversionRatesBuyHighMaxVolume"
-            label="Conversion Rates Buy High Max Volume"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please input your Conversion Rates Buy High Max Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesBuyHighMinVolume"
-            label="Conversion Rates Buy High Min Volume"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please input your Conversion Rates Buy High Min Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesBuyHighValueGHS"
-            label="Conversion Rates Buy High Value GHS"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please input your Conversion Rates Buy High Value GHS",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesBuyHighValueNGN"
-            label="Conversion Rates Buy High Value NGN"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please input your Conversion Rates Buy High Value NGN",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Title level={5}>Sell</Title>
-          <Form.Item
-            name="conversionRatesSellMaxVolume"
-            label="Conversion Rates Sell Max Volume"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Conversion Rates Sell Max Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesSellMinVolume"
-            label="Conversion Rates Sell Min Volume"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Conversion Rates Sell Min Volume",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesSellValueGHS"
-            label="Conversion Rates Sell Value GHS"
-            rules={[
-              {
-                required: true,
-                message: "Please input your password",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesSellValueNGN"
-            label="Conversion Rates Sell Value NGN"
-            rules={[
-              {
-                required: true,
-                message: "Please input your password",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
+          {coinSettings && Object.keys(coinSettings).map((item)=> (
+            <div key={coinSettings[item].id.toString()}>
+            
+            <Form.Item
+            label={coinSettings[item]?.description}
+            >
+              {coinSettings[item]?.type === "boolean" && (
+                <Switch defaultChecked={JSON.parse(coinSettings[item]?.value)["data"]}/>
+              )}
+              {coinSettings[item]?.type === "string" && (
+                <Input type="text" defaultValue={JSON.parse(coinSettings[item]?.value)["data"]} />
+              )}
+              {coinSettings[item]?.type === "number" && (
+                <Input type="number" defaultValue={JSON.parse(coinSettings[item]?.value)["data"]} />
+              )}
+              
+            </Form.Item>
+            </div>
+          ))}
+          
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Update Settings
@@ -1122,7 +838,7 @@ const mapStateToProps = (state) => ({
   p2pDetails: state.btc.p2pDetails,
   BTCDetails: state.btc.BTCDetails,
   selectedUser: state.users.userById,
-  buyTransactionsSettings: state.btc.buyTransactionsSettings,
+  coinSettings: state.btc.BTCTransactionSettings,
 });
 
 const mapDispatchToProps = (dispatch) => ({

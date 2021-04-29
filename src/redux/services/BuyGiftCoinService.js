@@ -35,14 +35,14 @@ buyGiftCoinService.getASingleBuyGiftCardTransaction = function (params) {
 
 buyGiftCoinService.getBuyGiftCardSettings = function () {
   return fetch({
-    url: `/admin/buy-cards/settings`,
+    url: `/admin/cards/settings`,
     method: "get",
   });
 };
 
 buyGiftCoinService.updateBuyGiftCardSettings = function (data) {
   return fetch({
-    url: `/admin/buy-cards/settings`,
+    url: `/admin/cards/settings`,
     method: "put",
     data,
   });

@@ -54,7 +54,7 @@ const dashBoardNavTree = [
   {
     key: "buy-giftCard",
     path: `${APP_PREFIX_PATH}/buy-giftCard`,
-    title: "Buy Gift Card",
+    title: "Gift Card",
     icon: CreditCardOutlined,
     breadcrumb: false,
     submenu: [],

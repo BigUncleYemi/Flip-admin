@@ -245,7 +245,7 @@ const GiftCard = ({
   useEffect(() => {
     getAllGiftCard({ skip: 0, limit: 10 });
     // getNewGiftCard({ skip: 0, limit: 10 });
-    getGiftCardList({ cardCode: "all" });
+    // getGiftCardList({ cardCode: "all" });
   }, [getAllGiftCard, getGiftCardList]);
   useEffect(() => {
     if (declineGiftCardTransaction && isModalVisible) {
@@ -734,9 +734,9 @@ const GiftCard = ({
         {/* <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
           Add New Giftcard
         </Button> */}
-        <Button type="primary" onClick={showDrawer}>
-          Edit Gift Card Rate
-        </Button>
+        {/* <Button type="primary" onClick={showDrawer}>
+          Gift Card Settings
+        </Button> */}
         </div>
         
       </div>

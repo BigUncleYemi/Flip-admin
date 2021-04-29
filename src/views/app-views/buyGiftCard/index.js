@@ -494,60 +494,27 @@ const BuyGiftCard = ({
           layout="vertical"
           name="login-form"
           onFinish={onFinish}
-          initialValues={{
-            availabilityValue:
-              BuyGiftCardTransactionSettings &&
-              BuyGiftCardTransactionSettings.availability.value,
-            conversionRatesValueGHS:
-              BuyGiftCardTransactionSettings &&
-              BuyGiftCardTransactionSettings.conversionRates.value.GHS,
-            conversionRatesValueNGN:
-              BuyGiftCardTransactionSettings &&
-              BuyGiftCardTransactionSettings.conversionRates.value.NGN,
-          }}
         >
-          <Title level={3}>Availability</Title>
-          <Form.Item
-            name="availabilityValue"
-            label="Availability Value"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Availability Value",
-              },
-            ]}
-            valuePropName="checked"
-            hasFeedback
-          >
-            <Switch />
-          </Form.Item>
-          <Title level={3}>Conversion Rate</Title>
-          <Form.Item
-            name="conversionRatesValueGHS"
-            label="Conversion Rates Value GHS"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Conversion Rates Value GHS",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="conversionRatesValueNGN"
-            label="Conversion Rates Value NGN"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Conversion Rates Value NGN",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
+          {BuyGiftCardTransactionSettings && Object.keys(BuyGiftCardTransactionSettings).map((item)=> (
+            <div key={BuyGiftCardTransactionSettings[item].id.toString()}>
+            
+            <Form.Item
+            label={BuyGiftCardTransactionSettings[item]?.description}
+            >
+              {BuyGiftCardTransactionSettings[item]?.type === "boolean" && (
+                <Switch defaultChecked={JSON.parse(BuyGiftCardTransactionSettings[item]?.value)["data"]}/>
+              )}
+              {BuyGiftCardTransactionSettings[item]?.type === "string" && (
+                <Input type="text" defaultValue={JSON.parse(BuyGiftCardTransactionSettings[item]?.value)["data"]} />
+              )}
+              {BuyGiftCardTransactionSettings[item]?.type === "number" && (
+                <Input type="number" defaultValue={JSON.parse(BuyGiftCardTransactionSettings[item]?.value)["data"]} />
+              )}
+              
+            </Form.Item>
+            </div>
+          ))}
+          
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Update Settings

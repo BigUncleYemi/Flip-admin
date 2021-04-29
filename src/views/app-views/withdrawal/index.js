@@ -553,11 +553,11 @@ const Withdrawal = ({
       >
         <Title level={2}>Withdrawals</Title>
         <Button type="primary" onClick={showDrawer}>
-          Withdrawals Transaction Settings
+          Withdrawals Settings
         </Button>
       </div>
       <Drawer
-        title="Withdrawals Transaction Settings"
+        title="Withdrawals Settings"
         placement="right"
         closable={false}
         onClose={onClose}
@@ -569,38 +569,10 @@ const Withdrawal = ({
           layout="vertical"
           name="login-form"
           onFinish={onFinish}
-          // initialValues={{
-          //   ratesNGNMIn:
-          //     withdrawalSettings && withdrawalSettings.rates.NGN[0].min,
-          //   ratesNGNMax:
-          //     withdrawalSettings && withdrawalSettings.rates.NGN[0].max,
-          //   ratesNGNChargeValue:
-          //     withdrawalSettings &&
-          //     withdrawalSettings.rates.NGN[0].charge &&
-          //     withdrawalSettings.rates.NGN[0].charge.value,
-          //   ratesNGNChargeIsPercent:
-          //     withdrawalSettings &&
-          //     withdrawalSettings.rates.NGN[0].charge &&
-          //     withdrawalSettings.rates.NGN[0].charge.isPercent,
-          //   ratesGHSMIn:
-          //     withdrawalSettings && withdrawalSettings.rates.GHS[0].min,
-          //   ratesGHSMax:
-          //     withdrawalSettings && withdrawalSettings.rates.GHS[0].max,
-          //   ratesGHSChargeValue:
-          //     withdrawalSettings &&
-          //     withdrawalSettings.rates.GHS[0].charge &&
-          //     withdrawalSettings.rates.GHS[0].charge.value,
-          //   ratesGHSChargeIsPercent:
-          //     withdrawalSettings &&
-          //     withdrawalSettings.rates.GHS[0].charge &&
-          //     withdrawalSettings.rates.GHS[0].charge.isPercent,
-          //   withdrawalDelay:
-          //     withdrawalSettings && withdrawalSettings.withdrawalDelay,
-          // }}
         >
           {withdrawalSettings && Object.keys(withdrawalSettings).map((item)=> (
             <div key={withdrawalSettings[item].id.toString()}>
-            {/* <Title level={3}>{withdrawalSettings[item]?.description}</Title> */}
+            
             <Form.Item
             label={withdrawalSettings[item]?.description}
             >
@@ -617,132 +589,7 @@ const Withdrawal = ({
             </Form.Item>
             </div>
           ))}
-          {/* <Title level={3}>Rates</Title>
-          <br />
-          <Title level={4}>NGN</Title>
-          <Form.Item
-            name="ratesNGNMIn"
-            label="Rates NGN Min"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates NGN Min",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="ratesNGNMax"
-            label="Rates NGN Max"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates NGN Max",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="ratesNGNChargeValue"
-            label="Rates NGN Charge value"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates NGN Charge value",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="ratesNGNChargeIsPercent"
-            label="Rates NGN Charge IsPercent"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates NGN Charge IsPercent",
-              },
-            ]}
-            valuePropName="checked"
-            hasFeedback
-          >
-            <Switch />
-          </Form.Item>
-          <br />
-          <Title level={4}>GHS</Title>
-          <Form.Item
-            name="ratesGHSMIn"
-            label="Rates GHS Min"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates GHS Min",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="ratesGHSMax"
-            label="Rates GHS Max"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates GHS Max",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="ratesGHSChargeValue"
-            label="Rates GHS Charge value"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates GHS Charge value",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="ratesGHSChargeIsPercent"
-            label="Rates GHS Charge IsPercent"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Rates GHS Charge IsPercent",
-              },
-            ]}
-            valuePropName="checked"
-            hasFeedback
-          >
-            <Switch />
-          </Form.Item>
-          <br />
-          <Title level={4}>Withdrawal Delay</Title>
-          <Form.Item
-            name="withdrawalDelay"
-            label="Withdrawal Delay"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Withdrawal Delay",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input type="number" />
-          </Form.Item> */}
+          
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Update Settings
@@ -766,16 +613,7 @@ const Withdrawal = ({
             ))}
           </Select>
         </Col>
-        {/* <Col span={6}>
-              <p>Filter By Admin Email</p>
-              <Search
-                placeholder="Search by admin email"
-                allowClear
-                enterButton="Search"
-                style={{minWidth: 280}}
-                onSearch={onSearch}
-              />
-            </Col> */}
+       
       </Row>
       <Row gutter={16}>
         <Col
@@ -792,44 +630,7 @@ const Withdrawal = ({
             title={"Withdrawals"}
             data={withdrawals && withdrawals.transactions}
           />
-          {/* <Tabs
-            defaultActiveKey="1"
-            onChange={callback}
-            style={{ background: "white" }}
-          >
-            <TabPane
-              tab={
-                <div>
-                  <span>New Submitted Withdrawals</span>
-                </div>
-              }
-              key="1"
-            >
-              <DataTable
-                columns={columns}
-                transaction={newWithdrawal}
-                fetchTrans={getNewWithdrawals}
-                title={"New Submitted Withdrawal"}
-                data={newWithdrawal && newWithdrawal.transactions}
-              />
-            </TabPane>
-            <TabPane
-              tab={
-                <div>
-                  <span>All Withdrawals</span>
-                </div>
-              }
-              key="2"
-            >
-              <DataTable
-                columns={columns}
-                transaction={withdrawals}
-                fetchTrans={getAllWithdrawals}
-                title={"Withdrawals"}
-                data={withdrawals && withdrawals.transactions}
-              />
-            </TabPane>
-          </Tabs> */}
+          
         </Col>
       </Row>
     </div>
