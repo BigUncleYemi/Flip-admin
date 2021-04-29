@@ -434,7 +434,7 @@ const BTC = ({
 
   return (
     <div>
-      <UserModal />
+      {/* <UserModal /> */}
       <ModalWrapper
         isModalVisible={isAddNewModalVisible}
         setIsModalVisible={setIsAddNewModalVisible}
