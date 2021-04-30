@@ -12,6 +12,7 @@ import {
   Drawer,
   Switch,
   Form,
+  Select as AntSelect,
 } from "antd";
 import { date, Money } from "utils/helper";
 import styles from "../../styles.module.scss";
@@ -29,7 +30,17 @@ import {
   updateBuyGiftCardSettings,
 } from "redux/actions/buyGiftCard";
 import Scrumboard from "./scrumboard";
-import SellGiftCard from "../giftCard"
+import SellGiftCard from "../giftCard";
+
+const ActionType = ["SUBMITTED", "PROCESSING","COMPLETED","DECLINED"];
+const { Option } = AntSelect;
+
+const convertToProperName = (name) => {
+  return name
+    .split("_")
+    .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+};
 
 const BuyGiftCard = ({
   getAllGiftCard,
@@ -51,8 +62,14 @@ const BuyGiftCard = ({
   const { Title } = Typography;
   const [isUserModalVisible, setUserIsModalVisible] = useState(false);
   // const [comment, setComment] = useState("");
+  const [actionTypeSel, setActionTypeSel] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: giftCard && giftCard.meta && giftCard.meta.limit,
+    total: giftCard && giftCard.meta && giftCard.meta.count,
+  });
   const showDrawer = () => {
     setVisible(true);
   };
@@ -62,53 +79,73 @@ const BuyGiftCard = ({
   function callback(key) {
     console.log(key);
   }
+
   useEffect(() => {
-    getAllGiftCard({ skip: 0, limit: 10 });
+    getAllGiftCard({ skip: 0, limit: 10, status: "" });
     // getNewGiftCard({ skip: 0, limit: 10 });
     getBuyGiftCardSettings();
   }, [getAllGiftCard, getNewGiftCard, getGiftCardList, getBuyGiftCardSettings]);
 
   const handleAction = (id) => {
-    console.log('clicked', id, giftCardDetails)
+    console.log("clicked", id, giftCardDetails);
     setIsModalVisible(true);
     getGiftCardById({ transactionId: id });
   };
+  function handleTypeChange(value) {
+    console.log(`selected ${value}`);
+    setActionTypeSel(value);
+  }
+  useEffect(() => {
+    getAllGiftCard({
+      skip: 0,
+      limit: pagination.pageSize,
+      status: actionTypeSel,
+    });
+    // setLoading(false);
+    // eslint-disable-next-line
+  }, [actionTypeSel, pagination]);
 
   const columns = [
     {
       title: "Date",
-      dataIndex: "createdAt",
+      dataIndex: "created_at",
       render: (createdAt) => `${date(createdAt)}`,
     },
     {
       title: "Reference",
       dataIndex: "reference",
     },
+    // {
+    //   title:"Name",
+    //   dataIndex:"card_detail",
+    //   render:(data) => `${data.name}`
+    // },
     {
       title: "Card Ordered",
-      dataIndex: "cardSlug",
+      dataIndex: "card_slug",
       render: (cardSlug, rec) => (
         <span>
           Ordered: {cardSlug.replace("-", " ").replace("_", " ")}
           <br />
-          Quantity: {rec.cardDetails && rec.cardDetails.quantity}
+          Quantity: {rec.card_detail && rec.card_detail.quantity}
         </span>
       ),
     },
     {
       title: "Card Amount | USD Amount",
-      dataIndex: "cardDetails",
+      dataIndex: "card_detail",
       render: (cardDetails) => (
         <span>
-          {cardDetails && cardDetails.cardCurrency}
-          {cardDetails && cardDetails.cardValue} | USD
-          {cardDetails && cardDetails.estimatedUSDValue.amount}
+          {cardDetails && cardDetails.currency}
+          {cardDetails && cardDetails.value} | USD
+          {/* {cardDetails && cardDetails.estima} */}
         </span>
       ),
     },
     {
       title: "Wallet",
-      dataIndex: "referenceCurrency",
+      dataIndex: "description",
+      render : (res) => `${res.split('-')[0].trim()}`
     },
     {
       title: "Status",
@@ -127,7 +164,6 @@ const BuyGiftCard = ({
   ];
 
   const handleUserAction = (id) => {
-    
     setUserIsModalVisible(true);
     getUserDetailsById({ id });
   };
@@ -350,9 +386,7 @@ const BuyGiftCard = ({
                 <List.Item.Meta
                   title={"ID"}
                   description={
-                    giftCardDetails &&
-                    giftCardDetails.id &&
-                    giftCardDetails.id
+                    giftCardDetails && giftCardDetails.id && giftCardDetails.id
                   }
                 />
               </List.Item>
@@ -382,7 +416,9 @@ const BuyGiftCard = ({
                   description={Money(
                     giftCardDetails &&
                       giftCardDetails.card_detail &&
-                      giftCardDetails.card_detail.quantity * parseFloat(giftCardDetails.card_detail.value) * parseFloat(giftCardDetails.rate),
+                      giftCardDetails.card_detail.quantity *
+                        parseFloat(giftCardDetails.card_detail.value) *
+                        parseFloat(giftCardDetails.rate),
                     (giftCardDetails &&
                       giftCardDetails.FiatCurrency &&
                       giftCardDetails.FiatCurrency.code) ||
@@ -396,7 +432,8 @@ const BuyGiftCard = ({
                   description={Money(
                     giftCardDetails &&
                       giftCardDetails.card_detail &&
-                      giftCardDetails.card_detail.quantity * parseFloat(giftCardDetails.card_detail.value),
+                      giftCardDetails.card_detail.quantity *
+                        parseFloat(giftCardDetails.card_detail.value),
                     "usd"
                   )}
                 />
@@ -446,7 +483,7 @@ const BuyGiftCard = ({
               </List.Item>
               <List.Item>
                 <List.Item.Meta
-                  title={"User Id"}
+                  title={"User email"}
                   description={
                     <p
                       style={{ cursor: "pointer" }}
@@ -459,8 +496,8 @@ const BuyGiftCard = ({
                       }
                     >
                       {giftCardDetails &&
-                            giftCardDetails.User &&
-                            giftCardDetails.User.id}
+                        giftCardDetails.User &&
+                        giftCardDetails.User.email}
                     </p>
                   }
                 />
@@ -496,26 +533,45 @@ const BuyGiftCard = ({
           name="login-form"
           onFinish={onFinish}
         >
-          {BuyGiftCardTransactionSettings && Object.keys(BuyGiftCardTransactionSettings).map((item)=> (
-            <div key={BuyGiftCardTransactionSettings[item].id.toString()}>
-            
-            <Form.Item
-            label={BuyGiftCardTransactionSettings[item]?.description}
-            >
-              {BuyGiftCardTransactionSettings[item]?.type === "boolean" && (
-                <Switch defaultChecked={JSON.parse(BuyGiftCardTransactionSettings[item]?.value)["data"]}/>
-              )}
-              {BuyGiftCardTransactionSettings[item]?.type === "string" && (
-                <Input type="text" defaultValue={JSON.parse(BuyGiftCardTransactionSettings[item]?.value)["data"]} />
-              )}
-              {BuyGiftCardTransactionSettings[item]?.type === "number" && (
-                <Input type="number" defaultValue={JSON.parse(BuyGiftCardTransactionSettings[item]?.value)["data"]} />
-              )}
-              
-            </Form.Item>
-            </div>
-          ))}
-          
+          {BuyGiftCardTransactionSettings &&
+            Object.keys(BuyGiftCardTransactionSettings).map((item) => (
+              <div key={BuyGiftCardTransactionSettings[item].id.toString()}>
+                <Form.Item
+                  label={BuyGiftCardTransactionSettings[item]?.description}
+                >
+                  {BuyGiftCardTransactionSettings[item]?.type === "boolean" && (
+                    <Switch
+                      defaultChecked={
+                        JSON.parse(BuyGiftCardTransactionSettings[item]?.value)[
+                          "data"
+                        ]
+                      }
+                    />
+                  )}
+                  {BuyGiftCardTransactionSettings[item]?.type === "string" && (
+                    <Input
+                      type="text"
+                      defaultValue={
+                        JSON.parse(BuyGiftCardTransactionSettings[item]?.value)[
+                          "data"
+                        ]
+                      }
+                    />
+                  )}
+                  {BuyGiftCardTransactionSettings[item]?.type === "number" && (
+                    <Input
+                      type="number"
+                      defaultValue={
+                        JSON.parse(BuyGiftCardTransactionSettings[item]?.value)[
+                          "data"
+                        ]
+                      }
+                    />
+                  )}
+                </Form.Item>
+              </div>
+            ))}
+
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Update Settings
@@ -545,14 +601,31 @@ const BuyGiftCard = ({
               }
               key="1"
             >
-              {/* <DataTable
+              <Row align="start">
+                <Col span={6}>
+                  <p>Filter By Status</p>
+                  <AntSelect
+                    style={{ minWidth: 200 }}
+                    allowClear
+                    onChange={handleTypeChange}
+                  >
+                    <Option value="">Select Status</Option>
+                    {ActionType.map((item) => (
+                      <Option key={item} value={item}>
+                        {convertToProperName(item)}
+                      </Option>
+                    ))}
+                  </AntSelect>
+                </Col>
+              </Row>
+              <DataTable
                 columns={columns}
                 transaction={giftCard}
                 fetchTrans={getAllGiftCard}
                 title={"Gift Card"}
                 data={giftCard && giftCard.transactions}
-              /> */}
-              <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} />
+              />
+              {/* <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} /> */}
             </TabPane>
             <TabPane
               tab={

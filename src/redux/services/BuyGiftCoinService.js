@@ -20,7 +20,7 @@ buyGiftCoinService.getAllBuyGiftCardTransaction = function (params) {
     method: "get",
     params: {
       skip: params.skip,
-      limit: 999999 || params.limit,
+      limit: params.limit || 20 ,
       status: params.status || "",
     },
   });

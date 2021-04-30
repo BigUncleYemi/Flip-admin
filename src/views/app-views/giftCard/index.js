@@ -864,16 +864,7 @@ const GiftCard = ({
             ))}
           </AntSelect>
         </Col>
-        {/* <Col span={6}>
-              <p>Filter By Admin Email</p>
-              <Search
-                placeholder="Search by admin email"
-                allowClear
-                enterButton="Search"
-                style={{minWidth: 280}}
-                onSearch={onSearch}
-              />
-            </Col> */}
+        
       </Row>
       <Row gutter={16}>
         <Col
