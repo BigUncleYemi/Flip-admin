@@ -465,7 +465,7 @@ const GiftCard = ({
   };
 
   return (
-    <div>
+    <div style={{padding:10}}>
      
       <ModalWrapper
         isModalVisible={isAddNewModalVisible}
@@ -721,7 +721,7 @@ const GiftCard = ({
           </div>
         </ModalWrapper>
       )}
-      <div
+      {/* <div
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -731,15 +731,10 @@ const GiftCard = ({
       >
         <Title level={2}>Sell Gift Card</Title>
         <div>
-        {/* <Button type="primary" onClick={()=> setIsAddNewModalVisible(true)} style={{marginRight:20}}>
-          Add New Giftcard
-        </Button> */}
-        {/* <Button type="primary" onClick={showDrawer}>
-          Gift Card Settings
-        </Button> */}
+        
         </div>
         
-      </div>
+      </div> */}
       <Drawer
         title="View Gift Cards"
         placement="right"

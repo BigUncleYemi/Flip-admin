@@ -25,6 +25,7 @@ import { MailOutlined, PayCircleOutlined } from "@ant-design/icons";
 import AppFetch from "auth/FetchInterceptor";
 import ModalWrapper from "components/layout-components/Modal";
 import styles from "../../styles.module.scss";
+import GiftCardEntryDetails from "./GiftCardEntryDetails";
 
 function Resources(props) {
   useEffect(() => {
@@ -38,6 +39,9 @@ function Resources(props) {
   let initialState = {
     giftCards: false,
     main: true,
+    entry:false,
+    uid:"",
+    name:"",
   };
   const [active, setActive] = useState(initialState);
   const [isAddCurrencyModalVisible, setIsAddCurrencyModalVisible] = useState(
@@ -306,9 +310,17 @@ function Resources(props) {
           </Form.Item>
         </Form>
       </ModalWrapper>
+      {active.entry && (
+        <GiftCardEntryDetails
+        uid={active.uid}
+        active={active}
+        setActive={setActive}
+        cardCurrencies={props.cardCurrencies}
+        />
+      )}
 
       {active.giftCards && (
-        <GiftCards data={props.giftCards} setActive={setActive} />
+        <GiftCards data={props.giftCards} setActive={setActive} active={active} />
       )}
       {active.main && (
         <>
@@ -322,6 +334,7 @@ function Resources(props) {
             >
               <Row gutter={16} style={{ marginBottom: 20 }}>
                 <Col
+                style={{cursor:"pointer"}}
                   onClick={(rt) =>
                     setActive((state) => ({
                       ...active,
@@ -354,6 +367,7 @@ function Resources(props) {
                   </Card>
                 </Col>
                 <Col
+                style={{cursor:"pointer"}}
                   onClick={(rt) => setIsAddCurrencyModalVisible(true)}
                   xs={24}
                   sm={24}
@@ -445,6 +459,7 @@ function Resources(props) {
                   </Card>
                 </Col>
                 <Col
+                style={{cursor:"pointer"}}
                   onClick={(rt) => setIsAddCoinModalVisible(true)}
                   xs={24}
                   sm={24}

@@ -597,7 +597,7 @@ const Withdrawal = ({
           </Form.Item>
         </Form>
       </Drawer>
-      <Row align="start">
+      <Row align="start" style={{marginBottom:10, marginLeft:10}}>
         <Col span={6}>
           <p>Filter By Status</p>
           <Select

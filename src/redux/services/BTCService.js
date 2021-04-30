@@ -107,14 +107,14 @@ btcService.getASingleBTCTransaction = function (params) {
 
 btcService.getBTCSettings = function () {
   return fetch({
-    url: `/api/admin/coins/btc/settings`,
+    url: `/admin/coins/settings`,
     method: 'get',
   })
 }
 
 btcService.updateBTCSettings = function (data) {
   return fetch({
-    url: `/api/admin/coins/btc/settings`,
+    url: `/admin/coins/settings`,
     method: 'put',
     data,
   })

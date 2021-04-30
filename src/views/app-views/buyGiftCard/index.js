@@ -29,6 +29,7 @@ import {
   updateBuyGiftCardSettings,
 } from "redux/actions/buyGiftCard";
 import Scrumboard from "./scrumboard";
+import SellGiftCard from "../giftCard"
 
 const BuyGiftCard = ({
   getAllGiftCard,
@@ -476,9 +477,9 @@ const BuyGiftCard = ({
           flexWrap: "wrap",
         }}
       >
-        <Title level={2}>Buy Gift Card</Title>
+        <Title level={2}>Gift Card</Title>
         <Button type="primary" onClick={showDrawer}>
-          Buy Gift Card Settings
+          Gift Card Settings
         </Button>
       </div>
       <Drawer
@@ -530,8 +531,8 @@ const BuyGiftCard = ({
           md={24}
           lg={18}
         >
-          <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} />
-          {/* <Tabs
+          {/* <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} /> */}
+          <Tabs
             defaultActiveKey="1"
             onChange={callback}
             style={{ background: "white" }}
@@ -539,37 +540,38 @@ const BuyGiftCard = ({
             <TabPane
               tab={
                 <div>
-                  <span>All Gift Card</span>
+                  <span>Buy Gift Card</span>
                 </div>
               }
               key="1"
             >
-              <DataTable
+              {/* <DataTable
                 columns={columns}
                 transaction={giftCard}
                 fetchTrans={getAllGiftCard}
                 title={"Gift Card"}
                 data={giftCard && giftCard.transactions}
-              />
+              /> */}
               <Scrumboard contents={giftCard} updateBuyGiftCardStatus={updateBuyGiftCardStatus} openTrans={(id) => handleAction(id)} />
             </TabPane>
             <TabPane
               tab={
                 <div>
-                  <span>New Submitted Gift Card</span>
+                  <span>Sell Gift Card</span>
                 </div>
               }
               key="2"
             >
-              <DataTable
+              <SellGiftCard />
+              {/* <DataTable
                 columns={columns}
                 transaction={newGiftCard}
                 fetchTrans={getNewGiftCard}
                 title={"New Submitted Withdrawal"}
                 data={newGiftCard && newGiftCard.transactions}
-              />
+              /> */}
             </TabPane>
-          </Tabs> */}
+          </Tabs>
         </Col>
       </Row>
     </div>

@@ -43,14 +43,14 @@ const dashBoardNavTree = [
     breadcrumb: false,
     submenu: [],
   },
-  {
-    key: "giftCard",
-    path: `${APP_PREFIX_PATH}/giftCard`,
-    title: "Sell Gift Card",
-    icon: SwapOutlined,
-    breadcrumb: false,
-    submenu: [],
-  },
+  // {
+  //   key: "giftCard",
+  //   path: `${APP_PREFIX_PATH}/giftCard`,
+  //   title: "Sell Gift Card",
+  //   icon: SwapOutlined,
+  //   breadcrumb: false,
+  //   submenu: [],
+  // },
   {
     key: "buy-giftCard",
     path: `${APP_PREFIX_PATH}/buy-giftCard`,

@@ -36,6 +36,7 @@ import styles from "../../styles.module.scss";
 import ModalWrapper from "components/layout-components/Modal";
 import { getGiftCards, getGiftCardsById } from "redux/actions/all";
 import GiftCardEntry from "./giftCardEntry";
+import GiftCardEntryDetails from "./GiftCardEntryDetails";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -47,7 +48,8 @@ const GiftCards = ({
   cardDetails,
   getCardsDetails,
   loading,
-  setActive
+  setActive,
+  active
 }) => {
 
     const onHandleFile = (file) => {
@@ -79,6 +81,7 @@ const GiftCards = ({
   const [details, setDetails] = useState(INITIAL_STATE);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddNewModalVisible, setIsAddNewModalVisible] = useState(false);
+  const [uid, setUid] = useState("")
   const [entryModal, setEntryModal] = useState(false)
   const [Trigger, setTrigger] = useState(false);
   const [progress, setProgress] = useState();
@@ -175,10 +178,18 @@ const GiftCards = ({
       title: "Edit Card Entry",
       dataIndex: "uid",
       key: "x",
-      render: (uid) => (
+      render: (uid,name) => (
         <p style={{ cursor: "pointer" }} onClick={() => {
           // handleAction(uid)
-          setEntryModal(true)
+          // console.log("ant", name)
+          setActive((state) => ({
+            giftCard:true,
+            main:false,
+            entry:true,
+            uid:name.uid,
+            name:name.name
+          }))
+          // setEntryModal(true)
         }
           }>
           Edit Details
@@ -189,6 +200,15 @@ const GiftCards = ({
 
   return (
     <div>
+      {/* {active.entry && (
+        <div>
+          asdsads
+        <GiftCardEntryDetails
+        uid={uid}
+        />
+        </div>
+      )} */}
+      {!active.entry && (<>
       <GiftCardEntry
       isModalVisible={entryModal}
       setIsModalVisible={setEntryModal}
@@ -408,6 +428,7 @@ const GiftCards = ({
           </Row>
         </Col>
       </Row>
+      </>)}
     </div>
   );
 };

@@ -136,7 +136,7 @@ const BTC = ({
   }
   useEffect(() => {
     getAllBuyTrans({ skip: 0, limit: 10 });
-    // getBTCTransSettings({ cardCode: "all" });
+    getBTCTransSettings();
   }, [getAllBuyTrans, getBTCTransSettings]);
 
   const handleAction = (id) => {
