@@ -35,6 +35,7 @@ import { date, processImageToCloudinary } from "utils/helper";
 import styles from "../../styles.module.scss";
 import ModalWrapper from "components/layout-components/Modal";
 import { getGiftCards, getGiftCardsById } from "redux/actions/all";
+import GiftCardEntry from "./giftCardEntry";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -78,6 +79,7 @@ const GiftCards = ({
   const [details, setDetails] = useState(INITIAL_STATE);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddNewModalVisible, setIsAddNewModalVisible] = useState(false);
+  const [entryModal, setEntryModal] = useState(false)
   const [Trigger, setTrigger] = useState(false);
   const [progress, setProgress] = useState();
   const [giftcardName, setGiftcardName] = useState("")
@@ -174,7 +176,11 @@ const GiftCards = ({
       dataIndex: "uid",
       key: "x",
       render: (uid) => (
-        <p style={{ cursor: "pointer" }} onClick={() => handleAction(uid)}>
+        <p style={{ cursor: "pointer" }} onClick={() => {
+          // handleAction(uid)
+          setEntryModal(true)
+        }
+          }>
           Edit Details
         </p>
       ),
@@ -183,6 +189,13 @@ const GiftCards = ({
 
   return (
     <div>
+      <GiftCardEntry
+      isModalVisible={entryModal}
+      setIsModalVisible={setEntryModal}
+      // className={styles.withdrawInitial}
+      showClose="no"
+      showCancel
+      />
       <ModalWrapper
         isModalVisible={isAddNewModalVisible}
         setIsModalVisible={setIsAddNewModalVisible}

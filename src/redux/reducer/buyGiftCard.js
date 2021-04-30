@@ -49,7 +49,7 @@ const buyGiftCardsReducer = (state = initState, action) => {
       })
       return {
         ...state,
-        BuyGiftCardTransactionSettings: action.payload,
+        BuyGiftCardTransactionSettings: action.payload.settings,
         loading: false,
         error: null,
       }

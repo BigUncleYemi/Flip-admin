@@ -11,7 +11,6 @@ import {
   Input,
   // Image,
   Drawer,
-  Divider,
   Form,
   Switch,
   Select,
@@ -37,7 +36,7 @@ import {
   getP2PCoinTransactions,
   getP2PCoinTransactionsById,
 } from "redux/actions/btc";
-import { MailOutlined, PayCircleOutlined } from "@ant-design/icons";
+import { PayCircleOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
